@@ -18,7 +18,7 @@ val Scala213 = "2.13.13"
 ThisBuild / tlBaseVersion := "0.16"
 
 ThisBuild / crossScalaVersions := Seq(Scala213, Scala212)
-ThisBuild / scalaVersion := Scala212
+ThisBuild / scalaVersion := Scala213
 
 lazy val root = project
   .in(file("."))
@@ -315,6 +315,21 @@ lazy val framelessSettings = Seq(
   mimaPreviousArtifacts ~= {
     _.filterNot(_.revision == "0.11.0") // didn't release properly
   },
+  //
+//  addCompilerPlugin(
+//    "io.tryp" % "splain" % "1.1.0-RC0" cross CrossVersion.patch
+//  ),
+//  scalacOptions ++= Seq(
+//    "-Vimplicits",
+//    "-Vimplicits-verbose-tree",
+//    "-Vtype-diffs",
+//    "-P:splain:Vimplicits-diverging",
+//    "-P:splain:Vtype-detail:4",
+//    "-P:splain:Vtype-diffs-detail:3"
+//    //                            "-P:splain:Vdebug"
+//  ),
+  //
+
   /**
    * The old Scala XML is pulled from Scala 2.12.x.
    *
