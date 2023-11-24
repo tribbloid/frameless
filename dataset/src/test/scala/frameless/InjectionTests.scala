@@ -202,7 +202,7 @@ class InjectionTests extends TypedDatasetSuite {
   }
 
   test("Resolve ambiguity by importing usingDerivation") {
-    import TypedEncoder.usingDerivation
+    import TypedEncoder.deriveForGeneric
     assert(
       implicitly[TypedEncoder[Person]].isInstanceOf[RecordEncoder[Person, _, _]]
     )
