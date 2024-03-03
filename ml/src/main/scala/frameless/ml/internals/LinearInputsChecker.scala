@@ -63,6 +63,7 @@ object LinearInputsChecker {
     new LinearInputsChecker[Inputs] {
       val labelCol: String = implicitly[Witness.Aux[LabelK]].value.name
       val featuresCol: String = implicitly[Witness.Aux[FeaturesK]].value.name
+
       val weightCol: Option[String] = Some(
         implicitly[Witness.Aux[WeightK]].value.name
       )

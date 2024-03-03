@@ -19,6 +19,7 @@ sealed abstract class Job[A](
 
   def withLocalProperty(key: String, value: String): Job[A] = {
     new Job[A] {
+
       def run(): A = {
         spark.sparkContext.setLocalProperty(key, value)
         self.run()

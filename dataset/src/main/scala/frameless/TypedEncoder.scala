@@ -737,14 +737,6 @@ object TypedEncoder {
       i5: ClassTag[F]
     ): TypedEncoder[F] = RecordEncoder.ForGeneric[F, G, H]()
 
-  implicit def deriveForTypedRow[G <: HList, H <: HList](
-      implicit
-      i1: DropUnitValues.Aux[G, H],
-      i2: IsHCons[H],
-      i3: Lazy[RecordEncoderFields[H]],
-      i4: Lazy[NewInstanceExprs[G]]
-    ): TypedEncoder[TypedRow[G]] = RecordEncoder.ForTypedRow[G, H]()
-
   /** Encodes things using a Spark SQL's User Defined Type (UDT) if there is one defined in implicit */
   implicit def usingUserDefinedType[
       A >: Null: UserDefinedType: ClassTag
