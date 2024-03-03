@@ -7,7 +7,7 @@ import shapeless.ops.record.{ MapValues, RemoveAll, Remover, Selector }
 import shapeless.tag.@@
 import shapeless.{ HList, HNil, Poly1, ProductArgs, RecordArgs }
 
-import scala.collection.immutable.ArraySeq
+import scala.collection.immutable.Seq
 import scala.language.{ dynamics, implicitConversions }
 import scala.reflect.ClassTag
 
@@ -22,7 +22,7 @@ import scala.reflect.ClassTag
  *   Record type
  */
 case class TypedRow[L <: HList](
-    cells: ArraySeq[Any])
+    cells: Seq[Any])
     extends Dynamic {
 
   import TypedRow._
@@ -113,12 +113,12 @@ object TypedRow extends RecordArgs {
 
     val cells = record.runtimeList
 
-    new TypedRow[L](cells.to(ArraySeq))
+    new TypedRow[L](cells.to(Seq))
   }
 
   def fromValues(values: Any*): TypedRow[HList] = {
 
-    val row = values.to(ArraySeq)
+    val row = values.to(Seq)
     new TypedRow[HList](row)
   }
 
