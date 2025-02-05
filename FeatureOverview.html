@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="Typelevel Laika + Helium Theme" />
+  <title>TypedDataset: Feature Overview</title>
+  
+  <meta name="author" content="Olivier Blanvillain"/>
+  
+  <meta name="author" content="Adelbert Chang"/>
+  
+  <meta name="author" content="Marios Iliofotou"/>
+  
+  <meta name="author" content="Gleb Kanterov"/>
+  
+  <meta name="author" content="Erik Osheim"/>
+  
+  <meta name="author" content="Jeremy Smith"/>
+  
+  <meta name="author" content="Cédric Chantepie"/>
+  
+  <meta name="author" content="Grigory Pomadchin"/>
+  
+  
+  <meta name="description" content="docs"/>
+  
+  
+  
+  <link rel="icon" sizes="32x32" type="image/png" href="https://typelevel.org/img/favicon.png"/>
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700">
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:500">
+  
+  <link rel="stylesheet" type="text/css" href="helium/site/icofont.min.css" />
+    <link rel="stylesheet" type="text/css" href="helium/site/laika-helium.css" />
+  <script src="helium/site/laika-helium.js"></script>
+  
+  
+  <script> /* for avoiding page load transitions */ </script>
+</head>
+
+  <body>
+
+    <header id="top-bar" class="light-default dark-default">
+
+  <div class="row">
+    <a id="nav-icon">
+      <i class="icofont-laika navigationMenu" title="Navigation">&#xefa2;</i>
+    </a>
+    
+    
+  </div>
+
+  <a class="image-link" href="https://typelevel.org"><img src="https://typelevel.org/img/logo.svg"></a>
+
+  <div class="row links">
+    
+    <a class="icon-link svg-link" href="https://github.com/tribbloid/frameless"><span class="github" title="Source Code"><svg class="svg-icon" width="100%" height="100%" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+  <g class="svg-shape">
+    <path d="M49.995,1c-27.609,-0 -49.995,22.386 -49.995,50.002c-0,22.09 14.325,40.83 34.194,47.444c2.501,0.458 3.413,-1.086 3.413,-2.412c0,-1.185 -0.043,-4.331 -0.067,-8.503c-13.908,3.021 -16.843,-6.704 -16.843,-6.704c-2.274,-5.773 -5.552,-7.311 -5.552,-7.311c-4.54,-3.103 0.344,-3.042 0.344,-3.042c5.018,0.356 7.658,5.154 7.658,5.154c4.46,7.64 11.704,5.433 14.552,4.156c0.454,-3.232 1.744,-5.436 3.174,-6.685c-11.102,-1.262 -22.775,-5.553 -22.775,-24.713c-0,-5.457 1.949,-9.92 5.147,-13.416c-0.516,-1.265 -2.231,-6.348 0.488,-13.233c0,0 4.199,-1.344 13.751,5.126c3.988,-1.108 8.266,-1.663 12.518,-1.682c4.245,0.019 8.523,0.574 12.517,1.682c9.546,-6.47 13.736,-5.126 13.736,-5.126c2.728,6.885 1.013,11.968 0.497,13.233c3.204,3.496 5.141,7.959 5.141,13.416c0,19.209 -11.691,23.436 -22.83,24.673c1.795,1.544 3.394,4.595 3.394,9.26c0,6.682 -0.061,12.076 -0.061,13.715c0,1.338 0.899,2.894 3.438,2.406c19.853,-6.627 34.166,-25.354 34.166,-47.438c-0,-27.616 -22.389,-50.002 -50.005,-50.002"/>
+  </g>
+</svg></span></a>
+    
+    <a class="icon-link glyph-link" href="https://discord.gg/XF3CXcMzqD"><i class="icofont-laika chat" title="Chat">&#xeed5;</i></a>
+    
+    <a class="icon-link svg-link" href="https://fosstodon.org/@typelevel"><span class="mastodon" title="Mastodon"><svg class="svg-icon" width="100%" height="100%" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <g class="svg-shape">
+    <path d="M11.19 12.195c2.016-.24 3.77-1.475 3.99-2.603.348-1.778.32-4.339.32-4.339 0-3.47-2.286-4.488-2.286-4.488C12.062.238 10.083.017 8.027 0h-.05C5.92.017 3.942.238 2.79.765c0 0-2.285 1.017-2.285 4.488l-.002.662c-.004.64-.007 1.35.011 2.091.083 3.394.626 6.74 3.78 7.57 1.454.383 2.703.463 3.709.408 1.823-.1 2.847-.647 2.847-.647l-.06-1.317s-1.303.41-2.767.36c-1.45-.05-2.98-.156-3.215-1.928a3.614 3.614 0 0 1-.033-.496s1.424.346 3.228.428c1.103.05 2.137-.064 3.188-.189zm1.613-2.47H11.13v-4.08c0-.859-.364-1.295-1.091-1.295-.804 0-1.207.517-1.207 1.541v2.233H7.168V5.89c0-1.024-.403-1.541-1.207-1.541-.727 0-1.091.436-1.091 1.296v4.079H3.197V5.522c0-.859.22-1.541.66-2.046.456-.505 1.052-.764 1.793-.764.856 0 1.504.328 1.933.983L8 4.39l.417-.695c.429-.655 1.077-.983 1.934-.983.74 0 1.336.259 1.791.764.442.505.661 1.187.661 2.046v4.203z"/>
+  </g>
+</svg></span></a>
+    
+  </div>  
+
+</header>
+    
+    <nav id="sidebar">
+
+  <div class="row">
+    
+    <a class="icon-link svg-link" href="https://github.com/tribbloid/frameless"><span class="github" title="Source Code"><svg class="svg-icon" width="100%" height="100%" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+  <g class="svg-shape">
+    <path d="M49.995,1c-27.609,-0 -49.995,22.386 -49.995,50.002c-0,22.09 14.325,40.83 34.194,47.444c2.501,0.458 3.413,-1.086 3.413,-2.412c0,-1.185 -0.043,-4.331 -0.067,-8.503c-13.908,3.021 -16.843,-6.704 -16.843,-6.704c-2.274,-5.773 -5.552,-7.311 -5.552,-7.311c-4.54,-3.103 0.344,-3.042 0.344,-3.042c5.018,0.356 7.658,5.154 7.658,5.154c4.46,7.64 11.704,5.433 14.552,4.156c0.454,-3.232 1.744,-5.436 3.174,-6.685c-11.102,-1.262 -22.775,-5.553 -22.775,-24.713c-0,-5.457 1.949,-9.92 5.147,-13.416c-0.516,-1.265 -2.231,-6.348 0.488,-13.233c0,0 4.199,-1.344 13.751,5.126c3.988,-1.108 8.266,-1.663 12.518,-1.682c4.245,0.019 8.523,0.574 12.517,1.682c9.546,-6.47 13.736,-5.126 13.736,-5.126c2.728,6.885 1.013,11.968 0.497,13.233c3.204,3.496 5.141,7.959 5.141,13.416c0,19.209 -11.691,23.436 -22.83,24.673c1.795,1.544 3.394,4.595 3.394,9.26c0,6.682 -0.061,12.076 -0.061,13.715c0,1.338 0.899,2.894 3.438,2.406c19.853,-6.627 34.166,-25.354 34.166,-47.438c-0,-27.616 -22.389,-50.002 -50.005,-50.002"/>
+  </g>
+</svg></span></a>
+    
+    <a class="icon-link glyph-link" href="https://discord.gg/XF3CXcMzqD"><i class="icofont-laika chat" title="Chat">&#xeed5;</i></a>
+    
+    <a class="icon-link svg-link" href="https://fosstodon.org/@typelevel"><span class="mastodon" title="Mastodon"><svg class="svg-icon" width="100%" height="100%" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <g class="svg-shape">
+    <path d="M11.19 12.195c2.016-.24 3.77-1.475 3.99-2.603.348-1.778.32-4.339.32-4.339 0-3.47-2.286-4.488-2.286-4.488C12.062.238 10.083.017 8.027 0h-.05C5.92.017 3.942.238 2.79.765c0 0-2.285 1.017-2.285 4.488l-.002.662c-.004.64-.007 1.35.011 2.091.083 3.394.626 6.74 3.78 7.57 1.454.383 2.703.463 3.709.408 1.823-.1 2.847-.647 2.847-.647l-.06-1.317s-1.303.41-2.767.36c-1.45-.05-2.98-.156-3.215-1.928a3.614 3.614 0 0 1-.033-.496s1.424.346 3.228.428c1.103.05 2.137-.064 3.188-.189zm1.613-2.47H11.13v-4.08c0-.859-.364-1.295-1.091-1.295-.804 0-1.207.517-1.207 1.541v2.233H7.168V5.89c0-1.024-.403-1.541-1.207-1.541-.727 0-1.091.436-1.091 1.296v4.079H3.197V5.522c0-.859.22-1.541.66-2.046.456-.505 1.052-.764 1.793-.764.856 0 1.504.328 1.933.983L8 4.39l.417-.695c.429-.655 1.077-.983 1.934-.983.74 0 1.336.259 1.791.764.442.505.661 1.187.661 2.046v4.203z"/>
+  </g>
+</svg></span></a>
+    
+  </div>
+
+  <ul class="nav-list">
+    <li class="level1 active nav-leaf"><a href="#">TypedDataset: Feature Overview</a></li>
+    <li class="level1 nav-leaf"><a href="TypedDatasetVsSparkDataset.html">Comparing TypedDatasets with Spark&#39;s Datasets</a></li>
+    <li class="level1 nav-leaf"><a href="WorkingWithCsvParquetJson.html">Working with CSV and Parquet data</a></li>
+    <li class="level1 nav-leaf"><a href="Injection.html">Injection: Creating Custom Encoders</a></li>
+    <li class="level1 nav-leaf"><a href="Job.html">Job[A]</a></li>
+    <li class="level1 nav-leaf"><a href="Cats.html">Using Cats with Frameless</a></li>
+    <li class="level1 nav-leaf"><a href="TypedML.html">Typed Spark ML</a></li>
+    <li class="level1 nav-leaf"><a href="TypedDataFrame.html">Proof of Concept: TypedDataFrame</a></li>
+    <li class="level1 nav-leaf"><a href="TypedEncoder.html">Typed Encoders in Frameless</a></li>
+  </ul>
+
+</nav>
+
+    <div id="container">
+
+      
+<nav id="page-nav">
+  <p class="header"><a href="#">TypedDataset: Feature Overview</a></p>
+
+  <ul class="nav-list">
+    <li class="level1 nav-leaf"><a href="#creating-typeddataset-instances">Creating TypedDataset instances</a></li>
+    <li class="level1 nav-leaf"><a href="#typesafe-column-referencing">Typesafe column referencing</a></li>
+    <li class="level1 nav-leaf"><a href="#working-with-optional-columns">Working with Optional columns</a></li>
+    <li class="level1 nav-node"><a href="#casting-and-projections">Casting and projections</a></li>
+    <li class="level2 nav-leaf"><a href="#advanced-topics-with-select">Advanced topics with <code>select()</code></a></li>
+    <li class="level2 nav-leaf"><a href="#projections">Projections</a></li>
+    <li class="level2 nav-leaf"><a href="#union-of-typeddatasets">Union of TypedDatasets</a></li>
+    <li class="level1 nav-node"><a href="#typeddataset-functions-and-transformations">TypedDataset functions and transformations</a></li>
+    <li class="level2 nav-leaf"><a href="#drop-replace-add-fields">Drop/Replace/Add fields</a></li>
+    <li class="level2 nav-leaf"><a href="#working-with-collections">Working with collections</a></li>
+    <li class="level2 nav-leaf"><a href="#collecting-data-to-the-driver">Collecting data to the driver</a></li>
+    <li class="level1 nav-leaf"><a href="#sorting-columns">Sorting columns</a></li>
+    <li class="level1 nav-leaf"><a href="#user-defined-functions">User Defined Functions</a></li>
+    <li class="level1 nav-node"><a href="#groupby-and-aggregations">GroupBy and Aggregations</a></li>
+    <li class="level2 nav-leaf"><a href="#working-with-optional-fields">Working with Optional fields</a></li>
+    <li class="level2 nav-leaf"><a href="#entire-typeddataset-aggregation">Entire TypedDataset Aggregation</a></li>
+    <li class="level1 nav-node"><a href="#joins">Joins</a></li>
+    <li class="level2 nav-leaf"><a href="#chained-joins">Chained Joins</a></li>
+  </ul>
+
+  <p class="footer"></p>
+</nav>
+
+
+      <main class="content">
+
+        <h1 id="typeddataset-feature-overview" class="title">TypedDataset: Feature Overview</h1>
+        <p>This tutorial introduces <code>TypedDataset</code> using a simple example.
+        The following imports are needed to make all code examples compile.</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">import</span><span> </span><span class="identifier">org</span><span>.</span><span class="identifier">apache</span><span>.</span><span class="identifier">spark</span><span>.{</span><span class="type-name">SparkConf</span><span>, </span><span class="type-name">SparkContext</span><span>}
+</span><span class="keyword">import</span><span> </span><span class="identifier">org</span><span>.</span><span class="identifier">apache</span><span>.</span><span class="identifier">spark</span><span>.</span><span class="identifier">sql</span><span>.</span><span class="type-name">SparkSession</span><span>
+</span><span class="keyword">import</span><span> </span><span class="identifier">frameless</span><span>.</span><span class="identifier">functions</span><span>.</span><span class="identifier">aggregate</span><span>.</span><span class="identifier">_</span><span>
+</span><span class="keyword">import</span><span> </span><span class="identifier">frameless</span><span>.</span><span class="type-name">TypedDataset</span><span>
+
+</span><span class="keyword">val</span><span> </span><span class="identifier">conf</span><span> = </span><span class="keyword">new</span><span> </span><span class="type-name">SparkConf</span><span>().</span><span class="identifier">setMaster</span><span>(</span><span class="string-literal">&quot;local[*]&quot;</span><span>).</span><span class="identifier">setAppName</span><span>(</span><span class="string-literal">&quot;Frameless repl&quot;</span><span>).</span><span class="identifier">set</span><span>(</span><span class="string-literal">&quot;spark.ui.enabled&quot;</span><span>, </span><span class="string-literal">&quot;false&quot;</span><span>)
+</span><span class="keyword">implicit</span><span> </span><span class="keyword">val</span><span> </span><span class="identifier">spark</span><span> = </span><span class="type-name">SparkSession</span><span>.</span><span class="identifier">builder</span><span>().</span><span class="identifier">config</span><span>(</span><span class="identifier">conf</span><span>).</span><span class="identifier">appName</span><span>(</span><span class="string-literal">&quot;REPL&quot;</span><span>).</span><span class="identifier">getOrCreate</span><span>()
+</span><span class="identifier">spark</span><span>.</span><span class="identifier">sparkContext</span><span>.</span><span class="identifier">setLogLevel</span><span>(</span><span class="string-literal">&quot;WARN&quot;</span><span>)
+
+</span><span class="keyword">import</span><span> </span><span class="identifier">spark</span><span>.</span><span class="identifier">implicits</span><span>.</span><span class="identifier">_</span></code></pre>
+        
+        <h2 id="creating-typeddataset-instances" class="section"><a class="anchor-link left" href="#creating-typeddataset-instances"><i class="icofont-laika link">&#xef71;</i></a>Creating TypedDataset instances</h2>
+        <p>We start by defining a case class:</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">case</span><span> </span><span class="keyword">class</span><span> </span><span class="type-name">Apartment</span><span>(</span><span class="identifier">city</span><span>: </span><span class="type-name">String</span><span>, </span><span class="identifier">surface</span><span>: </span><span class="type-name">Int</span><span>, </span><span class="identifier">price</span><span>: </span><span class="type-name">Double</span><span>, </span><span class="identifier">bedrooms</span><span>: </span><span class="type-name">Int</span><span>)</span></code></pre>
+        <p>And few <code>Apartment</code> instances:</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">val</span><span> </span><span class="identifier">apartments</span><span> = </span><span class="type-name">Seq</span><span>(
+  </span><span class="type-name">Apartment</span><span>(</span><span class="string-literal">&quot;Paris&quot;</span><span>, </span><span class="number-literal">50</span><span>,  </span><span class="number-literal">300000.0</span><span>, </span><span class="number-literal">2</span><span>),
+  </span><span class="type-name">Apartment</span><span>(</span><span class="string-literal">&quot;Paris&quot;</span><span>, </span><span class="number-literal">100</span><span>, </span><span class="number-literal">450000.0</span><span>, </span><span class="number-literal">3</span><span>),
+  </span><span class="type-name">Apartment</span><span>(</span><span class="string-literal">&quot;Paris&quot;</span><span>, </span><span class="number-literal">25</span><span>,  </span><span class="number-literal">250000.0</span><span>, </span><span class="number-literal">1</span><span>),
+  </span><span class="type-name">Apartment</span><span>(</span><span class="string-literal">&quot;Lyon&quot;</span><span>,  </span><span class="number-literal">83</span><span>,  </span><span class="number-literal">200000.0</span><span>, </span><span class="number-literal">2</span><span>),
+  </span><span class="type-name">Apartment</span><span>(</span><span class="string-literal">&quot;Lyon&quot;</span><span>,  </span><span class="number-literal">45</span><span>,  </span><span class="number-literal">133000.0</span><span>, </span><span class="number-literal">1</span><span>),
+  </span><span class="type-name">Apartment</span><span>(</span><span class="string-literal">&quot;Nice&quot;</span><span>,  </span><span class="number-literal">74</span><span>,  </span><span class="number-literal">325000.0</span><span>, </span><span class="number-literal">3</span><span>)
+)</span></code></pre>
+        <p>We are now ready to instantiate a <code>TypedDataset[Apartment]</code>:</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">val</span><span> </span><span class="identifier">aptTypedDs</span><span> = </span><span class="type-name">TypedDataset</span><span>.</span><span class="identifier">create</span><span>(</span><span class="identifier">apartments</span><span>)
+</span><span class="comment">// aptTypedDs: TypedDataset[Apartment] = [city: string, surface: int ... 2 more fields]</span></code></pre>
+        <p>We can also create one from an existing Spark <code>Dataset</code>:</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">val</span><span> </span><span class="identifier">aptDs</span><span> = </span><span class="identifier">spark</span><span>.</span><span class="identifier">createDataset</span><span>(</span><span class="identifier">apartments</span><span>)
+</span><span class="comment">// aptDs: org.apache.spark.sql.Dataset[Apartment] = [city: string, surface: int ... 2 more fields]
+</span><span class="keyword">val</span><span> </span><span class="identifier">aptTypedDs</span><span> = </span><span class="type-name">TypedDataset</span><span>.</span><span class="identifier">create</span><span>(</span><span class="identifier">aptDs</span><span>)
+</span><span class="comment">// aptTypedDs: TypedDataset[Apartment] = [city: string, surface: int ... 2 more fields]</span></code></pre>
+        <p>Or use the Frameless syntax:</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">import</span><span> </span><span class="identifier">frameless</span><span>.</span><span class="identifier">syntax</span><span>.</span><span class="identifier">_</span><span>
+
+</span><span class="keyword">val</span><span> </span><span class="identifier">aptTypedDs2</span><span> = </span><span class="identifier">aptDs</span><span>.</span><span class="identifier">typed</span><span>
+</span><span class="comment">// aptTypedDs2: TypedDataset[Apartment] = [city: string, surface: int ... 2 more fields]</span></code></pre>
+        
+        <h2 id="typesafe-column-referencing" class="section"><a class="anchor-link left" href="#typesafe-column-referencing"><i class="icofont-laika link">&#xef71;</i></a>Typesafe column referencing</h2>
+        <p>This is how we select a particular column from a <code>TypedDataset</code>:</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">val</span><span> </span><span class="identifier">cities</span><span>: </span><span class="type-name">TypedDataset</span><span>[</span><span class="type-name">String</span><span>] = </span><span class="identifier">aptTypedDs</span><span>.</span><span class="identifier">select</span><span>(</span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;city</span><span>))
+</span><span class="comment">// cities: TypedDataset[String] = [value: string]</span></code></pre>
+        <p>This is completely type-safe, for instance suppose we misspell <code>city</code> as <code>citi</code>:</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">aptTypedDs</span><span>.</span><span class="identifier">select</span><span>(</span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;citi</span><span>))
+</span><span class="comment">// error: No column Symbol with shapeless.tag.Tagged[String(&quot;citi&quot;)] of type A in repl.MdocSession.MdocApp0.Apartment</span></code></pre>
+        <p>This gets raised at compile time, whereas with the standard <code>Dataset</code> API the error appears at runtime (enjoy the stack trace):</p>
+        <pre><code class="nohighlight"><span class="identifier">aptDs</span><span>.</span><span class="identifier">select</span><span>(</span><span class="symbol-literal">&#39;citi</span><span>)
+</span><span class="comment">// org.apache.spark.sql.AnalysisException: [UNRESOLVED_COLUMN.WITH_SUGGESTION] A column or function parameter with name `citi` cannot be resolved. Did you mean one of the following? [`city`, `price`, `surface`, `bedrooms`].;
+// &#39;Project [&#39;citi]
+// +- LocalRelation [city#64, surface#65, price#66, bedrooms#67]
+// 
+// 	at org.apache.spark.sql.errors.QueryCompilationErrors$.unresolvedAttributeError(QueryCompilationErrors.scala:306)
+// 	at org.apache.spark.sql.catalyst.analysis.CheckAnalysis.org$apache$spark$sql$catalyst$analysis$CheckAnalysis$$failUnresolvedAttribute(CheckAnalysis.scala:141)
+// 	at org.apache.spark.sql.catalyst.analysis.CheckAnalysis.$anonfun$checkAnalysis0$6(CheckAnalysis.scala:299)
+// 	at org.apache.spark.sql.catalyst.analysis.CheckAnalysis.$anonfun$checkAnalysis0$6$adapted(CheckAnalysis.scala:297)
+// 	at org.apache.spark.sql.catalyst.trees.TreeNode.foreachUp(TreeNode.scala:244)
+// 	at org.apache.spark.sql.catalyst.analysis.CheckAnalysis.$anonfun$checkAnalysis0$5(CheckAnalysis.scala:297)
+// 	at org.apache.spark.sql.catalyst.analysis.CheckAnalysis.$anonfun$checkAnalysis0$5$adapted(CheckAnalysis.scala:297)
+// 	at scala.collection.immutable.Stream.foreach(Stream.scala:533)
+// 	at org.apache.spark.sql.catalyst.analysis.CheckAnalysis.$anonfun$checkAnalysis0$2(CheckAnalysis.scala:297)
+// 	at org.apache.spark.sql.catalyst.analysis.CheckAnalysis.$anonfun$checkAnalysis0$2$adapted(CheckAnalysis.scala:215)
+// 	at org.apache.spark.sql.catalyst.trees.TreeNode.foreachUp(TreeNode.scala:244)
+// 	at org.apache.spark.sql.catalyst.analysis.CheckAnalysis.checkAnalysis0(CheckAnalysis.scala:215)
+// 	at org.apache.spark.sql.catalyst.analysis.CheckAnalysis.checkAnalysis0$(CheckAnalysis.scala:197)
+// 	at org.apache.spark.sql.catalyst.analysis.Analyzer.checkAnalysis0(Analyzer.scala:202)
+// 	at org.apache.spark.sql.catalyst.analysis.CheckAnalysis.checkAnalysis(CheckAnalysis.scala:193)
+// 	at org.apache.spark.sql.catalyst.analysis.CheckAnalysis.checkAnalysis$(CheckAnalysis.scala:171)
+// 	at org.apache.spark.sql.catalyst.analysis.Analyzer.checkAnalysis(Analyzer.scala:202)
+// 	at org.apache.spark.sql.catalyst.analysis.Analyzer.$anonfun$executeAndCheck$1(Analyzer.scala:225)
+// 	at org.apache.spark.sql.catalyst.plans.logical.AnalysisHelper$.markInAnalyzer(AnalysisHelper.scala:330)
+// 	at org.apache.spark.sql.catalyst.analysis.Analyzer.executeAndCheck(Analyzer.scala:222)
+// 	at org.apache.spark.sql.execution.QueryExecution.$anonfun$analyzed$1(QueryExecution.scala:77)
+// 	at org.apache.spark.sql.catalyst.QueryPlanningTracker.measurePhase(QueryPlanningTracker.scala:138)
+// 	at org.apache.spark.sql.execution.QueryExecution.$anonfun$executePhase$2(QueryExecution.scala:219)
+// 	at org.apache.spark.sql.execution.QueryExecution$.withInternalError(QueryExecution.scala:546)
+// 	at org.apache.spark.sql.execution.QueryExecution.$anonfun$executePhase$1(QueryExecution.scala:219)
+// 	at org.apache.spark.sql.SparkSession.withActive(SparkSession.scala:900)
+// 	at org.apache.spark.sql.execution.QueryExecution.executePhase(QueryExecution.scala:218)
+// 	at org.apache.spark.sql.execution.QueryExecution.analyzed$lzycompute(QueryExecution.scala:77)
+// 	at org.apache.spark.sql.execution.QueryExecution.analyzed(QueryExecution.scala:74)
+// 	at org.apache.spark.sql.execution.QueryExecution.assertAnalyzed(QueryExecution.scala:66)
+// 	at org.apache.spark.sql.Dataset$.$anonfun$ofRows$1(Dataset.scala:91)
+// 	at org.apache.spark.sql.SparkSession.withActive(SparkSession.scala:900)
+// 	at org.apache.spark.sql.Dataset$.ofRows(Dataset.scala:89)
+// 	at org.apache.spark.sql.Dataset.withPlan(Dataset.scala:4352)
+// 	at org.apache.spark.sql.Dataset.select(Dataset.scala:1542)
+// 	at repl.MdocSession$MdocApp0$$anonfun$15.apply(FeatureOverview.md:95)
+// 	at repl.MdocSession$MdocApp0$$anonfun$15.apply(FeatureOverview.md:95)</span></code></pre>
+        <p><code>select()</code> supports arbitrary column operations:</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">aptTypedDs</span><span>.</span><span class="identifier">select</span><span>(</span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;surface</span><span>) * </span><span class="number-literal">10</span><span>, </span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;surface</span><span>) + </span><span class="number-literal">2</span><span>).</span><span class="identifier">show</span><span>().</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +----+---+
+// |  _1| _2|
+// +----+---+
+// | 500| 52|
+// |1000|102|
+// | 250| 27|
+// | 830| 85|
+// | 450| 47|
+// | 740| 76|
+// +----+---+
+//</span></code></pre>
+        <p>Note that unlike the standard Spark API, where some operations are lazy and some are not, <strong>all TypedDatasets operations are lazy.</strong>
+        In the above example, <code>show()</code> is lazy. It requires to apply <code>run()</code> for the <code>show</code> job to materialize.
+        A more detailed explanation of <code>Job</code> is given <a href="Job.html">here</a>.</p>
+        <p>Next we compute the price by surface unit:</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">val</span><span> </span><span class="identifier">priceBySurfaceUnit</span><span> = </span><span class="identifier">aptTypedDs</span><span>.</span><span class="identifier">select</span><span>(</span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;price</span><span>) / </span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;surface</span><span>))
+</span><span class="comment">// error: overloaded method value / with alternatives:
+//   (u: Double)(implicit n: frameless.CatalystNumeric[Double])frameless.TypedColumn[repl.MdocSession.MdocApp0.Apartment,Double] &lt;and&gt;
+//   [Out, TT, W](other: frameless.TypedColumn[TT,Double])(implicit n: frameless.CatalystDivisible[Double,Out], implicit e: frameless.TypedEncoder[Out], implicit w: frameless.With[repl.MdocSession.MdocApp0.Apartment,TT]{type Out = W})frameless.TypedColumn[W,Out]
+//  cannot be applied to (frameless.TypedColumn[repl.MdocSession.MdocApp0.Apartment,Int])
+// val priceBySurfaceUnit = aptTypedDs.select(aptTypedDs(&#39;price) / aptTypedDs(&#39;surface))
+//                                            ^^^^^^^^^^^^^^^^^^^^</span></code></pre>
+        <p>As the error suggests, we can&#39;t divide a <code>TypedColumn</code> of <code>Double</code> by <code>Int.</code>
+        For safety, in Frameless only math operations between same types is allowed:</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">val</span><span> </span><span class="identifier">priceBySurfaceUnit</span><span> = </span><span class="identifier">aptTypedDs</span><span>.</span><span class="identifier">select</span><span>(</span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;price</span><span>) / </span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;surface</span><span>).</span><span class="identifier">cast</span><span>[</span><span class="type-name">Double</span><span>])
+</span><span class="comment">// priceBySurfaceUnit: TypedDataset[Double] = [value: double]
+</span><span class="identifier">priceBySurfaceUnit</span><span>.</span><span class="identifier">collect</span><span>().</span><span class="identifier">run</span><span>()
+</span><span class="comment">// res5: Seq[Double] = WrappedArray(
+//   6000.0,
+//   4500.0,
+//   10000.0,
+//   2409.6385542168673,
+//   2955.5555555555557,
+//   4391.891891891892
+// )</span></code></pre>
+        <p>Looks like it worked, but that <code>cast</code> seems unsafe right? Actually it is safe.
+        Let&#39;s try to cast a <code>TypedColumn</code> of <code>String</code> to <code>Double</code>:</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;city</span><span>).</span><span class="identifier">cast</span><span>[</span><span class="type-name">Double</span><span>]
+</span><span class="comment">// error: could not find implicit value for parameter c: frameless.CatalystCast[String,Double]</span></code></pre>
+        <p>The compile-time error tells us that to perform the cast, an evidence
+        (in the form of <code>CatalystCast[String, Double]</code>) must be available.
+        Since casting from <code>String</code> to <code>Double</code> is not allowed, this results
+        in a compilation error.</p>
+        <p>Check <a href="https://github.com/typelevel/frameless/blob/master/core/src/main/scala/frameless/CatalystCast.scala">here</a>
+        for the set of available <code>CatalystCast.</code></p>
+        
+        <h2 id="working-with-optional-columns" class="section"><a class="anchor-link left" href="#working-with-optional-columns"><i class="icofont-laika link">&#xef71;</i></a>Working with Optional columns</h2>
+        <p>When working with real data we have to deal with imperfections, such as missing fields. Columns that may have
+        missing data should be represented using <code>Options</code>. For this example, let&#39;s assume that the Apartments dataset
+        may have missing values.<br></p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">case</span><span> </span><span class="keyword">class</span><span> </span><span class="type-name">ApartmentOpt</span><span>(</span><span class="identifier">city</span><span>: </span><span class="type-name">Option</span><span>[</span><span class="type-name">String</span><span>], </span><span class="identifier">surface</span><span>: </span><span class="type-name">Option</span><span>[</span><span class="type-name">Int</span><span>], </span><span class="identifier">price</span><span>: </span><span class="type-name">Option</span><span>[</span><span class="type-name">Double</span><span>], </span><span class="identifier">bedrooms</span><span>: </span><span class="type-name">Option</span><span>[</span><span class="type-name">Int</span><span>])</span></code></pre>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">val</span><span> </span><span class="identifier">apartmentsOpt</span><span> = </span><span class="type-name">Seq</span><span>(
+  </span><span class="type-name">ApartmentOpt</span><span>(</span><span class="type-name">Some</span><span>(</span><span class="string-literal">&quot;Paris&quot;</span><span>), </span><span class="type-name">Some</span><span>(</span><span class="number-literal">50</span><span>),  </span><span class="type-name">Some</span><span>(</span><span class="number-literal">300000.0</span><span>), </span><span class="type-name">None</span><span>),
+  </span><span class="type-name">ApartmentOpt</span><span>(</span><span class="type-name">None</span><span>, </span><span class="type-name">None</span><span>, </span><span class="type-name">Some</span><span>(</span><span class="number-literal">450000.0</span><span>), </span><span class="type-name">Some</span><span>(</span><span class="number-literal">3</span><span>))
+)</span></code></pre>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">val</span><span> </span><span class="identifier">aptTypedDsOpt</span><span> = </span><span class="type-name">TypedDataset</span><span>.</span><span class="identifier">create</span><span>(</span><span class="identifier">apartmentsOpt</span><span>)
+</span><span class="comment">// aptTypedDsOpt: TypedDataset[ApartmentOpt] = [city: string, surface: int ... 2 more fields]
+</span><span class="identifier">aptTypedDsOpt</span><span>.</span><span class="identifier">show</span><span>().</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +-----+-------+--------+--------+
+// | city|surface|   price|bedrooms|
+// +-----+-------+--------+--------+
+// |Paris|     50|300000.0|    NULL|
+// | NULL|   NULL|450000.0|       3|
+// +-----+-------+--------+--------+
+//</span></code></pre>
+        <p>Unfortunately the syntax used above with <code>select()</code> will not work here:</p>
+        <pre><code class="nohighlight"><span class="identifier">aptTypedDsOpt</span><span>.</span><span class="identifier">select</span><span>(</span><span class="identifier">aptTypedDsOpt</span><span>(</span><span class="symbol-literal">&#39;surface</span><span>) * </span><span class="number-literal">10</span><span>, </span><span class="identifier">aptTypedDsOpt</span><span>(</span><span class="symbol-literal">&#39;surface</span><span>) + </span><span class="number-literal">2</span><span>).</span><span class="identifier">show</span><span>().</span><span class="identifier">run</span><span>()
+</span><span class="comment">// error: overloaded method value * with alternatives:
+//   (u: Option[Int])(implicit n: frameless.CatalystNumeric[Option[Int]])frameless.TypedColumn[ApartmentOpt,Option[Int]] &lt;and&gt;
+//   [TT, W](other: frameless.TypedColumn[TT,Option[Int]])(implicit n: frameless.CatalystNumeric[Option[Int]], implicit w: frameless.With[ApartmentOpt,TT]{type Out = W}, implicit t: scala.reflect.ClassTag[Option[Int]])frameless.TypedColumn[W,Option[Int]]
+//  cannot be applied to (Int)
+// aptTypedDsOpt.select(aptTypedDsOpt(&#39;surface) * 10, aptTypedDsOpt(&#39;surface) + 2).show().run()
+//                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+// error: overloaded method value + with alternatives:
+//   (u: Option[Int])(implicit n: frameless.CatalystNumeric[Option[Int]])frameless.TypedColumn[ApartmentOpt,Option[Int]] &lt;and&gt;
+//   [TT, W](other: frameless.TypedColumn[TT,Option[Int]])(implicit n: frameless.CatalystNumeric[Option[Int]], implicit w: frameless.With[ApartmentOpt,TT]{type Out = W})frameless.TypedColumn[W,Option[Int]]
+//  cannot be applied to (Int)
+// aptTypedDsOpt.select(aptTypedDsOpt(&#39;surface) * 10, aptTypedDsOpt(&#39;surface) + 2).show().run()
+//                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^</span></code></pre>
+        <p>This is because we cannot multiple an <code>Option</code> with an <code>Int</code>. In Scala, <code>Option</code> has a <code>map()</code> method to help address
+        exactly this (e.g., <code>Some(10).map(c =&gt; c * 2)</code>). Frameless follows a similar convention. By applying the <code>opt</code> method on 
+        any <code>Option[X]</code> column you can then use <code>map()</code> to provide a function that works with the unwrapped type <code>X</code>. 
+        This is best shown in the example bellow:</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">aptTypedDsOpt</span><span>.</span><span class="identifier">select</span><span>(</span><span class="identifier">aptTypedDsOpt</span><span>(</span><span class="symbol-literal">&#39;surface</span><span>).</span><span class="identifier">opt</span><span>.</span><span class="identifier">map</span><span>(</span><span class="identifier">c</span><span> =&gt; </span><span class="identifier">c</span><span> * </span><span class="number-literal">10</span><span>), </span><span class="identifier">aptTypedDsOpt</span><span>(</span><span class="symbol-literal">&#39;surface</span><span>).</span><span class="identifier">opt</span><span>.</span><span class="identifier">map</span><span>(</span><span class="identifier">_</span><span> + </span><span class="number-literal">2</span><span>)).</span><span class="identifier">show</span><span>().</span><span class="identifier">run</span><span>()</span></code></pre>
+        <p><strong>Known issue</strong>: <code>map()</code> will throw a runtime exception when the applied function includes a <code>udf()</code>. If you want to 
+        apply a <code>udf()</code> to an optional column, we recommend changing your <code>udf</code> to work directly with <code>Optional</code> fields. </p>
+        
+        <h2 id="casting-and-projections" class="section"><a class="anchor-link left" href="#casting-and-projections"><i class="icofont-laika link">&#xef71;</i></a>Casting and projections</h2>
+        <p>In the general case, <code>select()</code> returns a TypedDataset of type <code>TypedDataset[TupleN[...]]</code> (with N in <code>[1...10]</code>).
+        For example, if we select three columns with types <code>String</code>, <code>Int</code>, and <code>Boolean</code> the result will have type
+        <code>TypedDataset[(String, Int, Boolean)]</code>. </p>
+        <p>We often want to give more expressive types to the result of our computations.
+        <code>as[T]</code> allows us to safely cast a <code>TypedDataset[U]</code> to another of type <code>TypedDataset[T]</code> as long
+        as the types in <code>U</code> and <code>T</code> align.</p>
+        <p>When the cast is valid the expression compiles:</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">case</span><span> </span><span class="keyword">class</span><span> </span><span class="type-name">UpdatedSurface</span><span>(</span><span class="identifier">city</span><span>: </span><span class="type-name">String</span><span>, </span><span class="identifier">surface</span><span>: </span><span class="type-name">Int</span><span>)
+</span><span class="keyword">val</span><span> </span><span class="identifier">updated</span><span> = </span><span class="identifier">aptTypedDs</span><span>.</span><span class="identifier">select</span><span>(</span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;city</span><span>), </span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;surface</span><span>) + </span><span class="number-literal">2</span><span>).</span><span class="identifier">as</span><span>[</span><span class="type-name">UpdatedSurface</span><span>]
+</span><span class="comment">// updated: TypedDataset[UpdatedSurface] = [city: string, surface: int]
+</span><span class="identifier">updated</span><span>.</span><span class="identifier">show</span><span>(</span><span class="number-literal">2</span><span>).</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +-----+-------+
+// | city|surface|
+// +-----+-------+
+// |Paris|     52|
+// |Paris|    102|
+// +-----+-------+
+// only showing top 2 rows
+//</span></code></pre>
+        <p>Next we try to cast a <code>(String, String)</code> to an <code>UpdatedSurface</code> (which has types <code>String</code>, <code>Int</code>).
+        The cast is not valid and the expression does not compile:</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">aptTypedDs</span><span>.</span><span class="identifier">select</span><span>(</span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;city</span><span>), </span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;city</span><span>)).</span><span class="identifier">as</span><span>[</span><span class="type-name">UpdatedSurface</span><span>]
+</span><span class="comment">// error: could not find implicit value for parameter as: frameless.ops.As[(String, String),UpdatedSurface]</span></code></pre>
+        
+        <h3 id="advanced-topics-with-select" class="section"><a class="anchor-link left" href="#advanced-topics-with-select"><i class="icofont-laika link">&#xef71;</i></a>Advanced topics with <code>select()</code></h3>
+        <p>When you <code>select()</code> a single column that has type <code>A</code>, the resulting type is <code>TypedDataset[A]</code> and 
+        not <code>TypedDataset[Tuple1[A]]</code>. This behavior makes working with nested schema easier (i.e., in the case 
+        where <code>A</code> is a complex data type) and simplifies type-checking column operations (e.g., verify that two 
+        columns can be added, divided, etc.). However, when <code>A</code> is scalar, say a <code>Long</code>, it makes it harder to select 
+        and work with the resulting <code>TypedDataset[Long]</code>. For instance, it&#39;s harder to reference this single scalar 
+        column using <code>select()</code>. If this becomes an issue, you can bypass this behavior by using the 
+        <code>selectMany()</code> method instead of <code>select()</code>. In the previous example, <code>selectMany()</code> will return
+        <code>TypedDataset[Tuple1[Long]]</code> and you can reference its single column using the name <code>_1</code>. 
+        <code>selectMany()</code> should also be used when you need to select more than 10 columns. 
+        <code>select()</code> has better IDE support and compiles faster than the macro based <code>selectMany()</code>, 
+        so prefer <code>select()</code> for the most common use cases.</p>
+        <p>When you are handed a single scalar column TypedDataset (e.g., <code>TypedDataset[Double]</code>) 
+        the best way to reference its single column is using the <code>asCol</code> (short for &quot;as a column&quot;) method. 
+        This is best shown in the example below. We will see more usages of <code>asCol</code> later in this tutorial.<br></p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">val</span><span> </span><span class="identifier">priceBySurfaceUnit</span><span> = </span><span class="identifier">aptTypedDs</span><span>.</span><span class="identifier">select</span><span>(</span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;price</span><span>) / </span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;surface</span><span>).</span><span class="identifier">cast</span><span>[</span><span class="type-name">Double</span><span>])
+</span><span class="comment">// priceBySurfaceUnit: TypedDataset[Double] = [value: double]
+</span><span class="identifier">priceBySurfaceUnit</span><span>.</span><span class="identifier">select</span><span>(</span><span class="identifier">priceBySurfaceUnit</span><span>.</span><span class="identifier">asCol</span><span> * </span><span class="number-literal">2</span><span>).</span><span class="identifier">show</span><span>(</span><span class="number-literal">2</span><span>).</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +-------+
+// |  value|
+// +-------+
+// |12000.0|
+// | 9000.0|
+// +-------+
+// only showing top 2 rows
+//</span></code></pre>
+        
+        <h3 id="projections" class="section"><a class="anchor-link left" href="#projections"><i class="icofont-laika link">&#xef71;</i></a>Projections</h3>
+        <p>We often want to work with a subset of the fields in a dataset.
+        Projections allow us to easily select our fields of interest
+        while preserving their initial names and types for extra safety.</p>
+        <p>Here is an example using the <code>TypedDataset[Apartment]</code> with an additional column:</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">val</span><span> </span><span class="identifier">aptds</span><span> = </span><span class="identifier">aptTypedDs</span><span> </span><span class="comment">// For shorter expressions
+// aptds: TypedDataset[Apartment] = [city: string, surface: int ... 2 more fields]
+</span><span>
+</span><span class="keyword">case</span><span> </span><span class="keyword">class</span><span> </span><span class="type-name">ApartmentDetails</span><span>(</span><span class="identifier">city</span><span>: </span><span class="type-name">String</span><span>, </span><span class="identifier">price</span><span>: </span><span class="type-name">Double</span><span>, </span><span class="identifier">surface</span><span>: </span><span class="type-name">Int</span><span>, </span><span class="identifier">ratio</span><span>: </span><span class="type-name">Double</span><span>)
+</span><span class="keyword">val</span><span> </span><span class="identifier">aptWithRatio</span><span> =
+  </span><span class="identifier">aptds</span><span>.</span><span class="identifier">select</span><span>(
+    </span><span class="identifier">aptds</span><span>(</span><span class="symbol-literal">&#39;city</span><span>),
+    </span><span class="identifier">aptds</span><span>(</span><span class="symbol-literal">&#39;price</span><span>),
+    </span><span class="identifier">aptds</span><span>(</span><span class="symbol-literal">&#39;surface</span><span>),
+    </span><span class="identifier">aptds</span><span>(</span><span class="symbol-literal">&#39;price</span><span>) / </span><span class="identifier">aptds</span><span>(</span><span class="symbol-literal">&#39;surface</span><span>).</span><span class="identifier">cast</span><span>[</span><span class="type-name">Double</span><span>]
+  ).</span><span class="identifier">as</span><span>[</span><span class="type-name">ApartmentDetails</span><span>]
+</span><span class="comment">// aptWithRatio: TypedDataset[ApartmentDetails] = [city: string, price: double ... 2 more fields]</span></code></pre>
+        <p>Suppose we only want to work with <code>city</code> and <code>ratio</code>:</p>
+        <pre><code class="nohighlight"><span class="keyword">case</span><span> </span><span class="keyword">class</span><span> </span><span class="type-name">CityInfo</span><span>(</span><span class="identifier">city</span><span>: </span><span class="type-name">String</span><span>, </span><span class="identifier">ratio</span><span>: </span><span class="type-name">Double</span><span>)
+
+</span><span class="keyword">val</span><span> </span><span class="identifier">cityRatio</span><span> = </span><span class="identifier">aptWithRatio</span><span>.</span><span class="identifier">project</span><span>[</span><span class="type-name">CityInfo</span><span>]
+</span><span class="comment">// cityRatio: TypedDataset[CityInfo] = [city: string, ratio: double]
+</span><span>
+</span><span class="identifier">cityRatio</span><span>.</span><span class="identifier">show</span><span>(</span><span class="number-literal">2</span><span>).</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +-----+------+
+// | city| ratio|
+// +-----+------+
+// |Paris|6000.0|
+// |Paris|4500.0|
+// +-----+------+
+// only showing top 2 rows
+//</span></code></pre>
+        <p>Suppose we only want to work with <code>price</code> and <code>ratio</code>:</p>
+        <pre><code class="nohighlight"><span class="keyword">case</span><span> </span><span class="keyword">class</span><span> </span><span class="type-name">PriceInfo</span><span>(</span><span class="identifier">ratio</span><span>: </span><span class="type-name">Double</span><span>, </span><span class="identifier">price</span><span>: </span><span class="type-name">Double</span><span>)
+
+</span><span class="keyword">val</span><span> </span><span class="identifier">priceInfo</span><span> = </span><span class="identifier">aptWithRatio</span><span>.</span><span class="identifier">project</span><span>[</span><span class="type-name">PriceInfo</span><span>]
+</span><span class="comment">// priceInfo: TypedDataset[PriceInfo] = [ratio: double, price: double]
+</span><span>
+</span><span class="identifier">priceInfo</span><span>.</span><span class="identifier">show</span><span>(</span><span class="number-literal">2</span><span>).</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +------+--------+
+// | ratio|   price|
+// +------+--------+
+// |6000.0|300000.0|
+// |4500.0|450000.0|
+// +------+--------+
+// only showing top 2 rows
+//</span></code></pre>
+        <p>We see that the order of the fields does not matter as long as the
+        names and the corresponding types agree. However, if we make a mistake in
+        any of the names and/or their types, then we get a compilation error.</p>
+        <p>Say we make a typo in a field name:</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">case</span><span> </span><span class="keyword">class</span><span> </span><span class="type-name">PriceInfo2</span><span>(</span><span class="identifier">ratio</span><span>: </span><span class="type-name">Double</span><span>, </span><span class="identifier">pricEE</span><span>: </span><span class="type-name">Double</span><span>)</span></code></pre>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">aptWithRatio</span><span>.</span><span class="identifier">project</span><span>[</span><span class="type-name">PriceInfo2</span><span>]
+</span><span class="comment">// error: Cannot prove that ApartmentDetails can be projected to PriceInfo2. Perhaps not all member names and types of PriceInfo2 are the same in ApartmentDetails?</span></code></pre>
+        <p>Say we make a mistake in the corresponding type:</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">case</span><span> </span><span class="keyword">class</span><span> </span><span class="type-name">PriceInfo3</span><span>(</span><span class="identifier">ratio</span><span>: </span><span class="type-name">Int</span><span>, </span><span class="identifier">price</span><span>: </span><span class="type-name">Double</span><span>) </span><span class="comment">// ratio should be Double</span></code></pre>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">aptWithRatio</span><span>.</span><span class="identifier">project</span><span>[</span><span class="type-name">PriceInfo3</span><span>]
+</span><span class="comment">// error: Cannot prove that ApartmentDetails can be projected to PriceInfo3. Perhaps not all member names and types of PriceInfo3 are the same in ApartmentDetails?</span></code></pre>
+        
+        <h3 id="union-of-typeddatasets" class="section"><a class="anchor-link left" href="#union-of-typeddatasets"><i class="icofont-laika link">&#xef71;</i></a>Union of TypedDatasets</h3>
+        <p>Lets create a projection of our original dataset with a subset of the fields.</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">case</span><span> </span><span class="keyword">class</span><span> </span><span class="type-name">ApartmentShortInfo</span><span>(</span><span class="identifier">city</span><span>: </span><span class="type-name">String</span><span>, </span><span class="identifier">price</span><span>: </span><span class="type-name">Double</span><span>, </span><span class="identifier">bedrooms</span><span>: </span><span class="type-name">Int</span><span>)
+
+</span><span class="keyword">val</span><span> </span><span class="identifier">aptTypedDs2</span><span>: </span><span class="type-name">TypedDataset</span><span>[</span><span class="type-name">ApartmentShortInfo</span><span>] = </span><span class="identifier">aptTypedDs</span><span>.</span><span class="identifier">project</span><span>[</span><span class="type-name">ApartmentShortInfo</span><span>]</span></code></pre>
+        <p>The union of <code>aptTypedDs2</code> with <code>aptTypedDs</code> uses all the fields of the caller (<code>aptTypedDs2</code>)
+        and expects the other dataset (<code>aptTypedDs</code>) to include all those fields. 
+        If field names/types do not match you get a compilation error. </p>
+        <pre><code class="nohighlight"><span class="identifier">aptTypedDs2</span><span>.</span><span class="identifier">union</span><span>(</span><span class="identifier">aptTypedDs</span><span>).</span><span class="identifier">show</span><span>().</span><span class="identifier">run</span><span>
+</span><span class="comment">// +-----+--------+--------+
+// | city|   price|bedrooms|
+// +-----+--------+--------+
+// |Paris|300000.0|       2|
+// |Paris|450000.0|       3|
+// |Paris|250000.0|       1|
+// | Lyon|200000.0|       2|
+// | Lyon|133000.0|       1|
+// | Nice|325000.0|       3|
+// |Paris|300000.0|       2|
+// |Paris|450000.0|       3|
+// |Paris|250000.0|       1|
+// | Lyon|200000.0|       2|
+// | Lyon|133000.0|       1|
+// | Nice|325000.0|       3|
+// +-----+--------+--------+
+//</span></code></pre>
+        <p>The other way around will not compile, since <code>aptTypedDs2</code> has only a subset of the fields. </p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">aptTypedDs</span><span>.</span><span class="identifier">union</span><span>(</span><span class="identifier">aptTypedDs2</span><span>).</span><span class="identifier">show</span><span>().</span><span class="identifier">run</span><span>
+</span><span class="comment">// error: Cannot prove that ApartmentShortInfo can be projected to repl.MdocSession.MdocApp0.Apartment. Perhaps not all member names and types of repl.MdocSession.MdocApp0.Apartment are the same in ApartmentShortInfo?
+// Error occurred in an application involving default arguments.</span></code></pre>
+        <p>Finally, as with <code>project</code>, <code>union</code> will align fields that have same names/types,
+        so fields do not have to be in the same order. </p>
+        
+        <h2 id="typeddataset-functions-and-transformations" class="section"><a class="anchor-link left" href="#typeddataset-functions-and-transformations"><i class="icofont-laika link">&#xef71;</i></a>TypedDataset functions and transformations</h2>
+        <p>Frameless supports many of Spark&#39;s functions and transformations. 
+        However, whenever a Spark function does not exist in Frameless, 
+        calling <code>.dataset</code> will expose the underlying 
+        <code>Dataset</code> (from org.apache.spark.sql, the original Spark APIs), 
+        where you can use anything that would be missing from the Frameless&#39; API.</p>
+        <p>These are the main imports for Frameless&#39; aggregate and non-aggregate functions.</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">import</span><span> </span><span class="identifier">frameless</span><span>.</span><span class="identifier">functions</span><span>.</span><span class="identifier">_</span><span>                </span><span class="comment">// For literals
+</span><span class="keyword">import</span><span> </span><span class="identifier">frameless</span><span>.</span><span class="identifier">functions</span><span>.</span><span class="identifier">nonAggregate</span><span>.</span><span class="identifier">_</span><span>   </span><span class="comment">// e.g., concat, abs
+</span><span class="keyword">import</span><span> </span><span class="identifier">frameless</span><span>.</span><span class="identifier">functions</span><span>.</span><span class="identifier">aggregate</span><span>.</span><span class="identifier">_</span><span>      </span><span class="comment">// e.g., count, sum, avg </span></code></pre>
+        
+        <h3 id="drop-replace-add-fields" class="section"><a class="anchor-link left" href="#drop-replace-add-fields"><i class="icofont-laika link">&#xef71;</i></a>Drop/Replace/Add fields</h3>
+        <p><code>dropTupled()</code> drops a single column and results in a tuple-based schema.</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">aptTypedDs2</span><span>.</span><span class="identifier">dropTupled</span><span>(</span><span class="symbol-literal">&#39;price</span><span>): </span><span class="type-name">TypedDataset</span><span>[(</span><span class="type-name">String</span><span>,</span><span class="type-name">Int</span><span>)]
+</span><span class="comment">// res18: TypedDataset[(String, Int)] = [_1: string, _2: int]</span></code></pre>
+        <p>To drop a column and specify a new schema use <code>drop()</code>.</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">case</span><span> </span><span class="keyword">class</span><span> </span><span class="type-name">CityBeds</span><span>(</span><span class="identifier">city</span><span>: </span><span class="type-name">String</span><span>, </span><span class="identifier">bedrooms</span><span>: </span><span class="type-name">Int</span><span>)
+</span><span class="keyword">val</span><span> </span><span class="identifier">cityBeds</span><span>: </span><span class="type-name">TypedDataset</span><span>[</span><span class="type-name">CityBeds</span><span>] = </span><span class="identifier">aptTypedDs2</span><span>.</span><span class="identifier">drop</span><span>[</span><span class="type-name">CityBeds</span><span>] 
+</span><span class="comment">// cityBeds: TypedDataset[CityBeds] = [city: string, bedrooms: int]</span></code></pre>
+        <p>Often, you want to replace an existing column with a new value.</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">val</span><span> </span><span class="identifier">inflation</span><span> = </span><span class="identifier">aptTypedDs2</span><span>.</span><span class="identifier">withColumnReplaced</span><span>(</span><span class="symbol-literal">&#39;price</span><span>, </span><span class="identifier">aptTypedDs2</span><span>(</span><span class="symbol-literal">&#39;price</span><span>) * </span><span class="number-literal">2</span><span>)
+</span><span class="comment">// inflation: TypedDataset[ApartmentShortInfo] = [city: string, price: double ... 1 more field]
+</span><span> 
+</span><span class="identifier">inflation</span><span>.</span><span class="identifier">show</span><span>(</span><span class="number-literal">2</span><span>).</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +-----+--------+--------+
+// | city|   price|bedrooms|
+// +-----+--------+--------+
+// |Paris|600000.0|       2|
+// |Paris|900000.0|       3|
+// +-----+--------+--------+
+// only showing top 2 rows
+//</span></code></pre>
+        <p>Or use a literal instead.</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">import</span><span> </span><span class="identifier">frameless</span><span>.</span><span class="identifier">functions</span><span>.</span><span class="identifier">lit</span><span>
+</span><span class="identifier">aptTypedDs2</span><span>.</span><span class="identifier">withColumnReplaced</span><span>(</span><span class="symbol-literal">&#39;price</span><span>, </span><span class="identifier">lit</span><span>(</span><span class="number-literal">0.001</span><span>)) 
+</span><span class="comment">// res20: TypedDataset[ApartmentShortInfo] = [city: string, price: double ... 1 more field]</span></code></pre>
+        <p>Adding a column using <code>withColumnTupled()</code> results in a tupled-based schema.</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">aptTypedDs2</span><span>.</span><span class="identifier">withColumnTupled</span><span>(</span><span class="identifier">lit</span><span>(</span><span class="type-name">Array</span><span>(</span><span class="string-literal">&quot;a&quot;</span><span>,</span><span class="string-literal">&quot;b&quot;</span><span>,</span><span class="string-literal">&quot;c&quot;</span><span>))).</span><span class="identifier">show</span><span>(</span><span class="number-literal">2</span><span>).</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +-----+--------+---+---------+
+// |   _1|      _2| _3|       _4|
+// +-----+--------+---+---------+
+// |Paris|300000.0|  2|[a, b, c]|
+// |Paris|450000.0|  3|[a, b, c]|
+// +-----+--------+---+---------+
+// only showing top 2 rows
+//</span></code></pre>
+        <p>Similarly, <code>withColumn()</code> adds a column and explicitly expects a schema for the result.</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">case</span><span> </span><span class="keyword">class</span><span> </span><span class="type-name">CityBedsOther</span><span>(</span><span class="identifier">city</span><span>: </span><span class="type-name">String</span><span>, </span><span class="identifier">bedrooms</span><span>: </span><span class="type-name">Int</span><span>, </span><span class="identifier">other</span><span>: </span><span class="type-name">List</span><span>[</span><span class="type-name">String</span><span>])
+
+</span><span class="identifier">cityBeds</span><span>.
+   </span><span class="identifier">withColumn</span><span>[</span><span class="type-name">CityBedsOther</span><span>](</span><span class="identifier">lit</span><span>(</span><span class="type-name">List</span><span>(</span><span class="string-literal">&quot;a&quot;</span><span>,</span><span class="string-literal">&quot;b&quot;</span><span>,</span><span class="string-literal">&quot;c&quot;</span><span>))).
+   </span><span class="identifier">show</span><span>(</span><span class="number-literal">1</span><span>).</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +-----+--------+---------+
+// | city|bedrooms|    other|
+// +-----+--------+---------+
+// |Paris|       2|[a, b, c]|
+// +-----+--------+---------+
+// only showing top 1 row
+//</span></code></pre>
+        <p>To conditionally change a column use the <code>when/otherwise</code> operation. </p>
+        <pre><code class="nohighlight"><span class="keyword">import</span><span> </span><span class="identifier">frameless</span><span>.</span><span class="identifier">functions</span><span>.</span><span class="identifier">nonAggregate</span><span>.</span><span class="identifier">when</span><span>
+</span><span class="identifier">aptTypedDs2</span><span>.</span><span class="identifier">withColumnTupled</span><span>(
+   </span><span class="identifier">when</span><span>(</span><span class="identifier">aptTypedDs2</span><span>(</span><span class="symbol-literal">&#39;city</span><span>) === </span><span class="string-literal">&quot;Paris&quot;</span><span>, </span><span class="identifier">aptTypedDs2</span><span>(</span><span class="symbol-literal">&#39;price</span><span>)).
+   </span><span class="identifier">when</span><span>(</span><span class="identifier">aptTypedDs2</span><span>(</span><span class="symbol-literal">&#39;city</span><span>) === </span><span class="string-literal">&quot;Lyon&quot;</span><span>, </span><span class="identifier">lit</span><span>(</span><span class="number-literal">1.1</span><span>)).
+   </span><span class="identifier">otherwise</span><span>(</span><span class="identifier">lit</span><span>(</span><span class="number-literal">0.0</span><span>))).</span><span class="identifier">show</span><span>(</span><span class="number-literal">8</span><span>).</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +-----+--------+---+--------+
+// |   _1|      _2| _3|      _4|
+// +-----+--------+---+--------+
+// |Paris|300000.0|  2|300000.0|
+// |Paris|450000.0|  3|450000.0|
+// |Paris|250000.0|  1|250000.0|
+// | Lyon|200000.0|  2|     1.1|
+// | Lyon|133000.0|  1|     1.1|
+// | Nice|325000.0|  3|     0.0|
+// +-----+--------+---+--------+
+//</span></code></pre>
+        <p>A simple way to add a column without losing important schema information is
+        to project the entire source schema into a single column using the <code>asCol()</code> method.</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">val</span><span> </span><span class="identifier">c</span><span> = </span><span class="identifier">cityBeds</span><span>.</span><span class="identifier">select</span><span>(</span><span class="identifier">cityBeds</span><span>.</span><span class="identifier">asCol</span><span>, </span><span class="identifier">lit</span><span>(</span><span class="type-name">List</span><span>(</span><span class="string-literal">&quot;a&quot;</span><span>,</span><span class="string-literal">&quot;b&quot;</span><span>,</span><span class="string-literal">&quot;c&quot;</span><span>)))
+</span><span class="comment">// c: TypedDataset[(CityBeds, List[String])] = [_1: struct&lt;city: string, bedrooms: int&gt;, _2: array&lt;string&gt;]
+</span><span class="identifier">c</span><span>.</span><span class="identifier">show</span><span>(</span><span class="number-literal">1</span><span>).</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +----------+---------+
+// |        _1|       _2|
+// +----------+---------+
+// |{Paris, 2}|[a, b, c]|
+// +----------+---------+
+// only showing top 1 row
+//</span></code></pre>
+        <p>When working with Spark&#39;s <code>DataFrames</code>, you often select all columns using <code>.select($&quot;*&quot;, ...)</code>. 
+        In a way, <code>asCol()</code> is a typed equivalent of <code>$&quot;*&quot;</code>. </p>
+        <p>To access nested columns, use the <code>colMany()</code> method. </p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">c</span><span>.</span><span class="identifier">select</span><span>(</span><span class="identifier">c</span><span>.</span><span class="identifier">colMany</span><span>(&#39;</span><span class="identifier">_1</span><span>, </span><span class="symbol-literal">&#39;city</span><span>), </span><span class="identifier">c</span><span>(&#39;</span><span class="identifier">_2</span><span>)).</span><span class="identifier">show</span><span>(</span><span class="number-literal">2</span><span>).</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +-----+---------+
+// |   _1|       _2|
+// +-----+---------+
+// |Paris|[a, b, c]|
+// |Paris|[a, b, c]|
+// +-----+---------+
+// only showing top 2 rows
+//</span></code></pre>
+        
+        <h3 id="working-with-collections" class="section"><a class="anchor-link left" href="#working-with-collections"><i class="icofont-laika link">&#xef71;</i></a>Working with collections</h3>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">import</span><span> </span><span class="identifier">frameless</span><span>.</span><span class="identifier">functions</span><span>.</span><span class="identifier">_</span><span>
+</span><span class="keyword">import</span><span> </span><span class="identifier">frameless</span><span>.</span><span class="identifier">functions</span><span>.</span><span class="identifier">nonAggregate</span><span>.</span><span class="identifier">_</span></code></pre>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">val</span><span> </span><span class="identifier">t</span><span> = </span><span class="identifier">cityRatio</span><span>.</span><span class="identifier">select</span><span>(</span><span class="identifier">cityRatio</span><span>(</span><span class="symbol-literal">&#39;city</span><span>), </span><span class="identifier">lit</span><span>(</span><span class="type-name">List</span><span>(</span><span class="string-literal">&quot;abc&quot;</span><span>,</span><span class="string-literal">&quot;c&quot;</span><span>,</span><span class="string-literal">&quot;d&quot;</span><span>)))
+</span><span class="comment">// t: TypedDataset[(String, List[String])] = [_1: string, _2: array&lt;string&gt;]
+</span><span class="identifier">t</span><span>.</span><span class="identifier">withColumnTupled</span><span>(
+   </span><span class="identifier">arrayContains</span><span>(</span><span class="identifier">t</span><span>(&#39;</span><span class="identifier">_2</span><span>), </span><span class="string-literal">&quot;abc&quot;</span><span>)
+).</span><span class="identifier">show</span><span>(</span><span class="number-literal">1</span><span>).</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +-----+-----------+----+
+// |   _1|         _2|  _3|
+// +-----+-----------+----+
+// |Paris|[abc, c, d]|true|
+// +-----+-----------+----+
+// only showing top 1 row
+//</span></code></pre>
+        <p>If accidentally you apply a collection function on a column that is not a collection,
+        you get a compilation error.</p>
+        <pre><code class="nohighlight"><span class="identifier">t</span><span>.</span><span class="identifier">withColumnTupled</span><span>(
+   </span><span class="identifier">arrayContains</span><span>(</span><span class="identifier">t</span><span>(&#39;</span><span class="identifier">_1</span><span>), </span><span class="string-literal">&quot;abc&quot;</span><span>)
+)
+</span><span class="comment">// error: no type parameters for method arrayContains: (column: frameless.AbstractTypedColumn[T,C[A]], value: A)(implicit evidence$1: frameless.CatalystCollection[C])column.ThisType[T,Boolean] exist so that it can be applied to arguments (frameless.TypedColumn[(String, List[String]),String], String)
+//  --- because ---
+// argument expression&#39;s type is not compatible with formal parameter type;
+//  found   : frameless.TypedColumn[(String, List[String]),String]
+//  required: frameless.AbstractTypedColumn[?T,?C[?A]]
+// 
+// Error occurred in an application involving default arguments.
+// error: type mismatch;
+//  found   : frameless.TypedColumn[(String, List[String]),String]
+//  required: frameless.AbstractTypedColumn[T,C[A]]
+// Error occurred in an application involving default arguments.
+// error: type mismatch;
+//  found   : String(&quot;abc&quot;)
+//  required: A
+// Error occurred in an application involving default arguments.
+//    arrayContains(t(&#39;_1), &quot;abc&quot;)
+//                          ^^^^^
+// error: Cannot do collection operations on columns of type C.
+// Error occurred in an application involving default arguments.</span></code></pre>
+        <p>Flattening columns in Spark is done with the <code>explode()</code> method. Unlike vanilla Spark, 
+        in Frameless <code>explode()</code> is part of <code>TypedDataset</code> and not a function of a column. 
+        This provides additional safety since more than one <code>explode()</code> applied in a single 
+        statement results in runtime error in vanilla Spark. <br></p>
+        <pre><code class="nohighlight"><span class="keyword">val</span><span> </span><span class="identifier">t2</span><span> = </span><span class="identifier">cityRatio</span><span>.</span><span class="identifier">select</span><span>(</span><span class="identifier">cityRatio</span><span>(</span><span class="symbol-literal">&#39;city</span><span>), </span><span class="identifier">lit</span><span>(</span><span class="type-name">List</span><span>(</span><span class="number-literal">1</span><span>,</span><span class="number-literal">2</span><span>,</span><span class="number-literal">3</span><span>,</span><span class="number-literal">4</span><span>)))
+</span><span class="comment">// t2: TypedDataset[(String, List[Int])] = [_1: string, _2: array&lt;int&gt;]
+</span><span class="keyword">val</span><span> </span><span class="identifier">flattened</span><span> = </span><span class="identifier">t2</span><span>.</span><span class="identifier">explode</span><span>(&#39;</span><span class="identifier">_2</span><span>): </span><span class="type-name">TypedDataset</span><span>[(</span><span class="type-name">String</span><span>, </span><span class="type-name">Int</span><span>)]
+</span><span class="comment">// flattened: TypedDataset[(String, Int)] = [_1: string, _2: int]
+</span><span class="identifier">flattened</span><span>.</span><span class="identifier">show</span><span>(</span><span class="number-literal">4</span><span>).</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +-----+---+
+// |   _1| _2|
+// +-----+---+
+// |Paris|  1|
+// |Paris|  2|
+// |Paris|  3|
+// |Paris|  4|
+// +-----+---+
+// only showing top 4 rows
+//</span></code></pre>
+        <p>Here is an example of how <code>explode()</code> may fail in vanilla Spark. The Frameless 
+        implementation does not suffer from this problem since, by design, it can only be applied
+        to a single column at a time. </p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span>{
+  </span><span class="keyword">import</span><span> </span><span class="identifier">org</span><span>.</span><span class="identifier">apache</span><span>.</span><span class="identifier">spark</span><span>.</span><span class="identifier">sql</span><span>.</span><span class="identifier">functions</span><span>.{</span><span class="identifier">explode</span><span> =&gt; </span><span class="identifier">sparkExplode</span><span>}
+  </span><span class="identifier">t2</span><span>.</span><span class="identifier">dataset</span><span>.</span><span class="identifier">toDF</span><span>().</span><span class="identifier">select</span><span>(</span><span class="identifier">sparkExplode</span><span>(</span><span class="identifier">$</span><span class="string-literal">&quot;_2&quot;</span><span>), </span><span class="identifier">sparkExplode</span><span>(</span><span class="identifier">$</span><span class="string-literal">&quot;_2&quot;</span><span>))
+}
+</span><span class="comment">// error: Unit does not take parameters
+// Error occurred in an application involving default arguments.</span></code></pre>
+        
+        <h3 id="collecting-data-to-the-driver" class="section"><a class="anchor-link left" href="#collecting-data-to-the-driver"><i class="icofont-laika link">&#xef71;</i></a>Collecting data to the driver</h3>
+        <p>In Frameless all Spark actions (such as <code>collect()</code>) are safe.</p>
+        <p>Take the first element from a dataset (if the dataset is empty return <code>None</code>).</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">cityBeds</span><span>.</span><span class="identifier">headOption</span><span>.</span><span class="identifier">run</span><span>()
+</span><span class="comment">// res30: Option[CityBeds] = Some(CityBeds(&quot;Paris&quot;, 2))</span></code></pre>
+        <p>Take the first <code>n</code> elements.</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">cityBeds</span><span>.</span><span class="identifier">take</span><span>(</span><span class="number-literal">2</span><span>).</span><span class="identifier">run</span><span>()
+</span><span class="comment">// res31: Seq[CityBeds] = WrappedArray(
+//   CityBeds(&quot;Paris&quot;, 2),
+//   CityBeds(&quot;Paris&quot;, 3)
+// )</span></code></pre>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">cityBeds</span><span>.</span><span class="identifier">head</span><span>(</span><span class="number-literal">3</span><span>).</span><span class="identifier">run</span><span>()
+</span><span class="comment">// res32: Seq[CityBeds] = WrappedArray(
+//   CityBeds(&quot;Paris&quot;, 2),
+//   CityBeds(&quot;Paris&quot;, 3),
+//   CityBeds(&quot;Paris&quot;, 1)
+// )</span></code></pre>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">cityBeds</span><span>.</span><span class="identifier">limit</span><span>(</span><span class="number-literal">4</span><span>).</span><span class="identifier">collect</span><span>().</span><span class="identifier">run</span><span>()
+</span><span class="comment">// res33: Seq[CityBeds] = WrappedArray(
+//   CityBeds(&quot;Paris&quot;, 2),
+//   CityBeds(&quot;Paris&quot;, 3),
+//   CityBeds(&quot;Paris&quot;, 1),
+//   CityBeds(&quot;Lyon&quot;, 2)
+// )</span></code></pre>
+        
+        <h2 id="sorting-columns" class="section"><a class="anchor-link left" href="#sorting-columns"><i class="icofont-laika link">&#xef71;</i></a>Sorting columns</h2>
+        <p>Only column types that can be sorted are allowed to be selected for sorting. </p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">aptTypedDs</span><span>.</span><span class="identifier">orderBy</span><span>(</span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;city</span><span>).</span><span class="identifier">asc</span><span>).</span><span class="identifier">show</span><span>(</span><span class="number-literal">2</span><span>).</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +----+-------+--------+--------+
+// |city|surface|   price|bedrooms|
+// +----+-------+--------+--------+
+// |Lyon|     83|200000.0|       2|
+// |Lyon|     45|133000.0|       1|
+// +----+-------+--------+--------+
+// only showing top 2 rows
+//</span></code></pre>
+        <p>The ordering can be changed by selecting <code>.acs</code> or <code>.desc</code>. </p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">aptTypedDs</span><span>.</span><span class="identifier">orderBy</span><span>(
+   </span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;city</span><span>).</span><span class="identifier">asc</span><span>, 
+   </span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;price</span><span>).</span><span class="identifier">desc</span><span>
+).</span><span class="identifier">show</span><span>(</span><span class="number-literal">2</span><span>).</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +----+-------+--------+--------+
+// |city|surface|   price|bedrooms|
+// +----+-------+--------+--------+
+// |Lyon|     83|200000.0|       2|
+// |Lyon|     45|133000.0|       1|
+// +----+-------+--------+--------+
+// only showing top 2 rows
+//</span></code></pre>
+        
+        <h2 id="user-defined-functions" class="section"><a class="anchor-link left" href="#user-defined-functions"><i class="icofont-laika link">&#xef71;</i></a>User Defined Functions</h2>
+        <p>Frameless supports lifting any Scala function (up to five arguments) to the
+        context of a particular <code>TypedDataset</code>:</p>
+        <pre><code class="nohighlight"><span class="comment">// The function we want to use as UDF
+</span><span class="keyword">val</span><span> </span><span class="identifier">priceModifier</span><span> =
+    (</span><span class="identifier">name</span><span>: </span><span class="type-name">String</span><span>, </span><span class="identifier">price</span><span>:</span><span class="type-name">Double</span><span>) =&gt; </span><span class="keyword">if</span><span>(</span><span class="identifier">name</span><span> == </span><span class="string-literal">&quot;Paris&quot;</span><span>) </span><span class="identifier">price</span><span> * </span><span class="number-literal">2.0</span><span> </span><span class="keyword">else</span><span> </span><span class="identifier">price</span><span>
+</span><span class="comment">// priceModifier: (String, Double) =&gt; Double = &lt;function2&gt;
+</span><span>
+</span><span class="keyword">val</span><span> </span><span class="identifier">udf</span><span> = </span><span class="identifier">aptTypedDs</span><span>.</span><span class="identifier">makeUDF</span><span>(</span><span class="identifier">priceModifier</span><span>)
+</span><span class="comment">// udf: (frameless.TypedColumn[Apartment, String], frameless.TypedColumn[Apartment, Double]) =&gt; frameless.TypedColumn[Apartment, Double] = frameless.functions.Udf$$Lambda$15460/0x0000000804207040@44974983
+</span><span>
+</span><span class="keyword">val</span><span> </span><span class="identifier">aptds</span><span> = </span><span class="identifier">aptTypedDs</span><span> </span><span class="comment">// For shorter expressions
+// aptds: TypedDataset[Apartment] = [city: string, surface: int ... 2 more fields]
+</span><span>
+</span><span class="keyword">val</span><span> </span><span class="identifier">adjustedPrice</span><span> = </span><span class="identifier">aptds</span><span>.</span><span class="identifier">select</span><span>(</span><span class="identifier">aptds</span><span>(</span><span class="symbol-literal">&#39;city</span><span>), </span><span class="identifier">udf</span><span>(</span><span class="identifier">aptds</span><span>(</span><span class="symbol-literal">&#39;city</span><span>), </span><span class="identifier">aptds</span><span>(</span><span class="symbol-literal">&#39;price</span><span>)))
+</span><span class="comment">// adjustedPrice: TypedDataset[(String, Double)] = [_1: string, _2: double]
+</span><span>
+</span><span class="identifier">adjustedPrice</span><span>.</span><span class="identifier">show</span><span>().</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +-----+--------+
+// |   _1|      _2|
+// +-----+--------+
+// |Paris|600000.0|
+// |Paris|900000.0|
+// |Paris|500000.0|
+// | Lyon|200000.0|
+// | Lyon|133000.0|
+// | Nice|325000.0|
+// +-----+--------+
+//</span></code></pre>
+        
+        <h2 id="groupby-and-aggregations" class="section"><a class="anchor-link left" href="#groupby-and-aggregations"><i class="icofont-laika link">&#xef71;</i></a>GroupBy and Aggregations</h2>
+        <p>Let&#39;s suppose we wanted to retrieve the average apartment price in each city</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">val</span><span> </span><span class="identifier">priceByCity</span><span> = </span><span class="identifier">aptTypedDs</span><span>.</span><span class="identifier">groupBy</span><span>(</span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;city</span><span>)).</span><span class="identifier">agg</span><span>(</span><span class="identifier">avg</span><span>(</span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;price</span><span>)))
+</span><span class="comment">// priceByCity: TypedDataset[(String, Double)] = [_1: string, _2: double]
+</span><span class="identifier">priceByCity</span><span>.</span><span class="identifier">collect</span><span>().</span><span class="identifier">run</span><span>()
+</span><span class="comment">// res37: Seq[(String, Double)] = WrappedArray(
+//   (&quot;Paris&quot;, 333333.3333333333),
+//   (&quot;Lyon&quot;, 166500.0),
+//   (&quot;Nice&quot;, 325000.0)
+// )</span></code></pre>
+        <p>Again if we try to aggregate a column that can&#39;t be aggregated, we get a compilation error</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">aptTypedDs</span><span>.</span><span class="identifier">groupBy</span><span>(</span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;city</span><span>)).</span><span class="identifier">agg</span><span>(</span><span class="identifier">avg</span><span>(</span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;city</span><span>)))
+</span><span class="comment">// error: Cannot compute average of type String.
+// Error occurred in an application involving default arguments.</span></code></pre>
+        <p>Next, we combine <code>select</code> and <code>groupBy</code> to calculate the average price/surface ratio per city:</p>
+        <pre><code class="nohighlight"><span class="keyword">val</span><span> </span><span class="identifier">aptds</span><span> = </span><span class="identifier">aptTypedDs</span><span> </span><span class="comment">// For shorter expressions
+// aptds: TypedDataset[Apartment] = [city: string, surface: int ... 2 more fields]
+</span><span>
+</span><span class="keyword">val</span><span> </span><span class="identifier">cityPriceRatio</span><span> =  </span><span class="identifier">aptds</span><span>.</span><span class="identifier">select</span><span>(</span><span class="identifier">aptds</span><span>(</span><span class="symbol-literal">&#39;city</span><span>), </span><span class="identifier">aptds</span><span>(</span><span class="symbol-literal">&#39;price</span><span>) / </span><span class="identifier">aptds</span><span>(</span><span class="symbol-literal">&#39;surface</span><span>).</span><span class="identifier">cast</span><span>[</span><span class="type-name">Double</span><span>])
+</span><span class="comment">// cityPriceRatio: TypedDataset[(String, Double)] = [_1: string, _2: double]
+</span><span>
+</span><span class="identifier">cityPriceRatio</span><span>.</span><span class="identifier">groupBy</span><span>(</span><span class="identifier">cityPriceRatio</span><span>(&#39;</span><span class="identifier">_1</span><span>)).</span><span class="identifier">agg</span><span>(</span><span class="identifier">avg</span><span>(</span><span class="identifier">cityPriceRatio</span><span>(&#39;</span><span class="identifier">_2</span><span>))).</span><span class="identifier">show</span><span>().</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +-----+------------------+
+// |   _1|                _2|
+// +-----+------------------+
+// |Paris| 6833.333333333333|
+// | Lyon|2682.5970548862115|
+// | Nice| 4391.891891891892|
+// +-----+------------------+
+//</span></code></pre>
+        <p>We can also use <code>pivot</code> to further group data on a secondary column.
+        For example, we can compare the average price across cities by number of bedrooms.</p>
+        <pre><code class="nohighlight"><span class="keyword">case</span><span> </span><span class="keyword">class</span><span> </span><span class="type-name">BedroomStats</span><span>(
+   </span><span class="identifier">city</span><span>: </span><span class="type-name">String</span><span>,
+   </span><span class="type-name">AvgPriceBeds1</span><span>: </span><span class="type-name">Option</span><span>[</span><span class="type-name">Double</span><span>], </span><span class="comment">// Pivot values may be missing, so we encode them using Options
+</span><span>   </span><span class="type-name">AvgPriceBeds2</span><span>: </span><span class="type-name">Option</span><span>[</span><span class="type-name">Double</span><span>],
+   </span><span class="type-name">AvgPriceBeds3</span><span>: </span><span class="type-name">Option</span><span>[</span><span class="type-name">Double</span><span>],
+   </span><span class="type-name">AvgPriceBeds4</span><span>: </span><span class="type-name">Option</span><span>[</span><span class="type-name">Double</span><span>])
+
+</span><span class="keyword">val</span><span> </span><span class="identifier">bedroomStats</span><span> = </span><span class="identifier">aptds</span><span>.
+   </span><span class="identifier">groupBy</span><span>(</span><span class="identifier">aptds</span><span>(</span><span class="symbol-literal">&#39;city</span><span>)).
+   </span><span class="identifier">pivot</span><span>(</span><span class="identifier">aptds</span><span>(</span><span class="symbol-literal">&#39;bedrooms</span><span>)).
+   </span><span class="identifier">on</span><span>(</span><span class="number-literal">1</span><span>,</span><span class="number-literal">2</span><span>,</span><span class="number-literal">3</span><span>,</span><span class="number-literal">4</span><span>). </span><span class="comment">// We only care for up to 4 bedrooms
+</span><span>   </span><span class="identifier">agg</span><span>(</span><span class="identifier">avg</span><span>(</span><span class="identifier">aptds</span><span>(</span><span class="symbol-literal">&#39;price</span><span>))).
+   </span><span class="identifier">as</span><span>[</span><span class="type-name">BedroomStats</span><span>]  </span><span class="comment">// Typesafe casting
+// bedroomStats: TypedDataset[BedroomStats] = [city: string, AvgPriceBeds1: double ... 3 more fields]
+</span><span>
+</span><span class="identifier">bedroomStats</span><span>.</span><span class="identifier">show</span><span>().</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +-----+-------------+-------------+-------------+-------------+
+// | city|AvgPriceBeds1|AvgPriceBeds2|AvgPriceBeds3|AvgPriceBeds4|
+// +-----+-------------+-------------+-------------+-------------+
+// | Nice|         NULL|         NULL|     325000.0|         NULL|
+// |Paris|     250000.0|     300000.0|     450000.0|         NULL|
+// | Lyon|     133000.0|     200000.0|         NULL|         NULL|
+// +-----+-------------+-------------+-------------+-------------+
+//</span></code></pre>
+        <p>With pivot, collecting data preserves typesafety by
+        encoding potentially missing columns with <code>Option</code>.</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">bedroomStats</span><span>.</span><span class="identifier">collect</span><span>().</span><span class="identifier">run</span><span>().</span><span class="identifier">foreach</span><span>(</span><span class="identifier">println</span><span>)
+</span><span class="comment">// BedroomStats(Nice,None,None,Some(325000.0),None)
+// BedroomStats(Paris,Some(250000.0),Some(300000.0),Some(450000.0),None)
+// BedroomStats(Lyon,Some(133000.0),Some(200000.0),None,None)</span></code></pre>
+        
+        <h4 id="working-with-optional-fields" class="section"><a class="anchor-link left" href="#working-with-optional-fields"><i class="icofont-laika link">&#xef71;</i></a>Working with Optional fields</h4>
+        <p>Optional fields can be converted to non-optional using <code>getOrElse()</code>. </p>
+        <pre><code class="nohighlight"><span class="keyword">val</span><span> </span><span class="identifier">sampleStats</span><span> = </span><span class="identifier">bedroomStats</span><span>.</span><span class="identifier">select</span><span>(
+   </span><span class="identifier">bedroomStats</span><span>(</span><span class="symbol-literal">&#39;AvgPriceBeds2</span><span>).</span><span class="identifier">getOrElse</span><span>(</span><span class="number-literal">0.0</span><span>),
+   </span><span class="identifier">bedroomStats</span><span>(</span><span class="symbol-literal">&#39;AvgPriceBeds3</span><span>).</span><span class="identifier">getOrElse</span><span>(</span><span class="number-literal">0.0</span><span>))
+</span><span class="comment">// sampleStats: TypedDataset[(Double, Double)] = [_1: double, _2: double]
+</span><span>
+</span><span class="identifier">sampleStats</span><span>.</span><span class="identifier">show</span><span>().</span><span class="identifier">run</span><span>()   
+</span><span class="comment">// +--------+--------+
+// |      _1|      _2|
+// +--------+--------+
+// |     0.0|325000.0|
+// |300000.0|450000.0|
+// |200000.0|     0.0|
+// +--------+--------+
+//</span></code></pre>
+        <p>In addition, optional columns can be flatten using the <code>.flattenOption</code> method on <code>TypedDatset</code>.
+        The result contains the rows for which the flattened column is not None (or null). The schema
+        is automatically adapted to reflect this change.</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">val</span><span> </span><span class="identifier">flattenStats</span><span> = </span><span class="identifier">bedroomStats</span><span>.</span><span class="identifier">flattenOption</span><span>(</span><span class="symbol-literal">&#39;AvgPriceBeds2</span><span>)
+</span><span class="comment">// flattenStats: TypedDataset[shapeless.ops.TuplerInstances.&lt;refinement&gt;.this.type.Out] = [_1: string, _2: double ... 3 more fields]
+</span><span>
+
+</span><span class="comment">// The second Option[Double] is now of type Double, since all &#39;null&#39; values are removed
+</span><span class="identifier">flattenStats</span><span>: </span><span class="type-name">TypedDataset</span><span>[(</span><span class="type-name">String</span><span>, </span><span class="type-name">Option</span><span>[</span><span class="type-name">Double</span><span>], </span><span class="type-name">Double</span><span>, </span><span class="type-name">Option</span><span>[</span><span class="type-name">Double</span><span>], </span><span class="type-name">Option</span><span>[</span><span class="type-name">Double</span><span>])]
+</span><span class="comment">// res43: TypedDataset[(String, Option[Double], Double, Option[Double], Option[Double])] = [_1: string, _2: double ... 3 more fields]</span></code></pre>
+        <p>In a DataFrame, if you just ignore types, this would equivelantly be written as:</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">bedroomStats</span><span>.</span><span class="identifier">dataset</span><span>.</span><span class="identifier">toDF</span><span>().</span><span class="identifier">filter</span><span>(</span><span class="identifier">$</span><span class="string-literal">&quot;AvgPriceBeds2&quot;</span><span>.</span><span class="identifier">isNotNull</span><span>)
+</span><span class="comment">// res44: org.apache.spark.sql.Dataset[org.apache.spark.sql.Row] = [city: string, AvgPriceBeds1: double ... 3 more fields]</span></code></pre>
+        
+        <h3 id="entire-typeddataset-aggregation" class="section"><a class="anchor-link left" href="#entire-typeddataset-aggregation"><i class="icofont-laika link">&#xef71;</i></a>Entire TypedDataset Aggregation</h3>
+        <p>We often want to aggregate the entire <code>TypedDataset</code> and skip the <code>groupBy()</code> clause.
+        In Frameless you can do this using the <code>agg()</code> operator directly on the <code>TypedDataset</code>.
+        In the following example, we compute the average price, the average surface,
+        the minimum surface, and the set of cities for the entire dataset.</p>
+        <pre><code class="nohighlight"><span class="keyword">case</span><span> </span><span class="keyword">class</span><span> </span><span class="type-name">Stats</span><span>(
+   </span><span class="identifier">avgPrice</span><span>: </span><span class="type-name">Double</span><span>,
+   </span><span class="identifier">avgSurface</span><span>: </span><span class="type-name">Double</span><span>,
+   </span><span class="identifier">minSurface</span><span>: </span><span class="type-name">Int</span><span>,
+   </span><span class="identifier">allCities</span><span>: </span><span class="type-name">Vector</span><span>[</span><span class="type-name">String</span><span>])
+
+</span><span class="identifier">aptds</span><span>.</span><span class="identifier">agg</span><span>(
+   </span><span class="identifier">avg</span><span>(</span><span class="identifier">aptds</span><span>(</span><span class="symbol-literal">&#39;price</span><span>)),
+   </span><span class="identifier">avg</span><span>(</span><span class="identifier">aptds</span><span>(</span><span class="symbol-literal">&#39;surface</span><span>)),
+   </span><span class="identifier">min</span><span>(</span><span class="identifier">aptds</span><span>(</span><span class="symbol-literal">&#39;surface</span><span>)),
+   </span><span class="identifier">collectSet</span><span>(</span><span class="identifier">aptds</span><span>(</span><span class="symbol-literal">&#39;city</span><span>))
+).</span><span class="identifier">as</span><span>[</span><span class="type-name">Stats</span><span>].</span><span class="identifier">show</span><span>().</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +-----------------+------------------+----------+-------------------+
+// |         avgPrice|        avgSurface|minSurface|          allCities|
+// +-----------------+------------------+----------+-------------------+
+// |276333.3333333333|62.833333333333336|        25|[Paris, Nice, Lyon]|
+// +-----------------+------------------+----------+-------------------+
+//</span></code></pre>
+        <p>You may apply any <code>TypedColumn</code> operation to a <code>TypedAggregate</code> column as well.</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">import</span><span> </span><span class="identifier">frameless</span><span>.</span><span class="identifier">functions</span><span>.</span><span class="identifier">_</span><span>
+</span><span class="identifier">aptds</span><span>.</span><span class="identifier">agg</span><span>(
+   </span><span class="identifier">avg</span><span>(</span><span class="identifier">aptds</span><span>(</span><span class="symbol-literal">&#39;price</span><span>)) * </span><span class="identifier">min</span><span>(</span><span class="identifier">aptds</span><span>(</span><span class="symbol-literal">&#39;surface</span><span>)).</span><span class="identifier">cast</span><span>[</span><span class="type-name">Double</span><span>], 
+   </span><span class="identifier">avg</span><span>(</span><span class="identifier">aptds</span><span>(</span><span class="symbol-literal">&#39;surface</span><span>)) * </span><span class="number-literal">0.2</span><span>,
+   </span><span class="identifier">litAggr</span><span>(</span><span class="string-literal">&quot;Hello World&quot;</span><span>)
+).</span><span class="identifier">show</span><span>().</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +-----------------+------------------+-----------+
+// |               _1|                _2|         _3|
+// +-----------------+------------------+-----------+
+// |6908333.333333333|12.566666666666668|Hello World|
+// +-----------------+------------------+-----------+
+//</span></code></pre>
+        
+        <h2 id="joins" class="section"><a class="anchor-link left" href="#joins"><i class="icofont-laika link">&#xef71;</i></a>Joins</h2>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">case</span><span> </span><span class="keyword">class</span><span> </span><span class="type-name">CityPopulationInfo</span><span>(</span><span class="identifier">name</span><span>: </span><span class="type-name">String</span><span>, </span><span class="identifier">population</span><span>: </span><span class="type-name">Int</span><span>)
+
+</span><span class="keyword">val</span><span> </span><span class="identifier">cityInfo</span><span> = </span><span class="type-name">Seq</span><span>(
+  </span><span class="type-name">CityPopulationInfo</span><span>(</span><span class="string-literal">&quot;Paris&quot;</span><span>, </span><span class="number-literal">2229621</span><span>),
+  </span><span class="type-name">CityPopulationInfo</span><span>(</span><span class="string-literal">&quot;Lyon&quot;</span><span>, </span><span class="number-literal">500715</span><span>),
+  </span><span class="type-name">CityPopulationInfo</span><span>(</span><span class="string-literal">&quot;Nice&quot;</span><span>, </span><span class="number-literal">343629</span><span>)
+)
+
+</span><span class="keyword">val</span><span> </span><span class="identifier">citiInfoTypedDS</span><span> = </span><span class="type-name">TypedDataset</span><span>.</span><span class="identifier">create</span><span>(</span><span class="identifier">cityInfo</span><span>)</span></code></pre>
+        <p>Here is how to join the population information to the apartment&#39;s dataset:</p>
+        <pre><code class="nohighlight"><span class="keyword">val</span><span> </span><span class="identifier">withCityInfo</span><span> = </span><span class="identifier">aptTypedDs</span><span>.</span><span class="identifier">joinInner</span><span>(</span><span class="identifier">citiInfoTypedDS</span><span>) { </span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;city</span><span>) === </span><span class="identifier">citiInfoTypedDS</span><span>(</span><span class="symbol-literal">&#39;name</span><span>) }
+</span><span class="comment">// withCityInfo: TypedDataset[(Apartment, CityPopulationInfo)] = [_1: struct&lt;city: string, surface: int ... 2 more fields&gt;, _2: struct&lt;name: string, population: int&gt;]
+</span><span>
+</span><span class="identifier">withCityInfo</span><span>.</span><span class="identifier">show</span><span>().</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +--------------------+----------------+
+// |                  _1|              _2|
+// +--------------------+----------------+
+// |{Paris, 50, 30000...|{Paris, 2229621}|
+// |{Paris, 100, 4500...|{Paris, 2229621}|
+// |{Paris, 25, 25000...|{Paris, 2229621}|
+// |{Lyon, 83, 200000...|  {Lyon, 500715}|
+// |{Lyon, 45, 133000...|  {Lyon, 500715}|
+// |{Nice, 74, 325000...|  {Nice, 343629}|
+// +--------------------+----------------+
+//</span></code></pre>
+        <p>The joined TypedDataset has type <code>TypedDataset[(Apartment, CityPopulationInfo)]</code>.</p>
+        <p>We can then select which information we want to continue to work with:</p>
+        <pre><code class="nohighlight"><span class="keyword">case</span><span> </span><span class="keyword">class</span><span> </span><span class="type-name">AptPriceCity</span><span>(</span><span class="identifier">city</span><span>: </span><span class="type-name">String</span><span>, </span><span class="identifier">aptPrice</span><span>: </span><span class="type-name">Double</span><span>, </span><span class="identifier">cityPopulation</span><span>: </span><span class="type-name">Int</span><span>)
+
+</span><span class="identifier">withCityInfo</span><span>.</span><span class="identifier">select</span><span>(
+   </span><span class="identifier">withCityInfo</span><span>.</span><span class="identifier">colMany</span><span>(&#39;</span><span class="identifier">_2</span><span>, </span><span class="symbol-literal">&#39;name</span><span>), </span><span class="identifier">withCityInfo</span><span>.</span><span class="identifier">colMany</span><span>(&#39;</span><span class="identifier">_1</span><span>, </span><span class="symbol-literal">&#39;price</span><span>), </span><span class="identifier">withCityInfo</span><span>.</span><span class="identifier">colMany</span><span>(&#39;</span><span class="identifier">_2</span><span>, </span><span class="symbol-literal">&#39;population</span><span>)
+).</span><span class="identifier">as</span><span>[</span><span class="type-name">AptPriceCity</span><span>].</span><span class="identifier">show</span><span>().</span><span class="identifier">run</span><span>
+</span><span class="comment">// +-----+--------+--------------+
+// | city|aptPrice|cityPopulation|
+// +-----+--------+--------------+
+// |Paris|300000.0|       2229621|
+// |Paris|450000.0|       2229621|
+// |Paris|250000.0|       2229621|
+// | Lyon|200000.0|        500715|
+// | Lyon|133000.0|        500715|
+// | Nice|325000.0|        343629|
+// +-----+--------+--------------+
+//</span></code></pre>
+        
+        <h3 id="chained-joins" class="section"><a class="anchor-link left" href="#chained-joins"><i class="icofont-laika link">&#xef71;</i></a>Chained Joins</h3>
+        <p>Joins, or any similar operation, may be chained using a thrush combinator removing the need for intermediate values.  Instead of:</p>
+        <pre><code class="nohighlight"><span class="keyword">val</span><span> </span><span class="identifier">withBedroomInfoInterim</span><span> = </span><span class="identifier">aptTypedDs</span><span>.</span><span class="identifier">joinInner</span><span>(</span><span class="identifier">citiInfoTypedDS</span><span>)( </span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;city</span><span>) === </span><span class="identifier">citiInfoTypedDS</span><span>(</span><span class="symbol-literal">&#39;name</span><span>) )
+</span><span class="comment">// withBedroomInfoInterim: TypedDataset[(Apartment, CityPopulationInfo)] = [_1: struct&lt;city: string, surface: int ... 2 more fields&gt;, _2: struct&lt;name: string, population: int&gt;]
+</span><span class="keyword">val</span><span> </span><span class="identifier">withBedroomInfo</span><span> = </span><span class="identifier">withBedroomInfoInterim</span><span> 
+  .</span><span class="identifier">joinLeft</span><span>(</span><span class="identifier">bedroomStats</span><span>)( </span><span class="identifier">withBedroomInfoInterim</span><span>.</span><span class="identifier">col</span><span>(&#39;</span><span class="identifier">_1</span><span>).</span><span class="identifier">field</span><span>(</span><span class="symbol-literal">&#39;city</span><span>) === </span><span class="identifier">bedroomStats</span><span>(</span><span class="symbol-literal">&#39;city</span><span>) )
+</span><span class="comment">// withBedroomInfo: TypedDataset[((Apartment, CityPopulationInfo), Option[BedroomStats])] = [_1: struct&lt;_1: struct&lt;city: string, surface: int ... 2 more fields&gt;, _2: struct&lt;name: string, population: int&gt;&gt;, _2: struct&lt;city: string, AvgPriceBeds1: double ... 3 more fields&gt;]
+</span><span>
+</span><span class="identifier">withBedroomInfo</span><span>.</span><span class="identifier">show</span><span>().</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +--------------------+--------------------+
+// |                  _1|                  _2|
+// +--------------------+--------------------+
+// |{{Paris, 50, 3000...|{Paris, 250000.0,...|
+// |{{Paris, 100, 450...|{Paris, 250000.0,...|
+// |{{Paris, 25, 2500...|{Paris, 250000.0,...|
+// |{{Lyon, 83, 20000...|{Lyon, 133000.0, ...|
+// |{{Lyon, 45, 13300...|{Lyon, 133000.0, ...|
+// |{{Nice, 74, 32500...|{Nice, NULL, NULL...|
+// +--------------------+--------------------+
+//</span></code></pre>
+        <p>You can use thrush from <a href="https://github.com/typelevel/mouse">mouse</a>:</p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">libraryDependencies</span><span> += </span><span class="string-literal">&quot;org.typelevel&quot;</span><span> %% </span><span class="string-literal">&quot;mouse&quot;</span><span> % </span><span class="string-literal">&quot;1.2.1&quot;</span></code></pre>
+        <pre><code class="nohighlight"><span class="keyword">import</span><span> </span><span class="identifier">mouse</span><span>.</span><span class="identifier">all</span><span>.</span><span class="identifier">_</span><span>
+
+</span><span class="keyword">val</span><span> </span><span class="identifier">withBedroomInfoChained</span><span> = </span><span class="identifier">aptTypedDs</span><span>.</span><span class="identifier">joinInner</span><span>(</span><span class="identifier">citiInfoTypedDS</span><span>)( </span><span class="identifier">aptTypedDs</span><span>(</span><span class="symbol-literal">&#39;city</span><span>) === </span><span class="identifier">citiInfoTypedDS</span><span>(</span><span class="symbol-literal">&#39;name</span><span>) )
+  .</span><span class="identifier">thrush</span><span>( </span><span class="identifier">interim</span><span> =&gt; </span><span class="identifier">interim</span><span>.</span><span class="identifier">joinLeft</span><span>(</span><span class="identifier">bedroomStats</span><span>)( </span><span class="identifier">interim</span><span>.</span><span class="identifier">col</span><span>(&#39;</span><span class="identifier">_1</span><span>).</span><span class="identifier">field</span><span>(</span><span class="symbol-literal">&#39;city</span><span>) === </span><span class="identifier">bedroomStats</span><span>(</span><span class="symbol-literal">&#39;city</span><span>) ) )
+</span><span class="comment">// withBedroomInfoChained: TypedDataset[((Apartment, CityPopulationInfo), Option[BedroomStats])] = [_1: struct&lt;_1: struct&lt;city: string, surface: int ... 2 more fields&gt;, _2: struct&lt;name: string, population: int&gt;&gt;, _2: struct&lt;city: string, AvgPriceBeds1: double ... 3 more fields&gt;]
+</span><span>
+</span><span class="identifier">withBedroomInfoChained</span><span>.</span><span class="identifier">show</span><span>().</span><span class="identifier">run</span><span>()
+</span><span class="comment">// +--------------------+--------------------+
+// |                  _1|                  _2|
+// +--------------------+--------------------+
+// |{{Paris, 50, 3000...|{Paris, 250000.0,...|
+// |{{Paris, 100, 450...|{Paris, 250000.0,...|
+// |{{Paris, 25, 2500...|{Paris, 250000.0,...|
+// |{{Lyon, 83, 20000...|{Lyon, 133000.0, ...|
+// |{{Lyon, 45, 13300...|{Lyon, 133000.0, ...|
+// |{{Nice, 74, 32500...|{Nice, NULL, NULL...|
+// +--------------------+--------------------+
+//</span></code></pre>
+
+        
+<hr class="footer-rule"/>
+<footer>
+  frameless is a <a href="https://typelevel.org/">Typelevel</a> project distributed under the <a href="http://opensource.org/licenses/Apache-2.0">Apache-2.0</a> license.
+</footer>
+
+
+      </main>
+
+    </div>
+
+  </body>
+
+</html>
