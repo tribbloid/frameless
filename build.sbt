@@ -6,19 +6,20 @@ val catsEffectVersion = "3.6.1"
 val catsMtlVersion = "1.5.0"
 val scalatest = "3.2.19"
 val scalatestplus = "3.1.0.0-RC2"
-val shapeless = "2.3.13"
+//val shapeless = "2.3.13"
+val formless = "0.7.0"
 val scalacheck = "1.18.1"
 val scalacheckEffect = "1.0.4"
 val refinedVersion = "0.11.3"
 val nakedFSVersion = "0.1.0"
 
-val Scala212 = "2.12.20"
+//val Scala212 = "2.12.20"
 val Scala213 = "2.13.16"
 
 ThisBuild / tlBaseVersion := "0.16"
 
-ThisBuild / crossScalaVersions := Seq(Scala213, Scala212)
-ThisBuild / scalaVersion := Scala212
+ThisBuild / crossScalaVersions := Seq(Scala213)
+ThisBuild / scalaVersion := Scala213
 ThisBuild / coverageScalacPluginVersion := "2.3.0"
 
 lazy val root = project
@@ -307,8 +308,9 @@ lazy val scalacOptionSettings = Def.setting {
 lazy val framelessSettings = Seq(
   scalacOptions ++= scalacOptionSettings.value,
   Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oDF"),
+  resolvers += "bondlink-maven-repo" at "https://maven.bondlink-cdn.com",
   libraryDependencies ++= Seq(
-    "com.chuusai" %% "shapeless" % shapeless,
+    "com.bondlink" %% "formless" % formless,
     "org.scalatest" %% "scalatest" % scalatest % Test,
     "org.scalatestplus" %% "scalatestplus-scalacheck" % scalatestplus % Test,
     "org.scalacheck" %% "scalacheck" % scalacheck % Test
