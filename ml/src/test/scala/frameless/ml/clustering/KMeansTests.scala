@@ -68,7 +68,7 @@ class KMeansTests extends FramelessMlSuite with Matchers {
   }
 
   test("param setting is retained") {
-    val prop = forAll { initMode: KMeansInitMode =>
+    val prop = forAll { _: KMeansInitMode =>
       val rf = TypedKMeans[X1[Vector]]
         .setInitMode(KMeansInitMode.Random)
         .setInitSteps(2)

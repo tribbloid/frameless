@@ -26,7 +26,7 @@ class UdtEncodedClass(val a: Int, val b: Array[Double]) {
 }
 
 object UdtEncodedClass {
-  implicit val udtForUdtEncodedClass = new UdtEncodedClassUdt
+  implicit val udtForUdtEncodedClass: UdtEncodedClassUdt = new UdtEncodedClassUdt
 }
 
 class UdtEncodedClassUdt extends UserDefinedType[UdtEncodedClass] {

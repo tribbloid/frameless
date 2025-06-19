@@ -84,7 +84,7 @@ class Test
     with ScalaCheckPropertyChecks
     with SparkTests {
 
-  implicit override val generatorDrivenConfig =
+  implicit override val generatorDrivenConfig: PropertyCheckConfiguration =
     PropertyCheckConfiguration(minSize = PosInt(10))
 
   property("spark is working") {

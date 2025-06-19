@@ -18,15 +18,15 @@ package object frameless {
     arbBigDecimal.arbitrary.map(_.toDouble)
   }
 
-  implicit val arbSqlDate = Arbitrary {
+  implicit val arbSqlDate: Arbitrary[SQLDate] = Arbitrary {
     Arbitrary.arbitrary[Int].map(SQLDate)
   }
 
-  implicit val arbSqlTimestamp = Arbitrary {
+  implicit val arbSqlTimestamp: Arbitrary[SQLTimestamp] = Arbitrary {
     Arbitrary.arbitrary[Long].map(SQLTimestamp)
   }
 
-  implicit def arbTuple1[A: Arbitrary] = Arbitrary {
+  implicit def arbTuple1[A: Arbitrary]: Arbitrary[Tuple1[A]] = Arbitrary {
     Arbitrary.arbitrary[A].map(Tuple1(_))
   }
 

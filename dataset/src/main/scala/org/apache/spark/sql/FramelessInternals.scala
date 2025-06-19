@@ -5,7 +5,6 @@ import org.apache.spark.sql.catalyst.expressions.codegen._
 import org.apache.spark.sql.catalyst.expressions.{ Alias, CreateStruct }
 import org.apache.spark.sql.catalyst.expressions.{ Expression, NamedExpression }
 import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.catalyst.plans.logical.LogicalPlan
 import org.apache.spark.sql.catalyst.plans.logical.{ LogicalPlan, Project }
 import org.apache.spark.sql.execution.QueryExecution
 import org.apache.spark.sql.types._

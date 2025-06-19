@@ -68,7 +68,7 @@ class TypedDataset[T] protected[frameless] (
           tuple1.dataset.selectExpr("_1.*").as[A](TypedExpressionEncoder[A])
 
         TypedDataset.create(df)
-      case other =>
+      case _ =>
         // for primitive types `Tuple1[A]` has the same schema as `A`
         TypedDataset.create(tuple1.dataset.as[A](TypedExpressionEncoder[A]))
     }
@@ -423,7 +423,7 @@ class TypedDataset[T] protected[frameless] (
       try {
         Option(dataset.first())
       } catch {
-        case e: NoSuchElementException => None
+        case _: NoSuchElementException => None
       }
     }
 
@@ -986,7 +986,7 @@ class TypedDataset[T] protected[frameless] (
           tuple1.dataset.selectExpr("_1.*").as[A](TypedExpressionEncoder[A])
 
         TypedDataset.create(df)
-      case other =>
+      case _ =>
         // for primitive types `Tuple1[A]` has the same schema as `A`
         TypedDataset.create(tuple1.dataset.as[A](TypedExpressionEncoder[A]))
     }

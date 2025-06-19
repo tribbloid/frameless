@@ -1284,10 +1284,10 @@ object SortedTypedColumn {
 
   object defaultAscendingPoly extends Poly1 {
 
-    implicit def caseTypedColumn[T, U: CatalystOrdered] =
+    implicit def caseTypedColumn[T, U: CatalystOrdered]: Case.Aux[TypedColumn[T,U],SortedTypedColumn[T,U]] =
       at[TypedColumn[T, U]](c => defaultAscending(c))
 
-    implicit def caseTypeSortedColumn[T, U] =
+    implicit def caseTypeSortedColumn[T, U]: Case.Aux[SortedTypedColumn[T,U],SortedTypedColumn[T,U]] =
       at[SortedTypedColumn[T, U]](identity)
   }
 }

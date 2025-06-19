@@ -39,7 +39,7 @@ class AggregateFunctionsTests extends TypedDatasetSuite {
 
       datasetSum match {
         case x :: Nil => approximatelyEqual(summer.sum(xs), x)
-        case other    => falsified
+        case _    => falsified
       }
     }
 
@@ -81,7 +81,7 @@ class AggregateFunctionsTests extends TypedDatasetSuite {
 
       datasetSum match {
         case x :: Nil => approximatelyEqual(summer.sum(xs), x)
-        case other    => falsified
+        case _    => falsified
       }
     }
 

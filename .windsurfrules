@@ -1,0 +1,7 @@
+
+# Environment
+- This is a Scala 2.13 project
+
+# Rules
+- build with `sbt "compile;Test/compile"` to figure out build errors
+- compile the project often to verify your work

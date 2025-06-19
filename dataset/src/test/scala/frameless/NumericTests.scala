@@ -120,31 +120,31 @@ class NumericTests extends TypedDatasetSuite with Matchers {
 
   object NumericMod {
 
-    implicit val byteInstance = new NumericMod[Byte] {
+    implicit val byteInstance: NumericMod[Byte] = new NumericMod[Byte] {
       def mod(a: Byte, b: Byte) = (a % b).toByte
     }
 
-    implicit val doubleInstance = new NumericMod[Double] {
+    implicit val doubleInstance: NumericMod[Double] = new NumericMod[Double] {
       def mod(a: Double, b: Double) = a % b
     }
 
-    implicit val floatInstance = new NumericMod[Float] {
+    implicit val floatInstance: NumericMod[Float] = new NumericMod[Float] {
       def mod(a: Float, b: Float) = a % b
     }
 
-    implicit val intInstance = new NumericMod[Int] {
+    implicit val intInstance: NumericMod[Int] = new NumericMod[Int] {
       def mod(a: Int, b: Int) = a % b
     }
 
-    implicit val longInstance = new NumericMod[Long] {
+    implicit val longInstance: NumericMod[Long] = new NumericMod[Long] {
       def mod(a: Long, b: Long) = a % b
     }
 
-    implicit val shortInstance = new NumericMod[Short] {
+    implicit val shortInstance: NumericMod[Short] = new NumericMod[Short] {
       def mod(a: Short, b: Short) = (a % b).toShort
     }
 
-    implicit val bigDecimalInstance = new NumericMod[BigDecimal] {
+    implicit val bigDecimalInstance: NumericMod[BigDecimal] = new NumericMod[BigDecimal] {
       def mod(a: BigDecimal, b: BigDecimal) = a % b
     }
   }

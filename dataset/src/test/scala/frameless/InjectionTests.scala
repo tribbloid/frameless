@@ -230,7 +230,6 @@ class InjectionTests extends TypedDatasetSuite {
   }
 
   test("TypedEncoder[Maybe] cannot be derived") {
-    import frameless.TypedEncoder.injections._
 
     illTyped(
       "implicitly[TypedEncoder[Maybe]]",

@@ -22,6 +22,15 @@ ThisBuild / crossScalaVersions := Seq(Scala213)
 ThisBuild / scalaVersion := Scala213
 ThisBuild / coverageScalacPluginVersion := "2.3.0"
 
+ThisBuild / scalafixOnCompile := true
+
+inThisBuild(
+  List(
+    semanticdbEnabled := true,
+    semanticdbVersion := scalafixSemanticdb.revision
+  )
+)
+
 lazy val root = project
   .in(file("."))
   .enablePlugins(NoPublishPlugin)
@@ -287,7 +296,9 @@ lazy val scalac213Options = {
     "-Xfuture",
     // type TraversableOnce in package scala is deprecated, symbol literal is deprecated; use Symbol("a") instead
     "-Xfatal-warnings",
-    "-Ypartial-unification"
+    "-Ypartial-unification",
+    //
+    "-quickfix:any"
   )
 
   // https://github.com/scala/bug/issues/12072
