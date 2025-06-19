@@ -26,8 +26,8 @@ ThisBuild / scalafixOnCompile := true
 
 inThisBuild(
   List(
-    semanticdbEnabled := true,
-    semanticdbVersion := scalafixSemanticdb.revision
+    semanticdbEnabled := true
+    // semanticdbVersion := scalafixSemanticdb.revision
   )
 )
 
