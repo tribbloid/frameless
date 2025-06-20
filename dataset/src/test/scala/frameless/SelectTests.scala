@@ -417,7 +417,7 @@ class SelectTests extends TypedDatasetSuite {
     assert(t.select(t.col(Symbol("_1"))).collect().run().toList === List(2))
     // Issue #54
     val fooT =
-      t.select(t.col(Symbol("_1"))).deserialized.map(x => Tuple1.apply(x)).as[Foo]
+      t.select(t.col(Symbol("_1"))).deserialized.map(x => Tuple1.apply(x)).as[Foo]()
     assert(fooT.select(fooT(Symbol("i"))).collect().run().toList === List(2))
   }
 

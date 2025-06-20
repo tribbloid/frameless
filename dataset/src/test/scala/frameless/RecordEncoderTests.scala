@@ -51,14 +51,14 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
       Seq(TupleWithUnits(1, "one"), TupleWithUnits(2, "two"))
     )
 
-    df.collect shouldEqual tds.toDF.collect
-    ds.collect.toSeq shouldEqual tds.collect.run
+    df.collect() shouldEqual tds.toDF().collect()
+    ds.collect().toSeq shouldEqual tds.collect().run()
   }
 
   test("Empty nested record value becomes null on serialization") {
     val ds = TypedDataset.create(Seq(OptionalNesting(Option.empty)))
-    val df = ds.toDF
-    df.na.drop.count shouldBe 0
+    val df = ds.toDF()
+    df.na.drop().count() shouldBe 0
   }
 
   test("Empty nested record value becomes none on deserialization") {
@@ -68,7 +68,7 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
     val df = session.createDataFrame(rdd, schema)
     val ds = TypedDataset.createUnsafe(df)(TypedEncoder[OptionalNesting])
 
-    ds.firstOption.run.get.o.isEmpty shouldBe true
+    ds.firstOption().run().get.o.isEmpty shouldBe true
   }
 
   test("Deeply nested optional values have correct deserialization") {
@@ -78,7 +78,7 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
       TypedEncoder[NestedOptionPair].catalystRepr.asInstanceOf[StructType]
     val df = session.createDataFrame(rdd, schema)
     val ds = TypedDataset.createUnsafe(df)(TypedEncoder[NestedOptionPair])
-    ds.firstOption.run.get shouldBe X2(true, Some(X2(None, None)))
+    ds.firstOption().run().get shouldBe X2(true, Some(X2(None, None)))
   }
 
   test("Nesting with Seq") {
@@ -88,7 +88,7 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
     val rdd = sc.parallelize(Seq(obj))
     val ds = session.createDataset(rdd)(TypedExpressionEncoder[C])
 
-    ds.collect.head shouldBe obj
+    ds.collect().head shouldBe obj
   }
 
   test("Nesting with Set") {
@@ -98,7 +98,7 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
     val rdd = sc.parallelize(Seq(obj))
     val ds = session.createDataset(rdd)(TypedExpressionEncoder[E])
 
-    ds.collect.head shouldBe obj
+    ds.collect().head shouldBe obj
   }
 
   test("Scalar value class") {
@@ -116,7 +116,7 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
     import sqlContext.implicits._
 
     TypedDataset
-      .createUnsafe[Name](Seq("Foo", "Bar").toDF)(encoder)
+      .createUnsafe[Name](Seq("Foo", "Bar").toDF())(encoder)
       .collect()
       .run() shouldBe Seq(new Name("Foo"), new Name("Bar"))
 
@@ -163,18 +163,18 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
 
     val expected = Seq(Person(new Name("Foo"), 2), Person(new Name("Bar"), 3))
 
-    unsafeDs.collect.run() shouldBe expected
+    unsafeDs.collect().run() shouldBe expected
 
     // Safely created DS
     val safeDs = TypedDataset.create(expected)
 
-    safeDs.collect.run() shouldBe expected
+    safeDs.collect().run() shouldBe expected
 
     val lorem = new Name("Lorem")
 
     safeDs
       .withColumnReplaced(Symbol("name"), functions.litValue(lorem))
-      .collect
+      .collect()
       .run() shouldBe expected.map(_.copy(name = lorem))
   }
 
@@ -221,7 +221,7 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
       TypedDataset.createUnsafe(df)(encoder)
     }
 
-    ds1.collect
+    ds1.collect()
       .run() shouldBe Seq(User(1L, None), User(2L, Some(new Name("Foo"))))
 
     val ds2: TypedDataset[User] = {
@@ -232,7 +232,7 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
         """{"id":3,"label":"unused"}""",
         """{"id":4,"name":"Lorem"}""",
         """{"id":5,"name":null}"""
-      ).toDF
+      ).toDF()
 
       val df2 = df1
         .withColumn(
@@ -247,10 +247,10 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
     val expected =
       Seq(User(3L, None), User(4L, Some(new Name("Lorem"))), User(5L, None))
 
-    ds2.collect.run() shouldBe expected
+    ds2.collect().run() shouldBe expected
 
     // Safely created ds
-    TypedDataset.create(expected).collect.run() shouldBe expected
+    TypedDataset.create(expected).collect().run() shouldBe expected
   }
 
   test("Case class with simple Map") {
@@ -283,7 +283,7 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
       val df = Seq(
         """{"m":{"pizza":1,"sushi":2}}""",
         """{"m":{"red":3,"blue":4}}"""
-      ).toDF
+      ).toDF()
 
       df.withColumn(
         "jsonValue",
@@ -296,13 +296,13 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
       D(m = Map("red" -> 3, "blue" -> 4))
     )
 
-    ds1.collect.run() shouldBe expected
+    ds1.collect().run() shouldBe expected
 
     val m2 = Map("updated" -> 5)
 
     val ds2 = ds1.withColumnReplaced(Symbol("m"), functions.lit(m2))
 
-    ds2.collect.run() shouldBe expected.map(_.copy(m = m2))
+    ds2.collect().run() shouldBe expected.map(_.copy(m = m2))
   }
 
   test("Case class with Map & Value class") {
@@ -336,7 +336,7 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
       val df = Seq(
         """{"name":"Foo","grades":{"math":1,"physics":"23.4"}}""",
         """{"name":"Bar","grades":{"biology":18.5,"geography":4}}"""
-      ).toDF
+      ).toDF()
 
       df.withColumn(
         "jsonValue",
@@ -361,7 +361,7 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
       )
     )
 
-    ds1.collect.run() shouldBe expected
+    ds1.collect().run() shouldBe expected
 
     val grades = Map[Subject, Grade](
       new Subject("any") -> new Grade(BigDecimal(Long.MaxValue) + 1L)
@@ -369,7 +369,7 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
 
     val ds2 = ds1.withColumnReplaced(Symbol("grades"), functions.lit(grades))
 
-    ds2.collect
+    ds2.collect()
       .run() shouldBe Seq(Student("Foo", grades), Student("Bar", grades))
   }
 
@@ -401,13 +401,13 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
 
     val expected = Seq("Foo" -> Seq[Byte](3, 4), "Bar" -> Seq[Byte](5))
 
-    ds1.collect.run().map { case (_1, _2) => _1 -> _2.toSeq } shouldBe expected
+    ds1.collect().run().map { case (_1, _2) => _1 -> _2.toSeq } shouldBe expected
 
     val subjects = "lorem".getBytes("UTF-8").toSeq
 
     val ds2 = ds1.withColumnReplaced(Symbol("_2"), functions.lit(subjects.toArray))
 
-    ds2.collect.run().map { case (_1, _2) => _1 -> _2.toSeq } shouldBe expected
+    ds2.collect().run().map { case (_1, _2) => _1 -> _2.toSeq } shouldBe expected
       .map(_.copy(_2 = subjects))
   }
 
@@ -432,7 +432,7 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
       val df = Seq(
         """{"_1":"Foo", "_2":[3, 4]}""",
         """{"_1":"Bar", "_2":[5]}"""
-      ).toDF
+      ).toDF()
 
       df.withColumn(
         "jsonValue",
@@ -442,13 +442,13 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
 
     val expected = Seq("Foo" -> Seq(3, 4), "Bar" -> Seq(5))
 
-    ds1.collect.run().map { case (_1, _2) => _1 -> _2.toSeq } shouldBe expected
+    ds1.collect().run().map { case (_1, _2) => _1 -> _2.toSeq } shouldBe expected
 
     val subjects = Seq(6, 6, 7)
 
     val ds2 = ds1.withColumnReplaced(Symbol("_2"), functions.lit(subjects.toArray))
 
-    ds2.collect.run().map { case (_1, _2) => _1 -> _2.toSeq } shouldBe expected
+    ds2.collect().run().map { case (_1, _2) => _1 -> _2.toSeq } shouldBe expected
       .map(_.copy(_2 = subjects))
   }
 
@@ -475,7 +475,7 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
       val df = Seq(
         """{"_1":"Foo", "_2":["math","physics"]}""",
         """{"_1":"Bar", "_2":["biology","geography"]}"""
-      ).toDF
+      ).toDF()
 
       df.withColumn(
         "jsonValue",
@@ -488,13 +488,13 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
       "Bar" -> Seq(new Subject("biology"), new Subject("geography"))
     )
 
-    ds1.collect.run().map { case (_1, _2) => _1 -> _2.toSeq } shouldBe expected
+    ds1.collect().run().map { case (_1, _2) => _1 -> _2.toSeq } shouldBe expected
 
     val subjects = Seq(new Subject("lorem"), new Subject("ipsum"))
 
     val ds2 = ds1.withColumnReplaced(Symbol("_2"), functions.lit(subjects.toArray))
 
-    ds2.collect.run().map { case (_1, _2) => _1 -> _2.toSeq } shouldBe expected
+    ds2.collect().run().map { case (_1, _2) => _1 -> _2.toSeq } shouldBe expected
       .map(_.copy(_2 = subjects))
   }
 
@@ -547,13 +547,13 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
 
     val expected = Seq(B(Seq(A(1), A(3))), B(Seq(A(2))))
 
-    ds1.collect.run() shouldBe expected
+    ds1.collect().run() shouldBe expected
 
     val as = Seq(A(5), A(6))
 
     val ds2 = ds1.withColumnReplaced(Symbol("a"), functions.lit(as))
 
-    ds2.collect.run() shouldBe expected.map(_.copy(a = as))
+    ds2.collect().run() shouldBe expected.map(_.copy(a = as))
   }
 
   test("Encode case class with Value class") {
@@ -579,7 +579,7 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
       val df = Seq(
         """{"_1":1, "_2":["foo", "bar"]}""",
         """{"_1":2, "_2":["lorem"]}"""
-      ).toDF
+      ).toDF()
 
       df.withColumn(
         "jsonValue",
@@ -592,7 +592,7 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
       2 -> Seq(new Name("lorem"))
     )
 
-    ds1.collect.run() shouldBe expected
+    ds1.collect().run() shouldBe expected
   }
 }
 

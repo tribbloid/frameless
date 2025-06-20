@@ -297,7 +297,7 @@ class OrderByTests extends TypedDatasetSuite with Matchers {
         case (typX2, untypX2) =>
           val vanilla =
             ds.dataset.orderBy(untypX2(ds.dataset.col("c"))).collect().toVector
-          val frameless = ds.orderBy(typX2(ds(Symbol("c")))).collect().run.toVector
+          val frameless = ds.orderBy(typX2(ds(Symbol("c")))).collect().run().toVector
           vanilla ?= frameless
       }.reduce(_ && _)
     }
@@ -323,7 +323,7 @@ class OrderByTests extends TypedDatasetSuite with Matchers {
         case (typX2, untypX2) =>
           val vanilla =
             ds.dataset.orderBy(untypX2(ds.dataset.col("b"))).collect().toVector
-          val frameless = ds.orderBy(typX2(ds(Symbol("b")))).collect().run.toVector
+          val frameless = ds.orderBy(typX2(ds(Symbol("b")))).collect().run().toVector
           vanilla ?= frameless
       }.reduce(_ && _)
     }

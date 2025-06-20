@@ -51,7 +51,7 @@ class FramelessSyntaxTests extends TypedDatasetSuite {
       val d = TypedDataset.create((a, b) :: Nil)
       (d.select(d(Symbol("_1")).untyped.typedColumn)
         .collect()
-        .run ?= d.select(d(Symbol("_1"))).collect().run).&&(
+        .run() ?= d.select(d(Symbol("_1"))).collect().run()).&&(
         d.agg(first(d(Symbol("_1")))).collect().run() ?= d
           .agg(first(d(Symbol("_1"))).untyped.typedAggregate)
           .collect()

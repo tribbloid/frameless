@@ -745,7 +745,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         tEncEv: TypedEncoder[C[Int]]
       ) = {
 
-      val contained = if (shouldBeIn) nth.nth(values, idxs.next) else -1
+      val contained = if (shouldBeIn) nth.nth(values, idxs.next()) else -1
 
       val cDS = session.createDataset(List(values))
       val resCompare = cDS

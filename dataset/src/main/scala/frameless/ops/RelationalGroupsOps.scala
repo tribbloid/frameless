@@ -70,7 +70,7 @@ private[ops] abstract class RelationalGroups1Ops[K1, V](
     self: TypedDataset[V],
     g1: TypedColumn[V, K1]) {
   protected def underlying: RelationalGroupsOps[V, ::[TypedColumn[V, K1], HNil], ::[K1, HNil], Tuple1[K1]]
-  private implicit def eg1 = g1.uencoder
+  private implicit def eg1: frameless.TypedEncoder[K1] = g1.uencoder
 
   def agg[U1](c1: TypedAggregate[V, U1]): TypedDataset[(Option[K1], U1)] = {
     implicit val e1 = c1.uencoder
@@ -149,8 +149,8 @@ private[ops] abstract class RelationalGroups2Ops[K1, K2, V](
     g1: TypedColumn[V, K1],
     g2: TypedColumn[V, K2]) {
   protected def underlying: RelationalGroupsOps[V, ::[TypedColumn[V, K1], ::[TypedColumn[V, K2], HNil]], ::[K1, ::[K2, HNil]], (K1, K2)]
-  private implicit def eg1 = g1.uencoder
-  private implicit def eg2 = g2.uencoder
+  private implicit def eg1: frameless.TypedEncoder[K1] = g1.uencoder
+  private implicit def eg2: frameless.TypedEncoder[K2] = g2.uencoder
 
   def agg[U1](
       c1: TypedAggregate[V, U1]

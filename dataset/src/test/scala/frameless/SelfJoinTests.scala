@@ -84,7 +84,7 @@ class SelfJoinTests extends TypedDatasetSuite {
             untyped.as("df1").join(untyped.as("df2"), trivial).count()
 
           val typed =
-            ds.joinInner(ds)(ds.colLeft(Symbol("a")) === ds.colLeft(Symbol("a"))).count().run
+            ds.joinInner(ds)(ds.colLeft(Symbol("a")) === ds.colLeft(Symbol("a"))).count().run()
           vanilla ?= typed
         }
       }

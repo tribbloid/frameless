@@ -16,7 +16,7 @@ import org.scalatest.funsuite.AnyFunSuite
 trait SparkTesting { self: BeforeAndAfterAll =>
 
   val appID: String = new java.util.Date().toString + math
-    .floor(math.random * 10e4)
+    .floor(math.random() * 10e4)
     .toLong
     .toString
 

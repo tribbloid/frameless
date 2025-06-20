@@ -52,7 +52,7 @@ class GroupedBy1Ops[K1, V](
     self: TypedDataset[V],
     g1: TypedColumn[V, K1]) {
   private def underlying = new GroupedByManyOps(self, g1 :: HNil)
-  private implicit def eg1 = g1.uencoder
+  private implicit def eg1: frameless.TypedEncoder[K1] = g1.uencoder
 
   def agg[U1](c1: TypedAggregate[V, U1]): TypedDataset[(K1, U1)] = {
     implicit val e1 = c1.uencoder
@@ -131,8 +131,8 @@ class GroupedBy2Ops[K1, K2, V](
     g1: TypedColumn[V, K1],
     g2: TypedColumn[V, K2]) {
   private def underlying = new GroupedByManyOps(self, g1 :: g2 :: HNil)
-  private implicit def eg1 = g1.uencoder
-  private implicit def eg2 = g2.uencoder
+  private implicit def eg1: frameless.TypedEncoder[K1] = g1.uencoder
+  private implicit def eg2: frameless.TypedEncoder[K2] = g2.uencoder
 
   def agg[U1](c1: TypedAggregate[V, U1]): TypedDataset[(K1, K2, U1)] = {
     implicit val e1 = c1.uencoder

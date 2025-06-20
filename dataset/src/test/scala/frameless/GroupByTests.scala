@@ -20,7 +20,7 @@ class GroupByTests extends TypedDatasetSuite {
       val B = dataset.col[B](Symbol("b"))
 
       val datasetSumByA =
-        dataset.groupByMany(A).agg(sum(B)).collect().run.toVector.sortBy(_._1)
+        dataset.groupByMany(A).agg(sum(B)).collect().run().toVector.sortBy(_._1)
       val sumByA = data
         .groupBy(_.a)
         .map { case (k, v) => k -> v.map(_.b).map(widen).sum }
@@ -155,7 +155,7 @@ class GroupByTests extends TypedDatasetSuite {
       val B = dataset.col[B](Symbol("b"))
 
       val datasetSumByA =
-        dataset.groupBy(A).agg(sum(B)).collect().run.toVector.sortBy(_._1)
+        dataset.groupBy(A).agg(sum(B)).collect().run().toVector.sortBy(_._1)
       val sumByA = data
         .groupBy(_.a)
         .mapValues(_.map(_.b).map(widen).sum)
@@ -216,7 +216,7 @@ class GroupByTests extends TypedDatasetSuite {
         .groupBy(A)
         .agg(sum(B), sum(C))
         .collect()
-        .run
+        .run()
         .toVector
         .sortBy(_._1)
 
@@ -233,7 +233,7 @@ class GroupByTests extends TypedDatasetSuite {
         .groupBy(A)
         .agg(sum(B), sum(C), sum(B))
         .collect()
-        .run
+        .run()
         .toVector
         .sortBy(_._1)
 
@@ -254,7 +254,7 @@ class GroupByTests extends TypedDatasetSuite {
         .groupBy(A)
         .agg(sum(B), sum(C), sum(B), sum(C))
         .collect()
-        .run
+        .run()
         .toVector
         .sortBy(_._1)
 
@@ -276,7 +276,7 @@ class GroupByTests extends TypedDatasetSuite {
         .groupBy(A)
         .agg(sum(B), sum(C), sum(B), sum(C), sum(B))
         .collect()
-        .run
+        .run()
         .toVector
         .sortBy(_._1)
 
@@ -324,7 +324,7 @@ class GroupByTests extends TypedDatasetSuite {
         .groupBy(A, B)
         .agg(sum(C))
         .collect()
-        .run
+        .run()
         .toVector
         .sortBy(x => (x._1, x._2))
 
@@ -339,7 +339,7 @@ class GroupByTests extends TypedDatasetSuite {
         .groupBy(A, B)
         .agg(sum(C), sum(C))
         .collect()
-        .run
+        .run()
         .toVector
         .sortBy(x => (x._1, x._2))
 
@@ -356,7 +356,7 @@ class GroupByTests extends TypedDatasetSuite {
         .groupBy(A, B)
         .agg(sum(C), sum(C), sum(C))
         .collect()
-        .run
+        .run()
         .toVector
         .sortBy(x => (x._1, x._2))
 
@@ -373,7 +373,7 @@ class GroupByTests extends TypedDatasetSuite {
         .groupBy(A, B)
         .agg(sum(C), sum(C), sum(C), sum(C))
         .collect()
-        .run
+        .run()
         .toVector
         .sortBy(x => (x._1, x._2))
 
@@ -390,7 +390,7 @@ class GroupByTests extends TypedDatasetSuite {
         .groupBy(A, B)
         .agg(sum(C), sum(C), sum(C), sum(C), sum(C))
         .collect()
-        .run
+        .run()
         .toVector
         .sortBy(x => (x._1, x._2))
 
@@ -440,7 +440,7 @@ class GroupByTests extends TypedDatasetSuite {
         .groupBy(A, B)
         .agg(sum(C), sum(D))
         .collect()
-        .run
+        .run()
         .toVector
         .sortBy(x => (x._1, x._2))
 
@@ -505,7 +505,7 @@ class GroupByTests extends TypedDatasetSuite {
         .deserialized
         .mapGroups((a, xs) => (a, xs.toVector.sorted))
         .collect()
-        .run
+        .run()
         .toMap
 
       val dataGrouped = data.groupBy(_.a).map { case (k, v) => k -> v.sorted }
@@ -530,7 +530,7 @@ class GroupByTests extends TypedDatasetSuite {
         .deserialized
         .flatMapGroups((a, xs) => xs.map(x => (a, x)))
         .collect()
-        .run
+        .run()
         .sorted
 
       val dataGrouped = data

@@ -464,7 +464,7 @@ final class ColumnTests extends TypedDatasetSuite with Matchers {
       TypedDataset.create(input)
 
     val result1: Seq[(Timestamp, Date, SqlDate)] =
-      ds.dataset.toDF
+      ds.dataset.toDF()
         .collect()
         .map { row =>
           Tuple3(
@@ -478,7 +478,7 @@ final class ColumnTests extends TypedDatasetSuite with Matchers {
     result1 shouldEqual Seq(Tuple3(ts, date, sqlDate))
 
     val result2: Seq[X3[Timestamp, Date, SqlDate]] =
-      ds.collect.run().toSeq
+      ds.collect().run().toSeq
 
     result2 shouldEqual input
   }

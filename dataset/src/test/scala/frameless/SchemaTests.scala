@@ -52,7 +52,7 @@ class SchemaTests extends TypedDatasetSuite with Matchers {
 
   test("schema of select(lit(1L), lit(2L)).as[X2[Long, Long]]") {
     val df0 = TypedDataset.create("test" :: Nil)
-    val df = df0.select(lit(1L), lit(2L)).as[X2[Long, Long]]
+    val df = df0.select(lit(1L), lit(2L)).as[X2[Long, Long]]()
 
     check(prop(df))
   }
