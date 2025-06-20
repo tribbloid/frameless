@@ -41,7 +41,7 @@ class ClusteringIntegrationTests extends FramelessMlSuite with Matchers {
       model.transform(testDataWithFeatures).as[X4[Double, Int, Vector, Int]]()
 
     val prediction =
-      predictionDs.select(predictionDs.col[Int]('d)).collect().run().toList
+      predictionDs.select(predictionDs.col[Int](Symbol("d"))).collect().run().toList
 
     prediction mustEqual testSeq.map(_.b)
   }
@@ -75,7 +75,7 @@ class ClusteringIntegrationTests extends FramelessMlSuite with Matchers {
       model.transform(testDataWithFeatures).as[X4[Double, Int, Vector, Int]]()
 
     val prediction =
-      predictionDs.select(predictionDs.col[Int]('d)).collect().run().toList
+      predictionDs.select(predictionDs.col[Int](Symbol("d"))).collect().run().toList
 
     prediction mustEqual testSeq.map(_.b)
   }

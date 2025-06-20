@@ -14,7 +14,7 @@ class CubeTests extends TypedDatasetSuite {
         summable: CatalystSummable[A, Out]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A]('a)
+      val A = dataset.col[A](Symbol("a"))
 
       val received =
         dataset.cube(A).agg(count()).collect().run().toVector.sortBy(_._2)
@@ -42,8 +42,8 @@ class CubeTests extends TypedDatasetSuite {
         summable: CatalystSummable[B, Out]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A]('a)
-      val B = dataset.col[B]('b)
+      val A = dataset.col[A](Symbol("a"))
+      val B = dataset.col[B](Symbol("b"))
 
       val received =
         dataset.cube(A, B).agg(count()).collect().run().toVector.sortBy(_._3)
@@ -73,8 +73,8 @@ class CubeTests extends TypedDatasetSuite {
         summable: CatalystSummable[B, Out]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A]('a)
-      val B = dataset.col[B]('b)
+      val A = dataset.col[A](Symbol("a"))
+      val B = dataset.col[B](Symbol("b"))
 
       val received =
         dataset.cube(A).agg(sum(B)).collect().run().toVector.sortBy(_._2)
@@ -97,7 +97,7 @@ class CubeTests extends TypedDatasetSuite {
         data: List[X2[A, B]]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A]('a)
+      val A = dataset.col[A](Symbol("a"))
 
       val received = dataset
         .cube(A)
@@ -129,9 +129,9 @@ class CubeTests extends TypedDatasetSuite {
         summableC: CatalystSummable[C, OutC]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A]('a)
-      val B = dataset.col[B]('b)
-      val C = dataset.col[C]('c)
+      val A = dataset.col[A](Symbol("a"))
+      val B = dataset.col[B](Symbol("b"))
+      val C = dataset.col[C](Symbol("c"))
 
       val framelessSumBC = dataset
         .cube(A)
@@ -246,10 +246,10 @@ class CubeTests extends TypedDatasetSuite {
         summableD: CatalystSummable[D, OutD]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A]('a)
-      val B = dataset.col[B]('b)
-      val C = dataset.col[C]('c)
-      val D = dataset.col[D]('d)
+      val A = dataset.col[A](Symbol("a"))
+      val B = dataset.col[B](Symbol("b"))
+      val C = dataset.col[C](Symbol("c"))
+      val D = dataset.col[D](Symbol("d"))
 
       val framelessSumByAB = dataset
         .cube(A, B)
@@ -291,9 +291,9 @@ class CubeTests extends TypedDatasetSuite {
         summableC: CatalystSummable[C, OutC]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A]('a)
-      val B = dataset.col[B]('b)
-      val C = dataset.col[C]('c)
+      val A = dataset.col[A](Symbol("a"))
+      val B = dataset.col[B](Symbol("b"))
+      val C = dataset.col[C](Symbol("c"))
 
       val framelessSumC =
         dataset.cube(A, B).agg(sum(C)).collect().run().toVector.sortBy(_._2)
@@ -424,8 +424,8 @@ class CubeTests extends TypedDatasetSuite {
       ](data: List[X3[A, B, C]]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A]('a)
-      val B = dataset.col[B]('b)
+      val A = dataset.col[A](Symbol("a"))
+      val B = dataset.col[B](Symbol("b"))
 
       val framelessSumByAB = dataset
         .cube(A, B)
@@ -454,7 +454,7 @@ class CubeTests extends TypedDatasetSuite {
         data: Vector[X2[A, B]]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A]('a)
+      val A = dataset.col[A](Symbol("a"))
 
       val datasetGrouped = dataset
         .cube(A)
@@ -479,7 +479,7 @@ class CubeTests extends TypedDatasetSuite {
         data: Vector[X2[A, B]]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A]('a)
+      val A = dataset.col[A](Symbol("a"))
 
       val datasetGrouped = dataset
         .cube(A)
@@ -511,8 +511,8 @@ class CubeTests extends TypedDatasetSuite {
       ](data: Vector[X3[A, B, C]]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val cA = dataset.col[A]('a)
-      val cB = dataset.col[B]('b)
+      val cA = dataset.col[A](Symbol("a"))
+      val cB = dataset.col[B](Symbol("b"))
 
       val datasetGrouped = dataset
         .cube(cA, cB)
@@ -543,7 +543,7 @@ class CubeTests extends TypedDatasetSuite {
         summable: CatalystSummable[A, Out]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A]('a)
+      val A = dataset.col[A](Symbol("a"))
 
       val received = dataset
         .cubeMany(A)

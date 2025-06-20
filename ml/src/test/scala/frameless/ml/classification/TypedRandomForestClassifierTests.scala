@@ -30,7 +30,7 @@ class TypedRandomForestClassifierTests extends FramelessMlSuite with Matchers {
       val pDs =
         model.transform(ds).as[X5[Double, Vector, Vector, Vector, Double]]()
 
-      pDs.select(pDs.col('a), pDs.col('b)).collect().run() == Seq(x2.a -> x2.b)
+      pDs.select(pDs.col(Symbol("a")), pDs.col(Symbol("b"))).collect().run() == Seq(x2.a -> x2.b)
     }
 
     val prop2 = forAll { x2: X2[Vector, Double] =>
@@ -40,7 +40,7 @@ class TypedRandomForestClassifierTests extends FramelessMlSuite with Matchers {
       val pDs =
         model.transform(ds).as[X5[Vector, Double, Vector, Vector, Double]]()
 
-      pDs.select(pDs.col('a), pDs.col('b)).collect().run() == Seq(x2.a -> x2.b)
+      pDs.select(pDs.col(Symbol("a")), pDs.col(Symbol("b"))).collect().run() == Seq(x2.a -> x2.b)
     }
 
     def prop3[A: TypedEncoder: Arbitrary] =
@@ -53,7 +53,7 @@ class TypedRandomForestClassifierTests extends FramelessMlSuite with Matchers {
           .as[X6[Vector, Double, A, Vector, Vector, Double]]()
 
         pDs
-          .select(pDs.col('a), pDs.col('b), pDs.col('c))
+          .select(pDs.col(Symbol("a")), pDs.col(Symbol("b")), pDs.col(Symbol("c")))
           .collect()
           .run() == Seq((x3.a, x3.b, x3.c))
       }

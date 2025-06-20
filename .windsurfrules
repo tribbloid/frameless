@@ -1,6 +1,7 @@
 
 # Environment
-- This is a Scala 2.13 project
+- This is a Scala 2.13 project, with Scala 2 syntax
+- Code blocks are enclosed by brackets
 
 # Rules
 - build with `sbt "compile;Test/compile"` to figure out build errors

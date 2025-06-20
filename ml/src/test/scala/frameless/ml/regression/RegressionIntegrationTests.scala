@@ -51,7 +51,7 @@ class RegressionIntegrationTests extends FramelessMlSuite with Matchers {
       model.transform(testDataWithFeatures).as[PredictionResult]()
 
     val prediction = predictionDs
-      .select(predictionDs.col('predictedField3))
+      .select(predictionDs.col(Symbol("predictedField3")))
       .collect()
       .run()
       .toList

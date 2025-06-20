@@ -24,7 +24,7 @@ class TypedRandomForestRegressorTests extends FramelessMlSuite with Matchers {
       val model = rf.fit(ds).run()
       val pDs = model.transform(ds).as[X3[Double, Vector, Double]]()
 
-      pDs.select(pDs.col('a), pDs.col('b)).collect().run() == Seq(x2.a -> x2.b)
+      pDs.select(pDs.col(Symbol("a")), pDs.col(Symbol("b"))).collect().run() == Seq(x2.a -> x2.b)
     }
 
     val prop2 = forAll { x2: X2[Vector, Double] =>
@@ -33,7 +33,7 @@ class TypedRandomForestRegressorTests extends FramelessMlSuite with Matchers {
       val model = rf.fit(ds).run()
       val pDs = model.transform(ds).as[X3[Vector, Double, Double]]()
 
-      pDs.select(pDs.col('a), pDs.col('b)).collect().run() == Seq(x2.a -> x2.b)
+      pDs.select(pDs.col(Symbol("a")), pDs.col(Symbol("b"))).collect().run() == Seq(x2.a -> x2.b)
     }
 
     def prop3[A: TypedEncoder: Arbitrary] =
@@ -44,7 +44,7 @@ class TypedRandomForestRegressorTests extends FramelessMlSuite with Matchers {
         val pDs = model.transform(ds).as[X4[Vector, Double, A, Double]]()
 
         pDs
-          .select(pDs.col('a), pDs.col('b), pDs.col('c))
+          .select(pDs.col(Symbol("a")), pDs.col(Symbol("b")), pDs.col(Symbol("c")))
           .collect()
           .run() == Seq((x3.a, x3.b, x3.c))
       }

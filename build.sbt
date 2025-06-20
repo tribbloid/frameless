@@ -26,10 +26,13 @@ ThisBuild / scalafixOnCompile := true
 
 inThisBuild(
   List(
-    semanticdbEnabled := true
-    // semanticdbVersion := scalafixSemanticdb.revision
+    semanticdbEnabled := true,
+    semanticdbVersion := scalafixSemanticdb.revision
   )
 )
+
+ThisBuild / scalafixDependencies += "com.github.xuwei-k" %% "scalafix-rules" % "0.6.10"
+ThisBuild / scalafixDependencies += "org.scala-lang" %% "scala-rewrites" % "0.1.5"
 
 lazy val root = project
   .in(file("."))
