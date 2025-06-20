@@ -1,8 +1,8 @@
 package frameless
 package ops
 
+import formless.hlist.{ Mapped, Prepend, ToTraversable, Tupler }
 import org.apache.spark.sql.{ Column, Dataset, RelationalGroupedDataset }
-import shapeless.ops.hlist.{ Mapped, Prepend, ToTraversable, Tupler }
 import shapeless.{ ::, HList, HNil, ProductArgs }
 
 /**

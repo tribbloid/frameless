@@ -1,6 +1,6 @@
 package frameless
 
-import shapeless.ops.hlist.LiftAll
+import formless.hlist.LiftAll
 import shapeless.{ Generic, HList, Lazy }
 
 import java.time.{ Duration, Instant, Period }

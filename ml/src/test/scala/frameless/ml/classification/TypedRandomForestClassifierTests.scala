@@ -20,10 +20,7 @@ class TypedRandomForestClassifierTests extends FramelessMlSuite with Matchers {
     Arbitrary(
       Generators.arbVector.arbitrary suchThat (_.size > 0)
     ) // vector must not be empty for RandomForestClassifier
-  import Generators.arbTreesFeaturesSubsetStrategy
-
-  test("fit() returns a correct TypedTransformer") {
-    val prop = forAll { x2: X2[Double, Vector] =>
+>
       val rf = TypedRandomForestClassifier[X2[Double, Vector]]
       val ds = TypedDataset.create(Seq(x2))
       val model = rf.fit(ds).run()

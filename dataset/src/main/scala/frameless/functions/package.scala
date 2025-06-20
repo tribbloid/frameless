@@ -1,10 +1,10 @@
 package frameless
 
+import formless.hlist.IsHCons
 import org.apache.spark.sql.catalyst.expressions.Literal
 import org.apache.spark.sql.{ reflection => ScalaReflection }
 import shapeless._
 import shapeless.labelled.FieldType
-import shapeless.ops.hlist.IsHCons
 import shapeless.ops.record.{ Keys, Values }
 
 import scala.reflect.ClassTag

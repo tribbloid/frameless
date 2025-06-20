@@ -54,10 +54,7 @@ class TypedLinearRegressionTests extends FramelessMlSuite with Matchers {
   }
 
   test("param setting is retained") {
-    import Generators.{ arbLossStrategy, arbSolver }
-
-    val prop = forAll { (lossStrategy: LossStrategy, solver: Solver) =>
-      val lr = TypedLinearRegression[X2[Double, Vector]]
+ion[X2[Double, Vector]]
         .setAggregationDepth(10)
         .setEpsilon(4)
         .setFitIntercept(true)

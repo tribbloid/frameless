@@ -1,7 +1,7 @@
 package frameless
 package ops
 
-import shapeless.ops.hlist.ToTraversable
+import formless.hlist.ToTraversable
 import shapeless.ops.record.{ Keys, SelectAll, Values }
 import shapeless.{ HList, LabelledGeneric }
 

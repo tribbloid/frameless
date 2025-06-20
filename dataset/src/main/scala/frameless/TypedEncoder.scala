@@ -1,5 +1,6 @@
 package frameless
 
+import formless.hlist.IsHCons
 import org.apache.spark.sql.FramelessInternals.UserDefinedType
 import org.apache.spark.sql.catalyst.expressions._
 import org.apache.spark.sql.catalyst.expressions.objects._
@@ -12,7 +13,6 @@ import org.apache.spark.sql.types._
 import org.apache.spark.sql.{FramelessInternals, reflection => ScalaReflection}
 import org.apache.spark.unsafe.types.UTF8String
 import shapeless._
-import shapeless.ops.hlist.IsHCons
 
 import java.math.BigInteger
 import java.sql.Timestamp

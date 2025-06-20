@@ -1,7 +1,7 @@
 package frameless
 package ops
 
-import shapeless.ops.hlist.Prepend
+import formless.hlist.Prepend
 import shapeless.{ HList, Nat, Succ }
 
 /**
@@ -10,7 +10,7 @@ import shapeless.{ HList, Nat, Succ }
  * Repeat[Int :: String :: HNil, Nat._2].Out =:=
  * Int :: String :: Int :: String :: HNil
  *
- * By Jeremy Smith. To be replaced by `shapeless.ops.hlists.Repeat`
+ * By Jeremy Smith. To be replaced by `formless.hlist.Repeat`
  * once (https://github.com/milessabin/shapeless/pull/730 is published.
  */
 trait Repeat[L <: HList, N <: Nat] {

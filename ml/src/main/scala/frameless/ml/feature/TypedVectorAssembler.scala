@@ -2,9 +2,9 @@ package frameless
 package ml
 package feature
 
+import formless.hlist.ToTraversable
 import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.ml.linalg.Vector
-import shapeless.ops.hlist.ToTraversable
 import shapeless.ops.record.{ Keys, Values }
 import shapeless.{HList, HNil, LabelledGeneric, _}
 
