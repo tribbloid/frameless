@@ -2,11 +2,11 @@ package frameless
 package ml
 package internals
 
+import org.apache.spark.ml.linalg.Vector
 import shapeless.ops.hlist.Length
 import shapeless.{ HList, LabelledGeneric, Nat, Witness }
 
 import scala.annotation.implicitNotFound
-import org.apache.spark.ml.linalg.Vector
 
 /** Can be used whenever algorithm requires only vector */
 @implicitNotFound(

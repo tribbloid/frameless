@@ -1,7 +1,7 @@
+import org.scalacheck.{ Arbitrary, Gen }
+
 import java.time.format.DateTimeFormatter
 import java.time.{ LocalDateTime => JavaLocalDateTime }
-
-import org.scalacheck.{ Arbitrary, Gen }
 
 package object frameless {
 

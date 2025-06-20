@@ -1,7 +1,7 @@
 package frameless.refined
 
-import scala.reflect.ClassTag
-
+import eu.timepit.refined.api.RefType
+import frameless.{RecordFieldEncoder, TypedEncoder}
 import org.apache.spark.sql.catalyst.expressions._
 import org.apache.spark.sql.catalyst.expressions.objects.{
   Invoke,
@@ -11,9 +11,7 @@ import org.apache.spark.sql.catalyst.expressions.objects.{
 }
 import org.apache.spark.sql.types._
 
-import eu.timepit.refined.api.RefType
-
-import frameless.{ TypedEncoder, RecordFieldEncoder }
+import scala.reflect.ClassTag
 
 private[refined] trait RefinedFieldEncoders {
 

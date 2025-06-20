@@ -1,8 +1,8 @@
 package frameless
 
 import frameless.CollectTests.prop
-import org.scalacheck._
 import org.scalacheck.Prop._
+import org.scalacheck._
 import shapeless.test.illTyped
 
 sealed trait Country

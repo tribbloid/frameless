@@ -1,14 +1,13 @@
 package frameless
 
-import scala.reflect.ClassTag
-
+import org.apache.spark.sql.catalyst.expressions.Literal
+import org.apache.spark.sql.{ reflection => ScalaReflection }
 import shapeless._
 import shapeless.labelled.FieldType
 import shapeless.ops.hlist.IsHCons
 import shapeless.ops.record.{ Keys, Values }
 
-import org.apache.spark.sql.{ reflection => ScalaReflection }
-import org.apache.spark.sql.catalyst.expressions.Literal
+import scala.reflect.ClassTag
 
 package object functions extends Udf with UnaryFunctions {
 

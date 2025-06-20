@@ -1,9 +1,9 @@
 package frameless
 
-import java.util.UUID
-
 import org.scalacheck.Prop._
 import org.scalacheck.{ Arbitrary, Gen, Prop }
+
+import java.util.UUID
 
 class WriteTests extends TypedDatasetSuite {
 

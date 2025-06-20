@@ -1,9 +1,8 @@
 package frameless
 
 import frameless.functions.CatalystExplodableCollection
+import org.scalacheck.Prop.{forAll, _}
 import org.scalacheck.{ Arbitrary, Prop }
-import org.scalacheck.Prop.forAll
-import org.scalacheck.Prop._
 
 import scala.reflect.ClassTag
 

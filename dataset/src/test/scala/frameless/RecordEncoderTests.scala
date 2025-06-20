@@ -1,6 +1,5 @@
 package frameless
 
-import org.apache.spark.sql.{ Row, functions => F }
 import org.apache.spark.sql.types.{
   ArrayType,
   BinaryType,
@@ -13,11 +12,10 @@ import org.apache.spark.sql.types.{
   StructField,
   StructType
 }
-
-import shapeless.{ HList, LabelledGeneric }
-import shapeless.test.illTyped
-
+import org.apache.spark.sql.{ Row, functions => F }
 import org.scalatest.matchers.should.Matchers
+import shapeless.test.illTyped
+import shapeless.{ HList, LabelledGeneric }
 
 final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
   test("Unable to encode products made from units only") {

@@ -1,9 +1,10 @@
 package frameless
 
-import scala.annotation.implicitNotFound
-import shapeless.{ Generic, HList, Lazy }
 import shapeless.ops.hlist.LiftAll
+import shapeless.{ Generic, HList, Lazy }
+
 import java.time.{ Duration, Instant, Period }
+import scala.annotation.implicitNotFound
 
 /** Types that can be ordered/compared by Catalyst. */
 @implicitNotFound("Cannot compare columns of type ${A}.")

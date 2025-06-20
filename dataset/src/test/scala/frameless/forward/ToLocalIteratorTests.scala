@@ -2,8 +2,9 @@ package frameless
 
 import org.scalacheck.Prop
 import org.scalacheck.Prop._
-import scala.collection.JavaConverters._
 import org.scalatest.matchers.should.Matchers
+
+import scala.collection.JavaConverters._
 
 class ToLocalIteratorTests extends TypedDatasetSuite with Matchers {
   test("toLocalIterator") {

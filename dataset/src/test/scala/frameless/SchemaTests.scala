@@ -1,7 +1,7 @@
 package frameless
 
-import frameless.functions.aggregate._
 import frameless.functions._
+import frameless.functions.aggregate._
 import org.apache.spark.sql.types.StructType
 import org.scalacheck.Prop
 import org.scalacheck.Prop._

@@ -3,22 +3,18 @@ package cats
 
 import _root_.cats.Foldable
 import _root_.cats.syntax.all._
-
 import org.apache.spark.SparkContext
-import org.apache.spark.sql.SparkSession
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.SparkSession
 import org.apache.spark.{ SparkConf, SparkContext => SC }
-
-import org.scalatest.compatible.Assertion
 import org.scalactic.anyvals.PosInt
-import org.scalacheck.Arbitrary
+import org.scalatest.compatible.Assertion
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.propspec.AnyPropSpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import Arbitrary._
 
 import scala.collection.immutable.SortedMap
 import scala.reflect.ClassTag
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.propspec.AnyPropSpec
 
 trait SparkTests {
 

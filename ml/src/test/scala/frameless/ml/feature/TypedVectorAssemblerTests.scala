@@ -2,9 +2,9 @@ package frameless
 package ml
 package feature
 
+import org.apache.spark.ml.linalg._
 import org.scalacheck.Arbitrary
 import org.scalacheck.Prop._
-import org.apache.spark.ml.linalg._
 import shapeless.test.illTyped
 
 class TypedVectorAssemblerTests extends FramelessMlSuite {

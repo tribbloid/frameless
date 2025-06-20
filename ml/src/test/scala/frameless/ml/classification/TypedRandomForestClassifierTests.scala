@@ -2,12 +2,12 @@ package frameless
 package ml
 package classification
 
-import shapeless.test.illTyped
-import org.apache.spark.ml.linalg._
 import frameless.ml.params.trees.FeatureSubsetStrategy
-import org.scalacheck.{ Arbitrary, Gen }
+import org.apache.spark.ml.linalg._
 import org.scalacheck.Prop._
+import org.scalacheck.{ Arbitrary, Gen }
 import org.scalatest.matchers.must.Matchers
+import shapeless.test.illTyped
 
 class TypedRandomForestClassifierTests extends FramelessMlSuite with Matchers {
 

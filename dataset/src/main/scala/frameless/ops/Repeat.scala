@@ -1,8 +1,8 @@
 package frameless
 package ops
 
-import shapeless.{ HList, Nat, Succ }
 import shapeless.ops.hlist.Prepend
+import shapeless.{ HList, Nat, Succ }
 
 /**
  * Typeclass supporting repeating L-typed HLists N times.

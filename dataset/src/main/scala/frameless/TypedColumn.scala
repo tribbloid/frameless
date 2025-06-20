@@ -1,19 +1,16 @@
 package frameless
 
-import frameless.functions.{ litAggr, lit => flit }
+import frameless.functions.{lit => flit, litAggr}
 import frameless.syntax._
-
 import org.apache.spark.sql.catalyst.expressions._
 import org.apache.spark.sql.types.DecimalType
 import org.apache.spark.sql.{ Column, FramelessInternals }
-
 import shapeless._
 import shapeless.ops.record.Selector
 
 import scala.annotation.implicitNotFound
-import scala.reflect.ClassTag
-
 import scala.language.experimental.macros
+import scala.reflect.ClassTag
 
 sealed trait UntypedExpression[T] {
   def expr: Expression

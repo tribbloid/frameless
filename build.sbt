@@ -299,13 +299,16 @@ lazy val scalac213Options = {
     "-Xfuture",
     // type TraversableOnce in package scala is deprecated, symbol literal is deprecated; use Symbol("a") instead
     "-Xfatal-warnings",
-    "-Ypartial-unification",
+    "-Ypartial-unification"
     //
-    "-quickfix:any"
+    // "-quickfix:any" - removed to enable quickfix functionality
   )
 
   // https://github.com/scala/bug/issues/12072
-  val options = Seq("-Xlint:-byname-implicit")
+  val options = Seq(
+    "-Xlint:-byname-implicit",
+    "-quickfix:any"  // Enable automatic fixing of quickfixable warnings
+  )
   scalac212Options.filter(s => !exclusions.contains(s)) ++ options
 }
 

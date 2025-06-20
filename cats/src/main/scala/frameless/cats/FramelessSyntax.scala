@@ -2,8 +2,8 @@ package frameless
 package cats
 
 import _root_.cats.effect.Sync
-import _root_.cats.syntax.all._
 import _root_.cats.mtl.Ask
+import _root_.cats.syntax.all._
 import org.apache.spark.sql.SparkSession
 
 trait FramelessSyntax extends frameless.FramelessSyntax {

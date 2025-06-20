@@ -1,9 +1,8 @@
 package frameless
 
-import org.scalatest.matchers.should.Matchers
-
 import org.scalacheck.Prop
 import org.scalacheck.Prop._
+import org.scalatest.matchers.should.Matchers
 
 final class FilterTests extends TypedDatasetSuite with Matchers {
   test("filter('a == lit(b))") {

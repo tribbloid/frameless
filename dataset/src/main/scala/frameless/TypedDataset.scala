@@ -1,9 +1,16 @@
 package frameless
 
-import java.util
 import frameless.functions.CatalystExplodableCollection
 import frameless.ops._
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.catalyst.expressions.{
+  Attribute,
+  AttributeReference,
+  Literal
+}
+import org.apache.spark.sql.catalyst.plans.Inner
+import org.apache.spark.sql.catalyst.plans.logical.{ Join, JoinHint }
+import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{
   Column,
   DataFrame,
@@ -11,14 +18,6 @@ import org.apache.spark.sql.{
   FramelessInternals,
   SparkSession
 }
-import org.apache.spark.sql.catalyst.expressions.{
-  Attribute,
-  AttributeReference,
-  Literal
-}
-import org.apache.spark.sql.catalyst.plans.logical.{ Join, JoinHint }
-import org.apache.spark.sql.catalyst.plans.Inner
-import org.apache.spark.sql.types.StructType
 import shapeless._
 import shapeless.labelled.FieldType
 import shapeless.ops.hlist.{
@@ -31,6 +30,7 @@ import shapeless.ops.hlist.{
 }
 import shapeless.ops.record.{ Keys, Modifier, Remover, Values }
 
+import java.util
 import scala.language.experimental.macros
 
 /**

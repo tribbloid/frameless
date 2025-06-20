@@ -1,10 +1,6 @@
 package frameless
 package functions
 
-import java.io.File
-import java.util.Base64
-import java.nio.charset.StandardCharsets
-
 import frameless.functions.nonAggregate._
 import org.apache.commons.io.FileUtils
 import org.apache.spark.sql.{
@@ -16,6 +12,9 @@ import org.apache.spark.sql.{
 import org.scalacheck.Prop._
 import org.scalacheck.{ Arbitrary, Gen, Prop }
 
+import java.io.File
+import java.nio.charset.StandardCharsets
+import java.util.Base64
 import scala.annotation.nowarn
 
 class NonAggregateFunctionsTests extends TypedDatasetSuite {

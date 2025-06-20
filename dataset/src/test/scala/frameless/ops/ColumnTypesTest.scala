@@ -3,8 +3,7 @@ package ops
 
 import org.scalacheck.Prop
 import org.scalacheck.Prop.forAll
-import shapeless.HNil
-import shapeless.::
+import shapeless.{::, HNil}
 
 class ColumnTypesTest extends TypedDatasetSuite {
   test("test summoning") {

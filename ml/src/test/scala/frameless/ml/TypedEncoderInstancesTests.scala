@@ -1,12 +1,16 @@
 package frameless
 package ml
 
-import org.scalacheck.Prop._
-import org.apache.spark.ml.linalg._
+import frameless.ml.Generators._
+import org.apache.spark.ml.linalg.{Matrix, Vector}
 import org.apache.spark.ml.regression.DecisionTreeRegressor
-import Generators._
+import org.scalacheck.Prop._
+
 import scala.util.Random
 
+/**
+ * Tests for TypedEncoderInstances
+ */
 class TypedEncoderInstancesTests extends FramelessMlSuite {
 
   test("Vector encoding is injective using collect()") {

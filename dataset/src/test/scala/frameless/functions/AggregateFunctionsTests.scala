@@ -1,11 +1,11 @@
 package frameless
 package functions
 
-import frameless.{ TypedAggregate, TypedColumn }
 import frameless.functions.aggregate._
+import frameless.{ TypedAggregate, TypedColumn }
 import org.apache.spark.sql.{ Column, Encoder }
-import org.scalacheck.{ Gen, Prop }
 import org.scalacheck.Prop._
+import org.scalacheck.{ Gen, Prop }
 import org.scalatest.exceptions.GeneratorDrivenPropertyCheckFailedException
 
 class AggregateFunctionsTests extends TypedDatasetSuite {

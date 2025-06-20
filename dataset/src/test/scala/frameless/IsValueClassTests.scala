@@ -1,10 +1,9 @@
 package frameless
 
-import shapeless.Refute
-import shapeless.test.illTyped
-
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
+import shapeless.Refute
+import shapeless.test.illTyped
 
 final class IsValueClassTests extends AnyFunSuite with Matchers {
   test("Case class is not Value class") {

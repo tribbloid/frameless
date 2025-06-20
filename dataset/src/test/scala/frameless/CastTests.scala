@@ -1,7 +1,7 @@
 package frameless
 
-import org.scalacheck.{ Arbitrary, Gen, Prop }
 import org.scalacheck.Prop._
+import org.scalacheck.{ Arbitrary, Gen, Prop }
 
 class CastTests extends TypedDatasetSuite {
 

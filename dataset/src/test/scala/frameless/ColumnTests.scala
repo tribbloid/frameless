@@ -1,21 +1,18 @@
 package frameless
 
-import java.util.Date
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Prop._
+import org.scalacheck.{ Arbitrary, Gen, Prop }
+import org.scalatest.matchers.should.Matchers
+import shapeless.test.illTyped
+
 import java.math.BigInteger
-
-import java.time.{ Instant, LocalDate, Period, Duration }
-import java.time.temporal.ChronoUnit
-
 import java.sql.{ Date => SqlDate, Timestamp }
-
+import java.time.temporal.ChronoUnit
+import java.time.{Duration, Instant, LocalDate, Period}
+import java.util.Date
 import scala.math.Ordering.Implicits._
 import scala.util.Try
-
-import org.scalacheck.{ Arbitrary, Gen, Prop }, Arbitrary.arbitrary, Prop._
-
-import org.scalatest.matchers.should.Matchers
-
-import shapeless.test.illTyped
 
 final class ColumnTests extends TypedDatasetSuite with Matchers {
 

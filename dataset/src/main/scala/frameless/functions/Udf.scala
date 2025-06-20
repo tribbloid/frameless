@@ -2,13 +2,13 @@ package frameless
 package functions
 
 import org.apache.spark.sql.catalyst.InternalRow
+import org.apache.spark.sql.catalyst.expressions.codegen.Block._
+import org.apache.spark.sql.catalyst.expressions.codegen._
 import org.apache.spark.sql.catalyst.expressions.{
   Expression,
   LeafExpression,
   NonSQLExpression
 }
-import org.apache.spark.sql.catalyst.expressions.codegen._
-import Block._
 import org.apache.spark.sql.types.DataType
 import shapeless.syntax.std.tuple._
 

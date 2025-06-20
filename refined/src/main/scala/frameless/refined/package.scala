@@ -1,8 +1,8 @@
 package frameless
 
-import scala.reflect.ClassTag
-
 import eu.timepit.refined.api.{ RefType, Validate }
+
+import scala.reflect.ClassTag
 
 package object refined extends RefinedFieldEncoders {
 

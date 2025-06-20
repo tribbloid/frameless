@@ -1,8 +1,8 @@
 package frameless
 
 import org.apache.spark.sql.Encoder
-import org.scalacheck.{ Arbitrary, Gen, Prop }
 import org.scalacheck.Prop._
+import org.scalacheck.{ Arbitrary, Gen, Prop }
 import org.scalatest.matchers.should.Matchers
 
 import scala.reflect.ClassTag

@@ -1,8 +1,8 @@
 package frameless
 
-import scala.collection.immutable.Set
-
 import org.scalatest.matchers.should.Matchers
+
+import scala.collection.immutable.Set
 
 object EncoderTests {
   case class Foo(s: Seq[(Int, Int)])

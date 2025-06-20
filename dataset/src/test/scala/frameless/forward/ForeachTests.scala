@@ -2,7 +2,6 @@ package frameless
 package forward
 
 import org.apache.spark.util.CollectionAccumulator
-
 import org.scalacheck.Prop
 import org.scalacheck.Prop._
 

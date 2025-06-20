@@ -1,7 +1,6 @@
 package frameless
 
 import org.apache.spark.sql.FramelessInternals
-
 import org.apache.spark.sql.catalyst.expressions._
 import org.apache.spark.sql.catalyst.expressions.objects.{
   Invoke,
@@ -10,7 +9,6 @@ import org.apache.spark.sql.catalyst.expressions.objects.{
   WrapOption
 }
 import org.apache.spark.sql.types._
-
 import shapeless._
 import shapeless.labelled.FieldType
 import shapeless.ops.hlist.IsHCons

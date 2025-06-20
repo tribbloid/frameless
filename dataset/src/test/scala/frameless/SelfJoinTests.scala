@@ -1,8 +1,8 @@
 package frameless
 
+import org.apache.spark.sql.{ SparkSession, functions => sparkFunctions }
 import org.scalacheck.Prop
 import org.scalacheck.Prop._
-import org.apache.spark.sql.{ SparkSession, functions => sparkFunctions }
 
 class SelfJoinTests extends TypedDatasetSuite {
 

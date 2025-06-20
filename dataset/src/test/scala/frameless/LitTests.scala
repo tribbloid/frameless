@@ -1,12 +1,10 @@
 package frameless
 
+import frameless.RecordEncoderTests.Name
 import frameless.functions.lit
-
+import org.scalacheck.Prop
+import org.scalacheck.Prop._
 import org.scalatest.matchers.should.Matchers
-
-import org.scalacheck.Prop, Prop._
-
-import RecordEncoderTests.Name
 
 class LitTests extends TypedDatasetSuite with Matchers {
 

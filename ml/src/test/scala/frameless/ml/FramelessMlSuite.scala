@@ -3,8 +3,8 @@ package ml
 
 import org.scalactic.anyvals.PosZInt
 import org.scalatest.BeforeAndAfterAll
-import org.scalatestplus.scalacheck.Checkers
 import org.scalatest.funsuite.AnyFunSuite
+import org.scalatestplus.scalacheck.Checkers
 
 class FramelessMlSuite
     extends AnyFunSuite

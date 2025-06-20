@@ -1,10 +1,10 @@
 package frameless
 package functions
 
+import frameless.syntax._
 import org.apache.spark.sql.FramelessInternals.expr
 import org.apache.spark.sql.catalyst.expressions._
 import org.apache.spark.sql.{ functions => sparkFunctions }
-import frameless.syntax._
 
 import scala.annotation.nowarn
 

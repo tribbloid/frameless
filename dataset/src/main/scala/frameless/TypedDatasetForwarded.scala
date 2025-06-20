@@ -1,7 +1,5 @@
 package frameless
 
-import java.util
-
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.execution.QueryExecution
 import org.apache.spark.sql.streaming.DataStreamWriter
@@ -14,6 +12,7 @@ import org.apache.spark.sql.{
 }
 import org.apache.spark.storage.StorageLevel
 
+import java.util
 import scala.util.Random
 
 /**

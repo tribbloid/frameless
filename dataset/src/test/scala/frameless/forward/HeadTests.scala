@@ -10,9 +10,9 @@ import frameless.{
 import org.apache.spark.sql.SparkSession
 import org.scalacheck.Prop
 import org.scalacheck.Prop._
+import org.scalatest.matchers.should.Matchers
 
 import scala.reflect.ClassTag
-import org.scalatest.matchers.should.Matchers
 
 class HeadTests extends TypedDatasetSuite with Matchers {
 

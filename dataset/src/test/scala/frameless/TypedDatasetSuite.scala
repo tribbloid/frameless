@@ -2,16 +2,16 @@ package frameless
 
 import com.globalmentor.apache.hadoop.fs.BareLocalFileSystem
 import org.apache.hadoop.fs.local.StreamingFS
-import org.apache.spark.{ SparkConf, SparkContext }
 import org.apache.spark.sql.{ SQLContext, SparkSession }
-import org.scalactic.anyvals.PosZInt
-import org.scalatest.BeforeAndAfterAll
-import org.scalatestplus.scalacheck.Checkers
+import org.apache.spark.{ SparkConf, SparkContext }
 import org.scalacheck.Prop
 import org.scalacheck.Prop._
+import org.scalactic.anyvals.PosZInt
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatestplus.scalacheck.Checkers
 
 import scala.util.{ Properties, Try }
-import org.scalatest.funsuite.AnyFunSuite
 
 trait SparkTesting { self: BeforeAndAfterAll =>
 

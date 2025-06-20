@@ -3,8 +3,8 @@ package ml
 
 import frameless.ops.SmartProject
 import org.apache.spark.ml.Transformer
-import shapeless.{ Generic, HList }
 import shapeless.ops.hlist.{ Prepend, Tupler }
+import shapeless.{ Generic, HList }
 
 /**
  * A TypedTransformer transforms one TypedDataset into another.

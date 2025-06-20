@@ -8,7 +8,6 @@ import org.apache.spark.sql.types.{
   StructField,
   StructType
 }
-
 import org.scalatest.matchers.should.Matchers
 
 class RefinedFieldEncoderTests extends TypedDatasetSuite with Matchers {

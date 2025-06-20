@@ -3,10 +3,10 @@ package frameless.sql.rules
 import frameless._
 import frameless.sql._
 import org.apache.spark.sql.catalyst.expressions.Expression
-import org.apache.spark.sql.sources.Filter
 import org.apache.spark.sql.catalyst.plans.logical
 import org.apache.spark.sql.execution.FileSourceScanExec
 import org.apache.spark.sql.execution.adaptive.AdaptiveSparkPlanExec
+import org.apache.spark.sql.sources.Filter
 import org.scalatest.Assertion
 import org.scalatest.matchers.should.Matchers
 

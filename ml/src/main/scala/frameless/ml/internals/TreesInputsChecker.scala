@@ -2,9 +2,9 @@ package frameless
 package ml
 package internals
 
+import org.apache.spark.ml.linalg._
 import shapeless.ops.hlist.Length
 import shapeless.{ HList, LabelledGeneric, Nat, Witness }
-import org.apache.spark.ml.linalg._
 
 import scala.annotation.implicitNotFound
 

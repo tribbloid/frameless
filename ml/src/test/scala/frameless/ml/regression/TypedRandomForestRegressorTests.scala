@@ -3,11 +3,11 @@ package ml
 package regression
 
 import frameless.ml.params.trees.FeatureSubsetStrategy
-import shapeless.test.illTyped
 import org.apache.spark.ml.linalg._
 import org.scalacheck.Arbitrary
 import org.scalacheck.Prop._
 import org.scalatest.matchers.must.Matchers
+import shapeless.test.illTyped
 
 class TypedRandomForestRegressorTests extends FramelessMlSuite with Matchers {
 

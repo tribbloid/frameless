@@ -5,10 +5,10 @@ import _root_.cats.data.ReaderT
 import _root_.cats.effect.IO
 import _root_.cats.effect.unsafe.implicits.global
 import org.apache.spark.sql.SparkSession
+import org.scalacheck.Prop._
+import org.scalacheck.effect.PropF.forAllF
+import org.scalacheck.{Prop, Test => PTest}
 import org.scalatest.matchers.should.Matchers
-import org.scalacheck.{ Test => PTest }
-import org.scalacheck.Prop, Prop._
-import org.scalacheck.effect.PropF, PropF._
 
 class FramelessSyntaxTests extends TypedDatasetSuite with Matchers {
   override val sparkDelay = null

@@ -1,10 +1,10 @@
 package frameless
 
+import org.apache.spark.sql.Column
 import org.scalacheck.Prop
 import org.scalacheck.Prop._
-import shapeless.test.illTyped
-import org.apache.spark.sql.Column
 import org.scalatest.matchers.should.Matchers
+import shapeless.test.illTyped
 
 class OrderByTests extends TypedDatasetSuite with Matchers {
 
