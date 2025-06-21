@@ -10,13 +10,16 @@ import org.apache.spark.sql.catalyst.util.{
   GenericArrayData
 }
 import org.apache.spark.sql.types._
-import org.apache.spark.sql.{FramelessInternals, reflection => ScalaReflection}
+import org.apache.spark.sql.{
+  FramelessInternals,
+  reflection => ScalaReflection
+}
 import org.apache.spark.unsafe.types.UTF8String
 import shapeless._
 
 import java.math.BigInteger
 import java.sql.Timestamp
-import java.time.{Duration, Instant, LocalDate, Period}
+import java.time.{ Duration, Instant, LocalDate, Period }
 import java.util.Date
 import scala.reflect.ClassTag
 

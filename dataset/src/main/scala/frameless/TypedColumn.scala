@@ -1,6 +1,6 @@
 package frameless
 
-import frameless.functions.{lit => flit, litAggr}
+import frameless.functions.{ lit => flit, litAggr }
 import frameless.syntax._
 import org.apache.spark.sql.catalyst.expressions._
 import org.apache.spark.sql.types.DecimalType
@@ -1281,10 +1281,16 @@ object SortedTypedColumn {
 
   object defaultAscendingPoly extends Poly1 {
 
-    implicit def caseTypedColumn[T, U: CatalystOrdered]: Case.Aux[TypedColumn[T,U],SortedTypedColumn[T,U]] =
+    implicit def caseTypedColumn[
+        T,
+        U: CatalystOrdered
+      ]: Case.Aux[TypedColumn[T, U], SortedTypedColumn[T, U]] =
       at[TypedColumn[T, U]](c => defaultAscending(c))
 
-    implicit def caseTypeSortedColumn[T, U]: Case.Aux[SortedTypedColumn[T,U],SortedTypedColumn[T,U]] =
+    implicit def caseTypeSortedColumn[
+        T,
+        U
+      ]: Case.Aux[SortedTypedColumn[T, U], SortedTypedColumn[T, U]] =
       at[SortedTypedColumn[T, U]](identity)
   }
 }

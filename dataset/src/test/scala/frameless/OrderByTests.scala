@@ -54,7 +54,12 @@ class OrderByTests extends TypedDatasetSuite with Matchers {
             .sortWithinPartitions(untyp(ds.dataset.col("a")))
             .collect()
             .toVector
-            .?=(ds.sortWithinPartitions(typ(ds(Symbol("a")))).collect().run().toVector)
+            .?=(
+              ds.sortWithinPartitions(typ(ds(Symbol("a"))))
+                .collect()
+                .run()
+                .toVector
+            )
       }.reduce(_ && _)
     }
 
@@ -88,7 +93,10 @@ class OrderByTests extends TypedDatasetSuite with Matchers {
               .toVector
             vanillaSpark
               .?=(
-                ds.orderBy(typA(ds(Symbol("a"))), typB(ds(Symbol("b")))).collect().run().toVector
+                ds.orderBy(typA(ds(Symbol("a"))), typB(ds(Symbol("b"))))
+                  .collect()
+                  .run()
+                  .toVector
               )
               .&&(
                 vanillaSpark ?= ds
@@ -127,14 +135,19 @@ class OrderByTests extends TypedDatasetSuite with Matchers {
               .toVector
             vanillaSpark
               .?=(
-                ds.sortWithinPartitions(typA(ds(Symbol("a"))), typB(ds(Symbol("b"))))
-                  .collect()
+                ds.sortWithinPartitions(
+                  typA(ds(Symbol("a"))),
+                  typB(ds(Symbol("b")))
+                ).collect()
                   .run()
                   .toVector
               )
               .&&(
                 vanillaSpark ?= ds
-                  .sortWithinPartitionsMany(typA(ds(Symbol("a"))), typB(ds(Symbol("b"))))
+                  .sortWithinPartitionsMany(
+                    typA(ds(Symbol("a"))),
+                    typB(ds(Symbol("b")))
+                  )
                   .collect()
                   .run()
                   .toVector
@@ -172,14 +185,21 @@ class OrderByTests extends TypedDatasetSuite with Matchers {
 
             vanillaSpark
               .?=(
-                ds.orderBy(typA(ds(Symbol("a"))), typB(ds(Symbol("b"))), typA2(ds(Symbol("c"))))
-                  .collect()
+                ds.orderBy(
+                  typA(ds(Symbol("a"))),
+                  typB(ds(Symbol("b"))),
+                  typA2(ds(Symbol("c")))
+                ).collect()
                   .run()
                   .toVector
               )
               .&&(
                 vanillaSpark ?= ds
-                  .orderByMany(typA(ds(Symbol("a"))), typB(ds(Symbol("b"))), typA2(ds(Symbol("c"))))
+                  .orderByMany(
+                    typA(ds(Symbol("a"))),
+                    typB(ds(Symbol("b"))),
+                    typA2(ds(Symbol("c")))
+                  )
                   .collect()
                   .run()
                   .toVector
@@ -257,7 +277,12 @@ class OrderByTests extends TypedDatasetSuite with Matchers {
         .orderBy(ds.dataset.col("a"), ds.dataset.col("b").desc)
         .collect()
         .toVector
-        .?=(ds.orderByMany(ds(Symbol("a")), ds(Symbol("b")).desc).collect().run().toVector) &&
+        .?=(
+          ds.orderByMany(ds(Symbol("a")), ds(Symbol("b")).desc)
+            .collect()
+            .run()
+            .toVector
+        ) &&
       ds.dataset
         .sortWithinPartitions(ds.dataset.col("a"), ds.dataset.col("b").desc)
         .collect()
@@ -297,7 +322,8 @@ class OrderByTests extends TypedDatasetSuite with Matchers {
         case (typX2, untypX2) =>
           val vanilla =
             ds.dataset.orderBy(untypX2(ds.dataset.col("c"))).collect().toVector
-          val frameless = ds.orderBy(typX2(ds(Symbol("c")))).collect().run().toVector
+          val frameless =
+            ds.orderBy(typX2(ds(Symbol("c")))).collect().run().toVector
           vanilla ?= frameless
       }.reduce(_ && _)
     }
@@ -323,7 +349,8 @@ class OrderByTests extends TypedDatasetSuite with Matchers {
         case (typX2, untypX2) =>
           val vanilla =
             ds.dataset.orderBy(untypX2(ds.dataset.col("b"))).collect().toVector
-          val frameless = ds.orderBy(typX2(ds(Symbol("b")))).collect().run().toVector
+          val frameless =
+            ds.orderBy(typX2(ds(Symbol("b")))).collect().run().toVector
           vanilla ?= frameless
       }.reduce(_ && _)
     }

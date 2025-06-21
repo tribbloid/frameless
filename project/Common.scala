@@ -8,7 +8,7 @@ object Common extends AutoPlugin {
   override def trigger = allRequirements
   override def requires = JvmPlugin
 
-    override def projectSettings = Seq(
+  override def projectSettings = Seq(
     scalafmtFilter := "diff-ref=78f708d",
     allowUnsafeScalaLibUpgrade := true,
     scalacOptions ++= {

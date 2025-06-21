@@ -12,7 +12,8 @@ class NumericTests extends TypedDatasetSuite with Matchers {
     def prop[A: TypedEncoder: CatalystNumeric: Numeric](a: A, b: A): Prop = {
       val df = TypedDataset.create(X2(a, b) :: Nil)
       val result = implicitly[Numeric[A]].plus(a, b)
-      val got = df.select(df.col(Symbol("a")) + df.col(Symbol("b"))).collect().run()
+      val got =
+        df.select(df.col(Symbol("a")) + df.col(Symbol("b"))).collect().run()
 
       got ?= (result :: Nil)
     }
@@ -29,7 +30,8 @@ class NumericTests extends TypedDatasetSuite with Matchers {
     def prop[A: TypedEncoder: CatalystNumeric: Numeric](a: A, b: A): Prop = {
       val df = TypedDataset.create(X2(a, b) :: Nil)
       val result = implicitly[Numeric[A]].minus(a, b)
-      val got = df.select(df.col(Symbol("a")) - df.col(Symbol("b"))).collect().run()
+      val got =
+        df.select(df.col(Symbol("a")) - df.col(Symbol("b"))).collect().run()
 
       got ?= (result :: Nil)
     }
@@ -49,7 +51,8 @@ class NumericTests extends TypedDatasetSuite with Matchers {
       ): Prop = {
       val df = TypedDataset.create(X2(a, b) :: Nil)
       val result = implicitly[Numeric[A]].times(a, b)
-      val got = df.select(df.col(Symbol("a")) * df.col(Symbol("b"))).collect().run()
+      val got =
+        df.select(df.col(Symbol("a")) * df.col(Symbol("b"))).collect().run()
 
       got ?= (result :: Nil)
     }
@@ -95,7 +98,8 @@ class NumericTests extends TypedDatasetSuite with Matchers {
         // Spark performs something in between Double division and BigDecimal division,
         // we approximate it using double vision and `approximatelyEqual`:
         val div = BigDecimal(a.doubleValue / b.doubleValue)
-        val got = df.select(df.col(Symbol("a")) / df.col(Symbol("b"))).collect().run()
+        val got =
+          df.select(df.col(Symbol("a")) / df.col(Symbol("b"))).collect().run()
         approximatelyEqual(got.head, div)
       }
     }
@@ -107,7 +111,8 @@ class NumericTests extends TypedDatasetSuite with Matchers {
     def prop(a: BigDecimal, b: BigDecimal): Prop = {
       val df = TypedDataset.create(X2(a, b) :: Nil)
       val result = BigDecimal(a.doubleValue * b.doubleValue)
-      val got = df.select(df.col(Symbol("a")) * df.col(Symbol("b"))).collect().run()
+      val got =
+        df.select(df.col(Symbol("a")) * df.col(Symbol("b"))).collect().run()
       approximatelyEqual(got.head, result)
     }
 
@@ -144,9 +149,10 @@ class NumericTests extends TypedDatasetSuite with Matchers {
       def mod(a: Short, b: Short) = (a % b).toShort
     }
 
-    implicit val bigDecimalInstance: NumericMod[BigDecimal] = new NumericMod[BigDecimal] {
-      def mod(a: BigDecimal, b: BigDecimal) = a % b
-    }
+    implicit val bigDecimalInstance: NumericMod[BigDecimal] =
+      new NumericMod[BigDecimal] {
+        def mod(a: BigDecimal, b: BigDecimal) = a % b
+      }
   }
 
   test("mod") {
@@ -157,7 +163,8 @@ class NumericTests extends TypedDatasetSuite with Matchers {
       if (b == 0) proved
       else {
         val mod: A = implicitly[NumericMod[A]].mod(a, b)
-        val got: Seq[A] = df.select(df.col(Symbol("a")) % df.col(Symbol("b"))).collect().run()
+        val got: Seq[A] =
+          df.select(df.col(Symbol("a")) % df.col(Symbol("b"))).collect().run()
 
         got ?= (mod :: Nil)
       }

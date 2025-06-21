@@ -31,7 +31,10 @@ class BisectingKMeansTests extends FramelessMlSuite with Matchers {
       val model = km.fit(ds).run()
       val pDs = model.transform(ds).as[X3[Vector, A, Int]]()
 
-      pDs.select(pDs.col(Symbol("a")), pDs.col(Symbol("b"))).collect().run() == Seq((x2.a, x2.b))
+      pDs
+        .select(pDs.col(Symbol("a")), pDs.col(Symbol("b")))
+        .collect()
+        .run() == Seq((x2.a, x2.b))
     }
 
     check(prop)

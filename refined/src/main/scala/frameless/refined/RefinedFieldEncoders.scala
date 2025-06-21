@@ -1,7 +1,7 @@
 package frameless.refined
 
 import eu.timepit.refined.api.RefType
-import frameless.{RecordFieldEncoder, TypedEncoder}
+import frameless.{ RecordFieldEncoder, TypedEncoder }
 import org.apache.spark.sql.catalyst.expressions._
 import org.apache.spark.sql.catalyst.expressions.objects.{
   Invoke,

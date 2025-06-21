@@ -12,7 +12,7 @@ object As extends LowPriorityAs {
 
   final class Equiv[A, B] private[ops] ()
 
-  implicit def equivIdentity[A]: Equiv[A,A] = new Equiv[A, A]
+  implicit def equivIdentity[A]: Equiv[A, A] = new Equiv[A, A]
 
   implicit def deriveAs[A, B](
       implicit

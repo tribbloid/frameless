@@ -39,7 +39,7 @@ class AggregateFunctionsTests extends TypedDatasetSuite {
 
       datasetSum match {
         case x :: Nil => approximatelyEqual(summer.sum(xs), x)
-        case _    => falsified
+        case _        => falsified
       }
     }
 
@@ -81,7 +81,7 @@ class AggregateFunctionsTests extends TypedDatasetSuite {
 
       datasetSum match {
         case x :: Nil => approximatelyEqual(summer.sum(xs), x)
-        case _    => falsified
+        case _        => falsified
       }
     }
 
@@ -343,7 +343,11 @@ class AggregateFunctionsTests extends TypedDatasetSuite {
       forAll(getLowCardinalityKVPairs) { xs: Vector[(Int, Int)] =>
         val tds = TypedDataset.create(xs)
         val tdsRes: Seq[(Int, Long)] =
-          tds.groupBy(tds(Symbol("_1"))).agg(countDistinct(tds(Symbol("_2")))).collect().run()
+          tds
+            .groupBy(tds(Symbol("_1")))
+            .agg(countDistinct(tds(Symbol("_2"))))
+            .collect()
+            .run()
         tdsRes.toMap ?= xs
           .groupBy(_._1)
           .mapValues(_.map(_._2).distinct.size.toLong)
@@ -371,7 +375,10 @@ class AggregateFunctionsTests extends TypedDatasetSuite {
         val tdsRes: Seq[(Int, Long, Long)] =
           tds
             .groupBy(tds(Symbol("_1")))
-            .agg(countDistinct(tds(Symbol("_2"))), approxCountDistinct(tds(Symbol("_2"))))
+            .agg(
+              countDistinct(tds(Symbol("_2"))),
+              approxCountDistinct(tds(Symbol("_2")))
+            )
             .collect()
             .run()
         tdsRes.forall { case (_, v1, v2) => approxEqual(v1, v2) }
@@ -400,7 +407,11 @@ class AggregateFunctionsTests extends TypedDatasetSuite {
     def prop[A: TypedEncoder: Ordering](xs: List[X2[A, A]]): Prop = {
       val tds = TypedDataset.create(xs)
       val tdsRes: Seq[(A, Vector[A])] =
-        tds.groupBy(tds(Symbol("a"))).agg(collectList(tds(Symbol("b")))).collect().run()
+        tds
+          .groupBy(tds(Symbol("a")))
+          .agg(collectList(tds(Symbol("b"))))
+          .collect()
+          .run()
 
       tdsRes.toMap.map { case (k, v) => k -> v.sorted } ?= xs.groupBy(_.a).map {
         case (k, v) => k -> v.map(_.b).toVector.sorted
@@ -417,7 +428,11 @@ class AggregateFunctionsTests extends TypedDatasetSuite {
     def prop[A: TypedEncoder: Ordering](xs: List[X2[A, A]]): Prop = {
       val tds = TypedDataset.create(xs)
       val tdsRes: Seq[(A, Vector[A])] =
-        tds.groupBy(tds(Symbol("a"))).agg(collectSet(tds(Symbol("b")))).collect().run()
+        tds
+          .groupBy(tds(Symbol("a")))
+          .agg(collectSet(tds(Symbol("b"))))
+          .collect()
+          .run()
 
       tdsRes.toMap.map { case (k, v) => k -> v.toSet } ?= xs.groupBy(_.a).map {
         case (k, v) => k -> v.map(_.b).toSet
@@ -433,7 +448,9 @@ class AggregateFunctionsTests extends TypedDatasetSuite {
   test("lit") {
     def prop[A: TypedEncoder](xs: List[X1[A]], l: A): Prop = {
       val tds = TypedDataset.create(xs)
-      tds.select(tds(Symbol("a")), lit(l)).collect().run() ?= xs.map(x => (x.a, l))
+      tds.select(tds(Symbol("a")), lit(l)).collect().run() ?= xs.map(x =>
+        (x.a, l)
+      )
     }
 
     check(forAll(prop[Long] _))

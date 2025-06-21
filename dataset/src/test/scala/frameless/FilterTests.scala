@@ -92,7 +92,10 @@ final class FilterTests extends TypedDatasetSuite with Matchers {
     check(forAll { (data: Vector[X1[Int]]) =>
       val ds = TypedDataset.create(data)
       val res =
-        ds.filter((ds(Symbol("a")) + 1) === (ds(Symbol("a")) + 1)).collect().run().toVector
+        ds.filter((ds(Symbol("a")) + 1) === (ds(Symbol("a")) + 1))
+          .collect()
+          .run()
+          .toVector
       res ?= data
     })
   }
@@ -110,10 +113,18 @@ final class FilterTests extends TypedDatasetSuite with Matchers {
     val tds: TypedDataset[X1[Int]] = TypedDataset.create(t)
 
     assert(
-      tds.filter(tds(Symbol("a")) * 2 === 2).collect().run().toVector === Vector(X1(1))
+      tds
+        .filter(tds(Symbol("a")) * 2 === 2)
+        .collect()
+        .run()
+        .toVector === Vector(X1(1))
     )
     assert(
-      tds.filter(tds(Symbol("a")) * 3 === 3).collect().run().toVector === Vector(X1(1))
+      tds
+        .filter(tds(Symbol("a")) * 3 === 3)
+        .collect()
+        .run()
+        .toVector === Vector(X1(1))
     )
   }
 
@@ -224,7 +235,8 @@ final class FilterTests extends TypedDatasetSuite with Matchers {
         a: CatalystIsin[A]
       ): Prop = {
       val ds = TypedDataset.create(data)
-      val res = ds.filter(ds(Symbol("a")).isin(values: _*)).collect().run().toVector
+      val res =
+        ds.filter(ds(Symbol("a")).isin(values: _*)).collect().run().toVector
       res ?= data.filter(d => values.contains(d.a))
     }
 

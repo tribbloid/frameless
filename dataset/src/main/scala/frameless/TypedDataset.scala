@@ -1,13 +1,6 @@
 package frameless
 
-import formless.hlist.{
-  Diff,
-  IsHCons,
-  Mapper,
-  Prepend,
-  ToTraversable,
-  Tupler
-}
+import formless.hlist.{ Diff, IsHCons, Mapper, Prepend, ToTraversable, Tupler }
 import frameless.functions.CatalystExplodableCollection
 import frameless.ops._
 import org.apache.spark.rdd.RDD

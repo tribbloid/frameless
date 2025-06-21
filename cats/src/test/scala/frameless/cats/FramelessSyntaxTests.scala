@@ -7,7 +7,7 @@ import _root_.cats.effect.unsafe.implicits.global
 import org.apache.spark.sql.SparkSession
 import org.scalacheck.Prop._
 import org.scalacheck.effect.PropF.forAllF
-import org.scalacheck.{Prop, Test => PTest}
+import org.scalacheck.{ Prop, Test => PTest }
 import org.scalatest.matchers.should.Matchers
 
 class FramelessSyntaxTests extends TypedDatasetSuite with Matchers {

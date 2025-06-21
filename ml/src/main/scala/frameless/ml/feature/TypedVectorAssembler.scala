@@ -6,7 +6,7 @@ import formless.hlist.ToTraversable
 import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.ml.linalg.Vector
 import shapeless.ops.record.{ Keys, Values }
-import shapeless.{HList, HNil, LabelledGeneric, _}
+import shapeless.{ HList, HNil, LabelledGeneric, _ }
 
 import scala.annotation.implicitNotFound
 

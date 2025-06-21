@@ -307,7 +307,7 @@ lazy val scalac213Options = {
   // https://github.com/scala/bug/issues/12072
   val options = Seq(
     "-Xlint:-byname-implicit",
-    "-quickfix:any"  // Enable automatic fixing of quickfixable warnings
+    "-quickfix:any" // Enable automatic fixing of quickfixable warnings
   )
   scalac212Options.filter(s => !exclusions.contains(s)) ++ options
 }

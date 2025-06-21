@@ -3,7 +3,7 @@ package ops
 
 import org.scalacheck.Prop
 import org.scalacheck.Prop.forAll
-import shapeless.{::, HNil}
+import shapeless.{ ::, HNil }
 
 class ColumnTypesTest extends TypedDatasetSuite {
   test("test summoning") {
@@ -15,7 +15,9 @@ class ColumnTypesTest extends TypedDatasetSuite {
       ](data: Vector[X4[A, B, C, D]]
       ): Prop = {
       val d: TypedDataset[X4[A, B, C, D]] = TypedDataset.create(data)
-      val hlist = d(Symbol("a")) :: d(Symbol("b")) :: d(Symbol("c")) :: d(Symbol("d")) :: HNil
+      val hlist = d(Symbol("a")) :: d(Symbol("b")) :: d(Symbol("c")) :: d(
+        Symbol("d")
+      ) :: HNil
 
       type TC[N] = TypedColumn[X4[A, B, C, D], N]
 

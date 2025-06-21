@@ -1,7 +1,7 @@
 package frameless
 
 import frameless.functions.CatalystExplodableCollection
-import org.scalacheck.Prop.{forAll, _}
+import org.scalacheck.Prop.{ forAll, _ }
 import org.scalacheck.{ Arbitrary, Prop }
 
 import scala.reflect.ClassTag
@@ -60,7 +60,8 @@ class ExplodeTests extends TypedDatasetSuite {
       ): Prop = {
       val tds = TypedDataset.create(xs)
 
-      val framelessResults = tds.explodeMap(Symbol("a")).collect().run().toVector
+      val framelessResults =
+        tds.explodeMap(Symbol("a")).collect().run().toVector
       val scalaResults =
         xs.flatMap(_.a.toList).map(t => Tuple1(Tuple2(t._1, t._2))).toVector
 
@@ -81,7 +82,8 @@ class ExplodeTests extends TypedDatasetSuite {
       ): Prop = {
       val tds = TypedDataset.create(xs)
 
-      val framelessResults = tds.explodeMap(Symbol("b")).collect().run().toVector
+      val framelessResults =
+        tds.explodeMap(Symbol("b")).collect().run().toVector
       val scalaResults = xs.flatMap { x2 =>
         x2.b.toList.map((x2.a, _))
       }.toVector
@@ -104,7 +106,8 @@ class ExplodeTests extends TypedDatasetSuite {
       ): Prop = {
       val tds = TypedDataset.create(xs)
 
-      val framelessResults = tds.explodeMap(Symbol("c")).collect().run().toVector
+      val framelessResults =
+        tds.explodeMap(Symbol("c")).collect().run().toVector
       val scalaResults = xs.flatMap { x3 =>
         x3.c.toList.map((x3.key, x3.value, _))
       }.toVector

@@ -2,10 +2,16 @@ package org.apache.spark.sql
 
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.expressions.codegen._
-import org.apache.spark.sql.catalyst.expressions.{Alias, CreateStruct, Expression, NamedExpression, _}
+import org.apache.spark.sql.catalyst.expressions.{
+  Alias,
+  CreateStruct,
+  Expression,
+  NamedExpression,
+  _
+}
 import org.apache.spark.sql.catalyst.plans.logical.{ LogicalPlan, Project }
 import org.apache.spark.sql.execution.QueryExecution
-import org.apache.spark.sql.types.{ObjectType, _}
+import org.apache.spark.sql.types.{ ObjectType, _ }
 
 import scala.reflect.ClassTag
 

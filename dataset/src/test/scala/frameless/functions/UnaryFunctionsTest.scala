@@ -18,7 +18,8 @@ class UnaryFunctionsTest extends TypedDatasetSuite {
       ): Prop = {
       val tds = TypedDataset.create(xs)
 
-      val framelessResults = tds.select(size(tds(Symbol("a")))).collect().run().toVector
+      val framelessResults =
+        tds.select(size(tds(Symbol("a")))).collect().run().toVector
       val scalaResults = xs.map(x => x.a.size).toVector
 
       framelessResults ?= scalaResults
@@ -36,7 +37,8 @@ class UnaryFunctionsTest extends TypedDatasetSuite {
     def prop[A: TypedEncoder: ClassTag](xs: List[X1[Array[A]]]): Prop = {
       val tds = TypedDataset.create(xs)
 
-      val framelessResults = tds.select(size(tds(Symbol("a")))).collect().run().toVector
+      val framelessResults =
+        tds.select(size(tds(Symbol("a")))).collect().run().toVector
       val scalaResults = xs.map(x => x.a.size).toVector
 
       framelessResults ?= scalaResults
@@ -56,7 +58,8 @@ class UnaryFunctionsTest extends TypedDatasetSuite {
       ): Prop = {
       val tds = TypedDataset.create(xs)
 
-      val framelessResults = tds.select(size(tds(Symbol("a")))).collect().run().toVector
+      val framelessResults =
+        tds.select(size(tds(Symbol("a")))).collect().run().toVector
       val scalaResults = xs.map(x => x.a.size).toVector
 
       framelessResults ?= scalaResults

@@ -2,7 +2,7 @@ package frameless
 package ml
 
 import frameless.ml.Generators._
-import org.apache.spark.ml.linalg.{Matrix, Vector}
+import org.apache.spark.ml.linalg.{ Matrix, Vector }
 import org.apache.spark.ml.regression.DecisionTreeRegressor
 import org.scalacheck.Prop._
 

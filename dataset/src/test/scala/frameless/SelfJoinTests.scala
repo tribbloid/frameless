@@ -84,7 +84,10 @@ class SelfJoinTests extends TypedDatasetSuite {
             untyped.as("df1").join(untyped.as("df2"), trivial).count()
 
           val typed =
-            ds.joinInner(ds)(ds.colLeft(Symbol("a")) === ds.colLeft(Symbol("a"))).count().run()
+            ds.joinInner(ds)(
+              ds.colLeft(Symbol("a")) === ds.colLeft(Symbol("a"))
+            ).count()
+              .run()
           vanilla ?= typed
         }
       }
@@ -113,8 +116,8 @@ class SelfJoinTests extends TypedDatasetSuite {
 
       val typed = ds
         .joinInner(ds)(
-          (ds.colLeft(Symbol("a")) + ds.colLeft(Symbol("b"))) === (ds.colRight(Symbol("a")) + ds
-            .colRight(Symbol("b")))
+          (ds.colLeft(Symbol("a")) + ds.colLeft(Symbol("b"))) === (ds
+            .colRight(Symbol("a")) + ds.colRight(Symbol("b")))
         )
         .count()
         .run()
@@ -150,7 +153,8 @@ class SelfJoinTests extends TypedDatasetSuite {
 
           val typed = ds
             .joinInner(ds)(
-              (ds.col(Symbol("a")) + ds.col(Symbol("b"))) === (ds.col(Symbol("a")) + ds.col(Symbol("b")))
+              (ds.col(Symbol("a")) + ds.col(Symbol("b"))) === (ds
+                .col(Symbol("a")) + ds.col(Symbol("b")))
             )
             .count()
             .run()
@@ -175,7 +179,11 @@ class SelfJoinTests extends TypedDatasetSuite {
       val selectedColLeft =
         dataset.select(dataset.colLeft[A](Symbol("a"))).collect().run().toVector
       val selectedColRight =
-        dataset.select(dataset.colRight[A](Symbol("a"))).collect().run().toVector
+        dataset
+          .select(dataset.colRight[A](Symbol("a")))
+          .collect()
+          .run()
+          .toVector
 
       (selectedCol ?= selectedColLeft) && (selectedCol ?= selectedColRight)
     }
@@ -206,7 +214,11 @@ class SelfJoinTests extends TypedDatasetSuite {
       val selectedColLeft =
         dataset.select(dataset.colLeft[A](Symbol("a"))).collect().run().toVector
       val selectedColRight =
-        dataset.select(dataset.colRight[A](Symbol("a"))).collect().run().toVector
+        dataset
+          .select(dataset.colRight[A](Symbol("a")))
+          .collect()
+          .run()
+          .toVector
 
       (selectedCol ?= selectedColLeft) && (selectedCol ?= selectedColRight)
     }

@@ -1,13 +1,7 @@
 package frameless
 package ops
 
-import formless.hlist.{
-  Mapped,
-  Prepend,
-  ToList,
-  ToTraversable,
-  Tupler
-}
+import formless.hlist.{ Mapped, Prepend, ToList, ToTraversable, Tupler }
 import org.apache.spark.sql.catalyst.analysis.UnresolvedAlias
 import org.apache.spark.sql.catalyst.plans.logical.Project
 import org.apache.spark.sql.{

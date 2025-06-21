@@ -5,7 +5,7 @@ package clustering
 import frameless._
 import frameless.ml.classification.{ TypedBisectingKMeans, TypedKMeans }
 import frameless.ml.feature._
-import frameless.ml.{FramelessMlSuite, _}
+import frameless.ml.{ FramelessMlSuite, _ }
 import org.apache.spark.ml.linalg.Vector
 import org.scalatest.matchers.must.Matchers
 
@@ -40,7 +40,11 @@ class ClusteringIntegrationTests extends FramelessMlSuite with Matchers {
       model.transform(testDataWithFeatures).as[X4[Double, Int, Vector, Int]]()
 
     val prediction =
-      predictionDs.select(predictionDs.col[Int](Symbol("d"))).collect().run().toList
+      predictionDs
+        .select(predictionDs.col[Int](Symbol("d")))
+        .collect()
+        .run()
+        .toList
 
     prediction mustEqual testSeq.map(_.b)
   }
@@ -74,7 +78,11 @@ class ClusteringIntegrationTests extends FramelessMlSuite with Matchers {
       model.transform(testDataWithFeatures).as[X4[Double, Int, Vector, Int]]()
 
     val prediction =
-      predictionDs.select(predictionDs.col[Int](Symbol("d"))).collect().run().toList
+      predictionDs
+        .select(predictionDs.col[Int](Symbol("d")))
+        .collect()
+        .run()
+        .toList
 
     prediction mustEqual testSeq.map(_.b)
   }

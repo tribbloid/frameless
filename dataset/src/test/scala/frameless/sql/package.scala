@@ -1,6 +1,6 @@
 package frameless
 
-import org.apache.spark.sql.catalyst.expressions.{And, Expression, Or}
+import org.apache.spark.sql.catalyst.expressions.{ And, Expression, Or }
 
 package object sql {
 

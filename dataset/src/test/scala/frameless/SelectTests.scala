@@ -414,11 +414,15 @@ class SelectTests extends TypedDatasetSuite {
   test("tests to cover problematic dataframe column names during projections") {
     case class Foo(i: Int)
     val e = TypedDataset.create[Foo](Foo(1) :: Nil)
-    val t: TypedDataset[(Int, Int)] = e.select(e.col(Symbol("i")) * 2, e.col(Symbol("i")))
+    val t: TypedDataset[(Int, Int)] =
+      e.select(e.col(Symbol("i")) * 2, e.col(Symbol("i")))
     assert(t.select(t.col(Symbol("_1"))).collect().run().toList === List(2))
     // Issue #54
     val fooT =
-      t.select(t.col(Symbol("_1"))).deserialized.map(x => Tuple1.apply(x)).as[Foo]()
+      t.select(t.col(Symbol("_1")))
+        .deserialized
+        .map(x => Tuple1.apply(x))
+        .as[Foo]()
     assert(fooT.select(fooT(Symbol("i"))).collect().run().toList === List(2))
   }
 
@@ -426,9 +430,14 @@ class SelectTests extends TypedDatasetSuite {
     val e = TypedDataset.create[(Int, String, Int)](
       (1, "a", 2) :: (2, "b", 4) :: (2, "b", 1) :: Nil
     )
-    assert(e.select(-e(Symbol("_1"))).collect().run().toVector === Vector(-1, -2, -2))
     assert(
-      e.select(-(e(Symbol("_1")) + e(Symbol("_3")))).collect().run().toVector === Vector(
+      e.select(-e(Symbol("_1"))).collect().run().toVector === Vector(-1, -2, -2)
+    )
+    assert(
+      e.select(-(e(Symbol("_1")) + e(Symbol("_3"))))
+        .collect()
+        .run()
+        .toVector === Vector(
         -3,
         -6,
         -3

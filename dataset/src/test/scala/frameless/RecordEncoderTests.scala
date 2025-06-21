@@ -219,8 +219,10 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
       TypedDataset.createUnsafe(df)(encoder)
     }
 
-    ds1.collect()
-      .run() shouldBe Seq(User(1L, None), User(2L, Some(new Name("Foo"))))
+    ds1.collect().run() shouldBe Seq(
+      User(1L, None),
+      User(2L, Some(new Name("Foo")))
+    )
 
     val ds2: TypedDataset[User] = {
       val sqlContext = session.sqlContext
@@ -367,8 +369,10 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
 
     val ds2 = ds1.withColumnReplaced(Symbol("grades"), functions.lit(grades))
 
-    ds2.collect()
-      .run() shouldBe Seq(Student("Foo", grades), Student("Bar", grades))
+    ds2.collect().run() shouldBe Seq(
+      Student("Foo", grades),
+      Student("Bar", grades)
+    )
   }
 
   test("Encode binary array") {
@@ -399,14 +403,18 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
 
     val expected = Seq("Foo" -> Seq[Byte](3, 4), "Bar" -> Seq[Byte](5))
 
-    ds1.collect().run().map { case (_1, _2) => _1 -> _2.toSeq } shouldBe expected
+    ds1.collect().run().map {
+      case (_1, _2) => _1 -> _2.toSeq
+    } shouldBe expected
 
     val subjects = "lorem".getBytes("UTF-8").toSeq
 
-    val ds2 = ds1.withColumnReplaced(Symbol("_2"), functions.lit(subjects.toArray))
+    val ds2 =
+      ds1.withColumnReplaced(Symbol("_2"), functions.lit(subjects.toArray))
 
-    ds2.collect().run().map { case (_1, _2) => _1 -> _2.toSeq } shouldBe expected
-      .map(_.copy(_2 = subjects))
+    ds2.collect().run().map {
+      case (_1, _2) => _1 -> _2.toSeq
+    } shouldBe expected.map(_.copy(_2 = subjects))
   }
 
   test("Encode simple array") {
@@ -440,14 +448,18 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
 
     val expected = Seq("Foo" -> Seq(3, 4), "Bar" -> Seq(5))
 
-    ds1.collect().run().map { case (_1, _2) => _1 -> _2.toSeq } shouldBe expected
+    ds1.collect().run().map {
+      case (_1, _2) => _1 -> _2.toSeq
+    } shouldBe expected
 
     val subjects = Seq(6, 6, 7)
 
-    val ds2 = ds1.withColumnReplaced(Symbol("_2"), functions.lit(subjects.toArray))
+    val ds2 =
+      ds1.withColumnReplaced(Symbol("_2"), functions.lit(subjects.toArray))
 
-    ds2.collect().run().map { case (_1, _2) => _1 -> _2.toSeq } shouldBe expected
-      .map(_.copy(_2 = subjects))
+    ds2.collect().run().map {
+      case (_1, _2) => _1 -> _2.toSeq
+    } shouldBe expected.map(_.copy(_2 = subjects))
   }
 
   test("Encode array of Value class") {
@@ -486,14 +498,18 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
       "Bar" -> Seq(new Subject("biology"), new Subject("geography"))
     )
 
-    ds1.collect().run().map { case (_1, _2) => _1 -> _2.toSeq } shouldBe expected
+    ds1.collect().run().map {
+      case (_1, _2) => _1 -> _2.toSeq
+    } shouldBe expected
 
     val subjects = Seq(new Subject("lorem"), new Subject("ipsum"))
 
-    val ds2 = ds1.withColumnReplaced(Symbol("_2"), functions.lit(subjects.toArray))
+    val ds2 =
+      ds1.withColumnReplaced(Symbol("_2"), functions.lit(subjects.toArray))
 
-    ds2.collect().run().map { case (_1, _2) => _1 -> _2.toSeq } shouldBe expected
-      .map(_.copy(_2 = subjects))
+    ds2.collect().run().map {
+      case (_1, _2) => _1 -> _2.toSeq
+    } shouldBe expected.map(_.copy(_2 = subjects))
   }
 
   test("Encode case class with simple Seq") {
