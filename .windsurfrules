@@ -5,5 +5,6 @@
 - DO NOT use Scala 3 features
 
 # Rules
-- build with `sbt "compile;Test/compile"` to figure out build errors
+- build with `sbt "Test/compile"` to figure out build errors
+- run `sbt "Test/test"` to figure out test errors
 - compile the project often to verify your work
