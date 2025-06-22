@@ -22,7 +22,7 @@ ThisBuild / crossScalaVersions := Seq(Scala213)
 ThisBuild / scalaVersion := Scala213
 ThisBuild / coverageScalacPluginVersion := "2.3.0"
 
-ThisBuild / scalafixOnCompile := true
+ThisBuild / scalafixOnCompile := false
 
 inThisBuild(
   List(
