@@ -5,7 +5,7 @@ import org.apache.spark.util.CollectionAccumulator
 import org.scalacheck.Prop
 import org.scalacheck.Prop._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class ForeachTests extends TypedDatasetSuite {
   test("foreach") {
