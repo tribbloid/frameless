@@ -1,4 +1,4 @@
-val sparkVersion = "3.5.5"
+val sparkVersion = "3.5.6"
 val spark34Version = "3.4.4"
 val spark33Version = "3.3.4"
 val catsCoreVersion = "2.13.0"
@@ -30,8 +30,8 @@ inThisBuild(
     semanticdbVersion := scalafixSemanticdb.revision
   )
 )
-
-ThisBuild / scalafixDependencies += "com.github.xuwei-k" %% "scalafix-rules" % "0.6.10"
+// https://mvnrepository.com/artifact/ch.epfl.scala/scalafix-rules
+ThisBuild / scalafixDependencies += "ch.epfl.scala" % s"scalafix-rules_${scalaVersion.value}" % "0.14.3"
 ThisBuild / scalafixDependencies += "org.scala-lang" %% "scala-rewrites" % "0.1.5"
 
 lazy val root = project
