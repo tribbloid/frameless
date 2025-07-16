@@ -171,7 +171,7 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
     val lorem = new Name("Lorem")
 
     safeDs
-      .withColumnReplaced(Symbol("name"), functions.litValue(lorem))
+      .withColumnReplaced("name", functions.litValue(lorem))
       .collect()
       .run() shouldBe expected.map(_.copy(name = lorem))
   }
@@ -300,7 +300,7 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
 
     val m2 = Map("updated" -> 5)
 
-    val ds2 = ds1.withColumnReplaced(Symbol("m"), functions.lit(m2))
+    val ds2 = ds1.withColumnReplaced("m", functions.lit(m2))
 
     ds2.collect().run() shouldBe expected.map(_.copy(m = m2))
   }
@@ -367,7 +367,7 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
       new Subject("any") -> new Grade(BigDecimal(Long.MaxValue) + 1L)
     )
 
-    val ds2 = ds1.withColumnReplaced(Symbol("grades"), functions.lit(grades))
+    val ds2 = ds1.withColumnReplaced("grades", functions.lit(grades))
 
     ds2.collect().run() shouldBe Seq(
       Student("Foo", grades),
@@ -410,7 +410,7 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
     val subjects = "lorem".getBytes("UTF-8").toSeq
 
     val ds2 =
-      ds1.withColumnReplaced(Symbol("_2"), functions.lit(subjects.toArray))
+      ds1.withColumnReplaced("_2", functions.lit(subjects.toArray))
 
     ds2.collect().run().map {
       case (_1, _2) => _1 -> _2.toSeq
@@ -455,7 +455,7 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
     val subjects = Seq(6, 6, 7)
 
     val ds2 =
-      ds1.withColumnReplaced(Symbol("_2"), functions.lit(subjects.toArray))
+      ds1.withColumnReplaced("_2", functions.lit(subjects.toArray))
 
     ds2.collect().run().map {
       case (_1, _2) => _1 -> _2.toSeq
@@ -505,7 +505,7 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
     val subjects = Seq(new Subject("lorem"), new Subject("ipsum"))
 
     val ds2 =
-      ds1.withColumnReplaced(Symbol("_2"), functions.lit(subjects.toArray))
+      ds1.withColumnReplaced("_2", functions.lit(subjects.toArray))
 
     ds2.collect().run().map {
       case (_1, _2) => _1 -> _2.toSeq
@@ -565,7 +565,7 @@ final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
 
     val as = Seq(A(5), A(6))
 
-    val ds2 = ds1.withColumnReplaced(Symbol("a"), functions.lit(as))
+    val ds2 = ds1.withColumnReplaced("a", functions.lit(as))
 
     ds2.collect().run() shouldBe expected.map(_.copy(a = as))
   }

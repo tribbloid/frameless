@@ -261,13 +261,13 @@ class TypedDataset[T] protected[frameless] (
    * Returns `TypedColumn` of type `A` given its name (alias for `col`).
    *
    * {{{
-   * tf('id)
+   * tf("id")
    * }}}
    *
    * It is statically checked that column with such name exists and has type `A`.
    */
   def apply[A](
-      column: Witness.Lt[Symbol]
+      column: Witness.Lt[String]
     )(implicit
       i0: TypedColumn.Exists[T, column.T, A],
       i1: TypedEncoder[A]
@@ -277,19 +277,19 @@ class TypedDataset[T] protected[frameless] (
    * Returns `TypedColumn` of type `A` given its name.
    *
    * {{{
-   * tf.col('id)
+   * tf.col("id")
    * }}}
    *
    * It is statically checked that column with such name exists and has type `A`.
    */
   def col[A](
-      column: Witness.Lt[Symbol]
+      column: Witness.Lt[String]
     )(implicit
       i0: TypedColumn.Exists[T, column.T, A],
       i1: TypedEncoder[A]
     ): TypedColumn[T, A] =
     new TypedColumn[T, A](
-      dataset(column.value.name).as[A](TypedExpressionEncoder[A])
+      dataset(column.value).as[A](TypedExpressionEncoder[A])
     )
 
   /**
@@ -365,7 +365,7 @@ class TypedDataset[T] protected[frameless] (
    * String based aliases, which is obviously unsafe.
    */
   def colRight[A](
-      column: Witness.Lt[Symbol]
+      column: Witness.Lt[String]
     )(implicit
       i0: TypedColumn.Exists[T, column.T, A],
       i1: TypedEncoder[A]
@@ -382,7 +382,7 @@ class TypedDataset[T] protected[frameless] (
    * String based aliases, which is obviously unsafe.
    */
   def colLeft[A](
-      column: Witness.Lt[Symbol]
+      column: Witness.Lt[String]
     )(implicit
       i0: TypedColumn.Exists[T, column.T, A],
       i1: TypedEncoder[A]
@@ -1344,7 +1344,7 @@ class TypedDataset[T] protected[frameless] (
       Removed <: HList,
       ValuesFromRemoved <: HList,
       V
-    ](column: Witness.Lt[Symbol]
+    ](column: Witness.Lt[String]
     )(implicit
       i0: LabelledGeneric.Aux[T, TRep],
       i1: Remover.Aux[TRep, column.T, (V, Removed)],
@@ -1352,10 +1352,8 @@ class TypedDataset[T] protected[frameless] (
       i3: Tupler.Aux[ValuesFromRemoved, Out],
       i4: TypedEncoder[Out]
     ): TypedDataset[Out] = {
-    val dropped = dataset
-      .toDF()
-      .drop(column.value.name)
-      .as[Out](TypedExpressionEncoder[Out])
+    val dropped =
+      dataset.toDF().drop(column.value).as[Out](TypedExpressionEncoder[Out])
 
     TypedDataset.create[Out](dropped)
   }
@@ -1418,14 +1416,14 @@ class TypedDataset[T] protected[frameless] (
    * @param i0 Evidence that a column with the correct type and name exists
    */
   def withColumnReplaced[A](
-      column: Witness.Lt[Symbol],
+      column: Witness.Lt[String],
       replacement: TypedColumn[T, A]
     )(implicit
       i0: TypedColumn.Exists[T, column.T, A]
     ): TypedDataset[T] = {
     val updated = dataset
       .toDF()
-      .withColumn(column.value.name, replacement.untyped)
+      .withColumn(column.value, replacement.untyped)
       .as[T](TypedExpressionEncoder[T])
 
     TypedDataset.create[T](updated)
@@ -1526,7 +1524,7 @@ class TypedDataset[T] protected[frameless] (
       OutMod <: HList,
       OutModValues <: HList,
       Out
-    ](column: Witness.Lt[Symbol]
+    ](column: Witness.Lt[String]
     )(implicit
       i0: TypedColumn.Exists[T, column.T, V[A]],
       i1: TypedEncoder[A],
@@ -1541,7 +1539,7 @@ class TypedDataset[T] protected[frameless] (
     val df = dataset.toDF()
 
     val trans =
-      df.withColumn(column.value.name, sparkExplode(df(column.value.name)))
+      df.withColumn(column.value, sparkExplode(df(column.value)))
         .as[Out](TypedExpressionEncoder[Out])
     TypedDataset.create[Out](trans)
   }
@@ -1568,7 +1566,7 @@ class TypedDataset[T] protected[frameless] (
       OutMod <: HList,
       OutModValues <: HList,
       Out
-    ](column: Witness.Lt[Symbol]
+    ](column: Witness.Lt[String]
     )(implicit
       i0: TypedColumn.Exists[T, column.T, V[A, B]],
       i1: TypedEncoder[A],
@@ -1595,7 +1593,7 @@ class TypedDataset[T] protected[frameless] (
     // preserve the original list of renamed columns
     val columns = columnNamesRenamed.map(sparkCol)
 
-    val columnRenamed = s"frameless_${column.value.name}"
+    val columnRenamed = s"frameless_${column.value}"
     // explode of a map adds "key" and "value" columns into the Row
     // this may cause col namings collision: row could already contain key / value columns
     // we rename the original Row columns to avoid this collision
@@ -1639,7 +1637,7 @@ class TypedDataset[T] protected[frameless] (
       OutMod <: HList,
       OutModValues <: HList,
       Out
-    ](column: Witness.Lt[Symbol]
+    ](column: Witness.Lt[String]
     )(implicit
       i0: TypedColumn.Exists[T, column.T, V[A]],
       i1: TypedEncoder[A],
@@ -1651,9 +1649,8 @@ class TypedDataset[T] protected[frameless] (
       i7: TypedEncoder[Out]
     ): TypedDataset[Out] = {
     val df = dataset.toDF()
-    val trans = df
-      .filter(df(column.value.name).isNotNull)
-      .as[Out](TypedExpressionEncoder[Out])
+    val trans =
+      df.filter(df(column.value).isNotNull).as[Out](TypedExpressionEncoder[Out])
 
     TypedDataset.create[Out](trans)
   }

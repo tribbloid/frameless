@@ -74,7 +74,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toList
 
       val typedDS = TypedDataset.create(values)
-      val col = typedDS(Symbol("a"))
+      val col = typedDS("a")
       val res = typedDS.select(negate(col)).collect().run().toList
 
       res ?= resCompare
@@ -107,7 +107,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toList
 
       val typedDS = TypedDataset.create(values)
-      val col = typedDS(Symbol("a"))
+      val col = typedDS("a")
       val res = typedDS.select(not(col)).collect().run().toList
 
       res ?= resCompare
@@ -136,7 +136,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toList
 
       val typedDS = TypedDataset.create(values)
-      val col = typedDS(Symbol("a"))
+      val col = typedDS("a")
       val res =
         typedDS.select(conv(col, fromBase, toBase)).collect().run().toList
 
@@ -163,7 +163,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toList
 
       val typedDS = TypedDataset.create(values)
-      val col = typedDS(Symbol("a"))
+      val col = typedDS("a")
       val res = typedDS.select(degrees(col)).collect().run().toList
 
       res ?= resCompare
@@ -210,7 +210,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
       ) = {
       val typedDS = TypedDataset.create(values)
       propBitShift(typedDS)(
-        shiftRightUnsigned(typedDS(Symbol("a")), numBits),
+        shiftRightUnsigned(typedDS("a"), numBits),
         sparkFunctions.shiftRightUnsigned,
         numBits
       )
@@ -237,7 +237,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
       ) = {
       val typedDS = TypedDataset.create(values)
       propBitShift(typedDS)(
-        shiftRight(typedDS(Symbol("a")), numBits),
+        shiftRight(typedDS("a"), numBits),
         sparkFunctions.shiftRight,
         numBits
       )
@@ -264,7 +264,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
       ) = {
       val typedDS = TypedDataset.create(values)
       propBitShift(typedDS)(
-        shiftLeft(typedDS(Symbol("a")), numBits),
+        shiftLeft(typedDS("a"), numBits),
         sparkFunctions.shiftLeft,
         numBits
       )
@@ -301,7 +301,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
 
       val typedDS = TypedDataset.create(values)
       val res =
-        typedDS.select(ceil(typedDS(Symbol("a")))).collect().run().toList
+        typedDS.select(ceil(typedDS("a"))).collect().run().toList
 
       res ?= resCompare
     }
@@ -333,7 +333,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         val typedDS = TypedDataset.create(values)
         val res =
           typedDS
-            .select(sha2(typedDS(Symbol("a")), numBits))
+            .select(sha2(typedDS("a"), numBits))
             .collect()
             .run()
             .toList
@@ -362,7 +362,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
 
       val typedDS = TypedDataset.create(values)
       val res =
-        typedDS.select(sha1(typedDS(Symbol("a")))).collect().run().toList
+        typedDS.select(sha1(typedDS("a"))).collect().run().toList
 
       res ?= resCompare
     }
@@ -388,7 +388,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
 
       val typedDS = TypedDataset.create(values)
       val res =
-        typedDS.select(crc32(typedDS(Symbol("a")))).collect().run().toList
+        typedDS.select(crc32(typedDS("a"))).collect().run().toList
 
       res ?= resCompare
     }
@@ -420,7 +420,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
 
       val typedDS = TypedDataset.create(values)
       val res =
-        typedDS.select(floor(typedDS(Symbol("a")))).collect().run().toList
+        typedDS.select(floor(typedDS("a"))).collect().run().toList
 
       res ?= resCompare
     }
@@ -449,7 +449,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toList
 
       val typedDS = TypedDataset.create(values)
-      val col = typedDS(Symbol("a"))
+      val col = typedDS("a")
       val res = typedDS
         .select(
           abs(col)
@@ -482,7 +482,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toList
 
       val typedDS = TypedDataset.create(values)
-      val res = typedDS.select(abs(typedDS(Symbol("a")))).collect().run().toList
+      val res = typedDS.select(abs(typedDS("a"))).collect().run().toList
 
       res ?= resCompare
     }
@@ -529,7 +529,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         encX1: Encoder[X1[A]]
       ) = {
       val typedDS = TypedDataset.create(values)
-      propTrigonometric(typedDS)(cos(typedDS(Symbol("a"))), sparkFunctions.cos)
+      propTrigonometric(typedDS)(cos(typedDS("a")), sparkFunctions.cos)
     }
 
     check(forAll(prop[Int] _))
@@ -551,7 +551,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
       ) = {
       val typedDS = TypedDataset.create(values)
       propTrigonometric(typedDS)(
-        cosh(typedDS(Symbol("a"))),
+        cosh(typedDS("a")),
         sparkFunctions.cosh
       )
     }
@@ -575,7 +575,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
       ) = {
       val typedDS = TypedDataset.create(values)
       propTrigonometric(typedDS)(
-        acos(typedDS(Symbol("a"))),
+        acos(typedDS("a")),
         sparkFunctions.acos
       )
     }
@@ -599,7 +599,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
       ) = {
       val typedDS = TypedDataset.create(values)
       propTrigonometric(typedDS)(
-        signum(typedDS(Symbol("a"))),
+        signum(typedDS("a")),
         sparkFunctions.signum
       )
     }
@@ -622,7 +622,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         encX1: Encoder[X1[A]]
       ) = {
       val typedDS = TypedDataset.create(values)
-      propTrigonometric(typedDS)(sin(typedDS(Symbol("a"))), sparkFunctions.sin)
+      propTrigonometric(typedDS)(sin(typedDS("a")), sparkFunctions.sin)
     }
 
     check(forAll(prop[Int] _))
@@ -644,7 +644,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
       ) = {
       val typedDS = TypedDataset.create(values)
       propTrigonometric(typedDS)(
-        sinh(typedDS(Symbol("a"))),
+        sinh(typedDS("a")),
         sparkFunctions.sinh
       )
     }
@@ -668,7 +668,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
       ) = {
       val typedDS = TypedDataset.create(values)
       propTrigonometric(typedDS)(
-        asin(typedDS(Symbol("a"))),
+        asin(typedDS("a")),
         sparkFunctions.asin
       )
     }
@@ -691,7 +691,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         encX1: Encoder[X1[A]]
       ) = {
       val typedDS = TypedDataset.create(values)
-      propTrigonometric(typedDS)(tan(typedDS(Symbol("a"))), sparkFunctions.tan)
+      propTrigonometric(typedDS)(tan(typedDS("a")), sparkFunctions.tan)
     }
 
     check(forAll(prop[Int] _))
@@ -713,7 +713,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
       ) = {
       val typedDS = TypedDataset.create(values)
       propTrigonometric(typedDS)(
-        tanh(typedDS(Symbol("a"))),
+        tanh(typedDS("a")),
         sparkFunctions.tanh
       )
     }
@@ -781,7 +781,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
 
       val typedDS = TypedDataset.create(List(X1(values)))
       val res = typedDS
-        .select(arrayContains(typedDS(Symbol("a")), contained))
+        .select(arrayContains(typedDS("a"), contained))
         .collect()
         .run()
         .toList
@@ -839,7 +839,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
 
       val typedDS = TypedDataset.create(cDS)
       val res = typedDS
-        .select(atan(typedDS(Symbol("a"))))
+        .select(atan(typedDS("a")))
         .deserialized
         .map(DoubleBehaviourUtils.nanNullHandler)
         .collect()
@@ -847,7 +847,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toList
 
       val aggrTyped = typedDS
-        .agg(atan(frameless.functions.aggregate.first(typedDS(Symbol("a")))))
+        .agg(atan(frameless.functions.aggregate.first(typedDS("a"))))
         .firstOption()
         .run()
         .get
@@ -891,7 +891,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
 
       val typedDS = TypedDataset.create(cDS)
       val res = typedDS
-        .select(atan2(typedDS(Symbol("a")), typedDS(Symbol("b"))))
+        .select(atan2(typedDS("a"), typedDS("b")))
         .deserialized
         .map(DoubleBehaviourUtils.nanNullHandler)
         .collect()
@@ -901,8 +901,8 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
       val aggrTyped = typedDS
         .agg(
           atan2(
-            frameless.functions.aggregate.first(typedDS(Symbol("a"))),
-            frameless.functions.aggregate.first(typedDS(Symbol("b")))
+            frameless.functions.aggregate.first(typedDS("a")),
+            frameless.functions.aggregate.first(typedDS("b"))
           )
         )
         .firstOption()
@@ -949,7 +949,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
 
       val typedDS = TypedDataset.create(cDS)
       val res = typedDS
-        .select(atan2(lit, typedDS(Symbol("a"))))
+        .select(atan2(lit, typedDS("a")))
         .deserialized
         .map(DoubleBehaviourUtils.nanNullHandler)
         .collect()
@@ -958,7 +958,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
 
       val aggrTyped = typedDS
         .agg(
-          atan2(lit, frameless.functions.aggregate.first(typedDS(Symbol("a"))))
+          atan2(lit, frameless.functions.aggregate.first(typedDS("a")))
         )
         .firstOption()
         .run()
@@ -1002,7 +1002,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
 
       val typedDS = TypedDataset.create(cDS)
       val res = typedDS
-        .select(atan2(typedDS(Symbol("a")), lit))
+        .select(atan2(typedDS("a"), lit))
         .deserialized
         .map(DoubleBehaviourUtils.nanNullHandler)
         .collect()
@@ -1011,7 +1011,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
 
       val aggrTyped = typedDS
         .agg(
-          atan2(frameless.functions.aggregate.first(typedDS(Symbol("a"))), lit)
+          atan2(frameless.functions.aggregate.first(typedDS("a")), lit)
         )
         .firstOption()
         .run()
@@ -1070,7 +1070,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         encX1: Encoder[X1[A]]
       ) = {
       val typedDS = TypedDataset.create(values)
-      mathProp(typedDS)(sqrt(typedDS(Symbol("a"))), sparkFunctions.sqrt)
+      mathProp(typedDS)(sqrt(typedDS("a")), sparkFunctions.sqrt)
     }
 
     check(forAll(prop[Int] _))
@@ -1091,7 +1091,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         encX1: Encoder[X1[A]]
       ) = {
       val typedDS = TypedDataset.create(values)
-      mathProp(typedDS)(cbrt(typedDS(Symbol("a"))), sparkFunctions.cbrt)
+      mathProp(typedDS)(cbrt(typedDS("a")), sparkFunctions.cbrt)
     }
 
     check(forAll(prop[Int] _))
@@ -1112,7 +1112,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         encX1: Encoder[X1[A]]
       ) = {
       val typedDS = TypedDataset.create(values)
-      mathProp(typedDS)(exp(typedDS(Symbol("a"))), sparkFunctions.exp)
+      mathProp(typedDS)(exp(typedDS("a")), sparkFunctions.exp)
     }
 
     check(forAll(prop[Int] _))
@@ -1139,7 +1139,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .collect()
         .toList
 
-      val res = typedDS.select(md5(typedDS(Symbol("a")))).collect().run().toList
+      val res = typedDS.select(md5(typedDS("a"))).collect().run().toList
 
       res ?= resCompare
     }
@@ -1163,7 +1163,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toList
 
       val res =
-        typedDS.select(factorial(typedDS(Symbol("a")))).collect().run().toList
+        typedDS.select(factorial(typedDS("a"))).collect().run().toList
 
       res ?= resCompare
     }
@@ -1193,7 +1193,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
 
       val typedDS = TypedDataset.create(values)
       val res =
-        typedDS.select(round(typedDS(Symbol("a")))).collect().run().toList
+        typedDS.select(round(typedDS("a"))).collect().run().toList
 
       res ?= resCompare
     }
@@ -1227,7 +1227,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .map(_.setScale(0))
 
       val typedDS = TypedDataset.create(values)
-      val col = typedDS(Symbol("a"))
+      val col = typedDS("a")
       val res = typedDS.select(round(col)).collect().run().toList
 
       res ?= resCompare
@@ -1258,7 +1258,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
 
       val typedDS = TypedDataset.create(values)
       val res =
-        typedDS.select(round(typedDS(Symbol("a")), 1)).collect().run().toList
+        typedDS.select(round(typedDS("a"), 1)).collect().run().toList
 
       res ?= resCompare
     }
@@ -1292,7 +1292,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .map(_.setScale(0))
 
       val typedDS = TypedDataset.create(values)
-      val col = typedDS(Symbol("a"))
+      val col = typedDS("a")
       val res = typedDS.select(round(col, 0)).collect().run().toList
 
       res ?= resCompare
@@ -1323,7 +1323,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
 
       val typedDS = TypedDataset.create(values)
       val res =
-        typedDS.select(bround(typedDS(Symbol("a")))).collect().run().toList
+        typedDS.select(bround(typedDS("a"))).collect().run().toList
 
       res ?= resCompare
     }
@@ -1357,7 +1357,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .map(_.setScale(0))
 
       val typedDS = TypedDataset.create(values)
-      val col = typedDS(Symbol("a"))
+      val col = typedDS("a")
       val res = typedDS.select(bround(col)).collect().run().toList
 
       res ?= resCompare
@@ -1388,7 +1388,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
 
       val typedDS = TypedDataset.create(values)
       val res =
-        typedDS.select(bround(typedDS(Symbol("a")), 1)).collect().run().toList
+        typedDS.select(bround(typedDS("a"), 1)).collect().run().toList
 
       res ?= resCompare
     }
@@ -1422,7 +1422,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .map(_.setScale(0))
 
       val typedDS = TypedDataset.create(values)
-      val col = typedDS(Symbol("a"))
+      val col = typedDS("a")
       val res = typedDS.select(bround(col, 0)).collect().run().toList
 
       res ?= resCompare
@@ -1452,7 +1452,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toList
 
       val res = typedDS
-        .select(log(base, typedDS(Symbol("a"))))
+        .select(log(base, typedDS("a")))
         .deserialized
         .map(DoubleBehaviourUtils.nanNullHandler)
         .collect()
@@ -1480,7 +1480,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         encX1: Encoder[X1[A]]
       ) = {
       val typedDS = TypedDataset.create(values)
-      mathProp(typedDS)(log(typedDS(Symbol("a"))), sparkFunctions.log)
+      mathProp(typedDS)(log(typedDS("a")), sparkFunctions.log)
     }
 
     check(forAll(prop[Int] _))
@@ -1501,7 +1501,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         encX1: Encoder[X1[A]]
       ) = {
       val typedDS = TypedDataset.create(values)
-      mathProp(typedDS)(log2(typedDS(Symbol("a"))), sparkFunctions.log2)
+      mathProp(typedDS)(log2(typedDS("a")), sparkFunctions.log2)
     }
 
     check(forAll(prop[Int] _))
@@ -1522,7 +1522,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         encX1: Encoder[X1[A]]
       ) = {
       val typedDS = TypedDataset.create(values)
-      mathProp(typedDS)(log1p(typedDS(Symbol("a"))), sparkFunctions.log1p)
+      mathProp(typedDS)(log1p(typedDS("a")), sparkFunctions.log1p)
     }
 
     check(forAll(prop[Int] _))
@@ -1543,7 +1543,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         encX1: Encoder[X1[A]]
       ) = {
       val typedDS = TypedDataset.create(values)
-      mathProp(typedDS)(log10(typedDS(Symbol("a"))), sparkFunctions.log10)
+      mathProp(typedDS)(log10(typedDS("a")), sparkFunctions.log10)
     }
 
     check(forAll(prop[Int] _))
@@ -1571,10 +1571,10 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
 
       val typedDS = TypedDataset.create(values)
       val res =
-        typedDS.select(base64(typedDS(Symbol("a")))).collect().run().toList
+        typedDS.select(base64(typedDS("a"))).collect().run().toList
 
       val backAndForth = typedDS
-        .select(base64(unbase64(base64(typedDS(Symbol("a"))))))
+        .select(base64(unbase64(base64(typedDS("a")))))
         .collect()
         .run()
         .toList
@@ -1605,7 +1605,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toList
 
       val res2 = typedDS
-        .select(hypot(typedDS(Symbol("a")), base))
+        .select(hypot(typedDS("a"), base))
         .deserialized
         .map(DoubleBehaviourUtils.nanNullHandler)
         .collect()
@@ -1613,7 +1613,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toList
 
       val res = typedDS
-        .select(hypot(base, typedDS(Symbol("a"))))
+        .select(hypot(base, typedDS("a")))
         .deserialized
         .map(DoubleBehaviourUtils.nanNullHandler)
         .collect()
@@ -1649,7 +1649,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toList
 
       val res = typedDS
-        .select(hypot(typedDS(Symbol("b")), typedDS(Symbol("a"))))
+        .select(hypot(typedDS("b"), typedDS("a")))
         .deserialized
         .map(DoubleBehaviourUtils.nanNullHandler)
         .collect()
@@ -1686,7 +1686,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toList
 
       val res = typedDS
-        .select(pow(base, typedDS(Symbol("a"))))
+        .select(pow(base, typedDS("a")))
         .deserialized
         .map(DoubleBehaviourUtils.nanNullHandler)
         .collect()
@@ -1701,7 +1701,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toList
 
       val res2 = typedDS
-        .select(pow(typedDS(Symbol("a")), base))
+        .select(pow(typedDS("a"), base))
         .deserialized
         .map(DoubleBehaviourUtils.nanNullHandler)
         .collect()
@@ -1737,7 +1737,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toList
 
       val res = typedDS
-        .select(pow(typedDS(Symbol("b")), typedDS(Symbol("a"))))
+        .select(pow(typedDS("b"), typedDS("a")))
         .deserialized
         .map(DoubleBehaviourUtils.nanNullHandler)
         .collect()
@@ -1774,7 +1774,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
 
       val res =
         typedDS
-          .select(pmod(typedDS(Symbol("b")), typedDS(Symbol("a"))))
+          .select(pmod(typedDS("b"), typedDS("a")))
           .collect()
           .run()
           .toList
@@ -1808,7 +1808,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
 
       val typedDS = TypedDataset.create(valuesBase64)
       val res =
-        typedDS.select(unbase64(typedDS(Symbol("a")))).collect().run().toList
+        typedDS.select(unbase64(typedDS("a"))).collect().run().toList
 
       res.map(_.toList) ?= resCompare.map(_.toList)
     }
@@ -1833,7 +1833,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toList
 
       val typedDS = TypedDataset.create(values)
-      val res = typedDS.select(bin(typedDS(Symbol("a")))).collect().run().toList
+      val res = typedDS.select(bin(typedDS("a"))).collect().run().toList
 
       res ?= resCompare
     }
@@ -1860,7 +1860,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
 
       val typedDS = TypedDataset.create(values)
       val res =
-        typedDS.select(bitwiseNOT(typedDS(Symbol("a")))).collect().run().toList
+        typedDS.select(bitwiseNOT(typedDS("a"))).collect().run().toList
 
       res ?= resCompare
     }
@@ -1978,9 +1978,9 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
 
       val typedWhen = ds
         .select(
-          when(ds(Symbol("a")), ds(Symbol("c")))
-            .when(ds(Symbol("b")), ds(Symbol("d")))
-            .otherwise(ds(Symbol("e")))
+          when(ds("a"), ds("c"))
+            .when(ds("b"), ds("d"))
+            .otherwise(ds("e"))
         )
         .collect()
         .run()
@@ -2009,7 +2009,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .collect()
         .toVector
 
-      val typed = ds.select(ascii(ds(Symbol("a")))).collect().run().toVector
+      val typed = ds.select(ascii(ds("a"))).collect().run().toVector
 
       typed ?= sparkResult
     })
@@ -2035,7 +2035,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toVector
 
       val typed = ds
-        .select(concat(ds(Symbol("a")), ds(Symbol("b"))))
+        .select(concat(ds("a"), ds("b")))
         .collect()
         .run()
         .toVector
@@ -2058,7 +2058,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
     check(forAll(pairs) { values: List[X2[String, String]] =>
       val ds = TypedDataset.create(values)
       val td =
-        ds.agg(concat(first(ds(Symbol("a"))), first(ds(Symbol("b")))))
+        ds.agg(concat(first(ds("a")), first(ds("b"))))
           .collect()
           .run()
           .toVector
@@ -2096,7 +2096,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toVector
 
       val typed =
-        ds.select(concatWs(",", ds(Symbol("a")), ds(Symbol("b"))))
+        ds.select(concatWs(",", ds("a"), ds("b")))
           .collect()
           .run()
           .toVector
@@ -2120,9 +2120,9 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .agg(
           concatWs(
             ",",
-            first(ds(Symbol("a"))),
-            first(ds(Symbol("b"))),
-            last(ds(Symbol("b")))
+            first(ds("a")),
+            first(ds("b")),
+            last(ds("b"))
           )
         )
         .collect()
@@ -2158,7 +2158,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toVector
 
       val typed =
-        ds.select(instr(ds(Symbol("a")), values.head)).collect().run().toVector
+        ds.select(instr(ds("a"), values.head)).collect().run().toVector
 
       typed ?= sparkResult
     })
@@ -2178,7 +2178,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toVector
 
       val typed =
-        ds.select(length(ds[String](Symbol("a")))).collect().run().toVector
+        ds.select(length(ds[String]("a"))).collect().run().toVector
 
       (typed ?= sparkResult).&&(values.map(_.a.length).toVector ?= typed)
     })
@@ -2204,7 +2204,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
 
       val typed = ds
         .select(
-          levenshtein(ds(Symbol("a")), concat(ds(Symbol("a")), lit("Hello")))
+          levenshtein(ds("a"), concat(ds("a"), lit("Hello")))
         )
         .collect()
         .run()
@@ -2214,7 +2214,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
       val aggrTyped = ds
         .agg(
           levenshtein(
-            frameless.functions.aggregate.first(ds(Symbol("a"))),
+            frameless.functions.aggregate.first(ds("a")),
             litAggr("Hello")
           )
         )
@@ -2248,7 +2248,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toVector
 
       val typed = ds
-        .select(regexpReplace(ds[String](Symbol("a")), "\\d+".r, "n"))
+        .select(regexpReplace(ds[String]("a"), "\\d+".r, "n"))
         .collect()
         .run()
         .toVector
@@ -2271,7 +2271,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toVector
 
       val typed =
-        ds.select(reverse(ds[String](Symbol("a")))).collect().run().toVector
+        ds.select(reverse(ds[String]("a"))).collect().run().toVector
 
       (typed ?= sparkResult).&&(values.map(_.a.reverse).toVector ?= typed)
     })
@@ -2291,7 +2291,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toVector
 
       val typed =
-        ds.select(rpad(ds[String](Symbol("a")), 5, "hello"))
+        ds.select(rpad(ds[String]("a"), 5, "hello"))
           .collect()
           .run()
           .toVector
@@ -2314,7 +2314,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toVector
 
       val typed =
-        ds.select(lpad(ds[String](Symbol("a")), 5, "hello"))
+        ds.select(lpad(ds[String]("a"), 5, "hello"))
           .collect()
           .run()
           .toVector
@@ -2337,7 +2337,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toVector
 
       val typed =
-        ds.select(rtrim(ds[String](Symbol("a")))).collect().run().toVector
+        ds.select(rtrim(ds[String]("a"))).collect().run().toVector
 
       typed ?= sparkResult
     })
@@ -2357,7 +2357,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toVector
 
       val typed =
-        ds.select(ltrim(ds[String](Symbol("a")))).collect().run().toVector
+        ds.select(ltrim(ds[String]("a"))).collect().run().toVector
 
       typed ?= sparkResult
     })
@@ -2377,7 +2377,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toVector
 
       val typed =
-        ds.select(substring(ds[String](Symbol("a")), 5, 3))
+        ds.select(substring(ds[String]("a"), 5, 3))
           .collect()
           .run()
           .toVector
@@ -2400,7 +2400,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toVector
 
       val typed =
-        ds.select(trim(ds[String](Symbol("a")))).collect().run().toVector
+        ds.select(trim(ds[String]("a"))).collect().run().toVector
 
       typed ?= sparkResult
     })
@@ -2420,7 +2420,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toVector
 
       val typed =
-        ds.select(upper(ds[String](Symbol("a")))).collect().run().toVector
+        ds.select(upper(ds[String]("a"))).collect().run().toVector
 
       typed ?= sparkResult
     })
@@ -2440,7 +2440,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         .toVector
 
       val typed =
-        ds.select(lower(ds[String](Symbol("a")))).collect().run().toVector
+        ds.select(lower(ds[String]("a"))).collect().run().toVector
 
       typed ?= sparkResult
     })
@@ -2450,7 +2450,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
     def prop[A: TypedEncoder, B: TypedEncoder](data: Vector[X2[A, B]]) = {
       val ds = TypedDataset.create(data)
       val frameless = ds
-        .select(ds(Symbol("a")), concat(), ds(Symbol("b")), concatWs(":"))
+        .select(ds("a"), concat(), ds("b"), concatWs(":"))
         .collect()
         .run()
         .toVector
@@ -2494,7 +2494,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         E: Encoder[Option[Int]]
       ): Prop = {
       val ds = TypedDataset.create(data)
-      dateTimeStringProp(ds)(year(ds[String](Symbol("a"))), sparkFunctions.year)
+      dateTimeStringProp(ds)(year(ds[String]("a")), sparkFunctions.year)
     }
 
     check(forAll(dateTimeStringGen)(data => prop(data.map(X1.apply))))
@@ -2512,7 +2512,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
       ): Prop = {
       val ds = TypedDataset.create(data)
       dateTimeStringProp(ds)(
-        quarter(ds[String](Symbol("a"))),
+        quarter(ds[String]("a")),
         sparkFunctions.quarter
       )
     }
@@ -2532,7 +2532,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
       ): Prop = {
       val ds = TypedDataset.create(data)
       dateTimeStringProp(ds)(
-        month(ds[String](Symbol("a"))),
+        month(ds[String]("a")),
         sparkFunctions.month
       )
     }
@@ -2552,7 +2552,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
       ): Prop = {
       val ds = TypedDataset.create(data)
       dateTimeStringProp(ds)(
-        dayofweek(ds[String](Symbol("a"))),
+        dayofweek(ds[String]("a")),
         sparkFunctions.dayofweek
       )
     }
@@ -2572,7 +2572,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
       ): Prop = {
       val ds = TypedDataset.create(data)
       dateTimeStringProp(ds)(
-        dayofmonth(ds[String](Symbol("a"))),
+        dayofmonth(ds[String]("a")),
         sparkFunctions.dayofmonth
       )
     }
@@ -2592,7 +2592,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
       ): Prop = {
       val ds = TypedDataset.create(data)
       dateTimeStringProp(ds)(
-        dayofyear(ds[String](Symbol("a"))),
+        dayofyear(ds[String]("a")),
         sparkFunctions.dayofyear
       )
     }
@@ -2611,7 +2611,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
         E: Encoder[Option[Int]]
       ): Prop = {
       val ds = TypedDataset.create(data)
-      dateTimeStringProp(ds)(hour(ds[String](Symbol("a"))), sparkFunctions.hour)
+      dateTimeStringProp(ds)(hour(ds[String]("a")), sparkFunctions.hour)
     }
 
     check(forAll(dateTimeStringGen)(data => prop(data.map(X1.apply))))
@@ -2629,7 +2629,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
       ): Prop = {
       val ds = TypedDataset.create(data)
       dateTimeStringProp(ds)(
-        minute(ds[String](Symbol("a"))),
+        minute(ds[String]("a")),
         sparkFunctions.minute
       )
     }
@@ -2649,7 +2649,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
       ): Prop = {
       val ds = TypedDataset.create(data)
       dateTimeStringProp(ds)(
-        second(ds[String](Symbol("a"))),
+        second(ds[String]("a")),
         sparkFunctions.second
       )
     }
@@ -2669,7 +2669,7 @@ class NonAggregateFunctionsTests extends TypedDatasetSuite {
       ): Prop = {
       val ds = TypedDataset.create(data)
       dateTimeStringProp(ds)(
-        weekofyear(ds[String](Symbol("a"))),
+        weekofyear(ds[String]("a")),
         sparkFunctions.weekofyear
       )
     }

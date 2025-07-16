@@ -22,17 +22,17 @@ ThisBuild / crossScalaVersions := Seq(Scala213)
 ThisBuild / scalaVersion := Scala213
 ThisBuild / coverageScalacPluginVersion := "2.3.0"
 
-ThisBuild / scalafixOnCompile := false
+//ThisBuild / scalafixOnCompile := false // never enable this!
 
-inThisBuild(
-  List(
-    semanticdbEnabled := true,
-    semanticdbVersion := scalafixSemanticdb.revision
-  )
-)
+//inThisBuild(
+//  List(
+//    semanticdbEnabled := true,
+//    semanticdbVersion := scalafixSemanticdb.revision
+//  )
+//)
 // https://mvnrepository.com/artifact/ch.epfl.scala/scalafix-rules
-ThisBuild / scalafixDependencies += "ch.epfl.scala" % s"scalafix-rules_${scalaVersion.value}" % "0.14.3"
-ThisBuild / scalafixDependencies += "org.scala-lang" %% "scala-rewrites" % "0.1.5"
+//ThisBuild / scalafixDependencies += "ch.epfl.scala" % s"scalafix-rules_${scalaVersion.value}" % "0.14.3"
+//ThisBuild / scalafixDependencies += "org.scala-lang" %% "scala-rewrites" % "0.1.5"
 
 lazy val root = project
   .in(file("."))
@@ -306,8 +306,8 @@ lazy val scalac213Options = {
 
   // https://github.com/scala/bug/issues/12072
   val options = Seq(
-    "-Xlint:-byname-implicit",
-    "-quickfix:any" // Enable automatic fixing of quickfixable warnings
+    "-Xlint:-byname-implicit"
+//    "-quickfix:any" // Enable automatic fixing of quickfixable warnings
   )
   scalac212Options.filter(s => !exclusions.contains(s)) ++ options
 }

@@ -1246,12 +1246,12 @@ abstract class AbstractTypedColumn[T, U](
    * @tparam V the type of the nested field
    */
   def field[V](
-      symbol: Witness.Lt[Symbol]
+      symbol: Witness.Lt[String]
     )(implicit
       i0: TypedColumn.Exists[U, symbol.T, V],
       i1: TypedEncoder[V]
     ): ThisType[T, V] =
-    typed(self.untyped.getField(symbol.value.name))
+    typed(self.untyped.getField(symbol.value))
 
 }
 

@@ -14,7 +14,7 @@ class RollupTests extends TypedDatasetSuite {
         summable: CatalystSummable[A, Out]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
+      val A = dataset.col[A]("a")
 
       val received =
         dataset.rollup(A).agg(count()).collect().run().toVector.sortBy(_._2)
@@ -42,8 +42,8 @@ class RollupTests extends TypedDatasetSuite {
         summable: CatalystSummable[B, Out]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
-      val B = dataset.col[B](Symbol("b"))
+      val A = dataset.col[A]("a")
+      val B = dataset.col[B]("b")
 
       val received =
         dataset.rollup(A, B).agg(count()).collect().run().toVector.sortBy(_._3)
@@ -73,8 +73,8 @@ class RollupTests extends TypedDatasetSuite {
         summable: CatalystSummable[B, Out]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
-      val B = dataset.col[B](Symbol("b"))
+      val A = dataset.col[A]("a")
+      val B = dataset.col[B]("b")
 
       val received =
         dataset.rollup(A).agg(sum(B)).collect().run().toVector.sortBy(_._2)
@@ -97,7 +97,7 @@ class RollupTests extends TypedDatasetSuite {
         data: List[X2[A, B]]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
+      val A = dataset.col[A]("a")
 
       val received = dataset
         .rollup(A)
@@ -129,9 +129,9 @@ class RollupTests extends TypedDatasetSuite {
         summableC: CatalystSummable[C, OutC]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
-      val B = dataset.col[B](Symbol("b"))
-      val C = dataset.col[C](Symbol("c"))
+      val A = dataset.col[A]("a")
+      val B = dataset.col[B]("b")
+      val C = dataset.col[C]("c")
 
       val framelessSumBC = dataset
         .rollup(A)
@@ -246,10 +246,10 @@ class RollupTests extends TypedDatasetSuite {
         summableD: CatalystSummable[D, OutD]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
-      val B = dataset.col[B](Symbol("b"))
-      val C = dataset.col[C](Symbol("c"))
-      val D = dataset.col[D](Symbol("d"))
+      val A = dataset.col[A]("a")
+      val B = dataset.col[B]("b")
+      val C = dataset.col[C]("c")
+      val D = dataset.col[D]("d")
 
       val framelessSumByAB = dataset
         .rollup(A, B)
@@ -291,9 +291,9 @@ class RollupTests extends TypedDatasetSuite {
         summableC: CatalystSummable[C, OutC]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
-      val B = dataset.col[B](Symbol("b"))
-      val C = dataset.col[C](Symbol("c"))
+      val A = dataset.col[A]("a")
+      val B = dataset.col[B]("b")
+      val C = dataset.col[C]("c")
 
       val framelessSumC =
         dataset.rollup(A, B).agg(sum(C)).collect().run().toVector.sortBy(_._2)
@@ -424,8 +424,8 @@ class RollupTests extends TypedDatasetSuite {
       ](data: List[X3[A, B, C]]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
-      val B = dataset.col[B](Symbol("b"))
+      val A = dataset.col[A]("a")
+      val B = dataset.col[B]("b")
 
       val framelessSumByAB = dataset
         .rollup(A, B)
@@ -454,7 +454,7 @@ class RollupTests extends TypedDatasetSuite {
         data: Vector[X2[A, B]]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
+      val A = dataset.col[A]("a")
 
       val datasetGrouped = dataset
         .rollup(A)
@@ -479,7 +479,7 @@ class RollupTests extends TypedDatasetSuite {
         data: Vector[X2[A, B]]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
+      val A = dataset.col[A]("a")
 
       val datasetGrouped = dataset
         .rollup(A)
@@ -511,8 +511,8 @@ class RollupTests extends TypedDatasetSuite {
       ](data: Vector[X3[A, B, C]]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val cA = dataset.col[A](Symbol("a"))
-      val cB = dataset.col[B](Symbol("b"))
+      val cA = dataset.col[A]("a")
+      val cB = dataset.col[B]("b")
 
       val datasetGrouped = dataset
         .rollup(cA, cB)
@@ -543,7 +543,7 @@ class RollupTests extends TypedDatasetSuite {
         summable: CatalystSummable[A, Out]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
+      val A = dataset.col[A]("a")
 
       val received = dataset
         .rollupMany(A)

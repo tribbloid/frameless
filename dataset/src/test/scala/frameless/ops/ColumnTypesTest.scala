@@ -15,8 +15,8 @@ class ColumnTypesTest extends TypedDatasetSuite {
       ](data: Vector[X4[A, B, C, D]]
       ): Prop = {
       val d: TypedDataset[X4[A, B, C, D]] = TypedDataset.create(data)
-      val hlist = d(Symbol("a")) :: d(Symbol("b")) :: d(Symbol("c")) :: d(
-        Symbol("d")
+      val hlist = d("a") :: d("b") :: d("c") :: d(
+        "d"
       ) :: HNil
 
       type TC[N] = TypedColumn[X4[A, B, C, D], N]

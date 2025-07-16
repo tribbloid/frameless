@@ -32,7 +32,7 @@ trait SQLRulesSuite extends TypedDatasetSuite with Matchers { self =>
       op: TypedColumn[X1[A], A] => TypedColumn[X1[A], Boolean]
     ): Assertion = {
     withDataset(expected) { dataset =>
-      val ds = dataset.filter(op(dataset(Symbol("a"))))
+      val ds = dataset.filter(op(dataset("a")))
       val actualPushDownFilters = pushDownFilters(ds)
 
       val optimizedPlan = ds.queryExecution.optimizedPlan.collect {

@@ -7,7 +7,7 @@ class FlattenTests extends TypedDatasetSuite {
   test("simple flatten test") {
     val ds: TypedDataset[(Int, Option[Int])] =
       TypedDataset.create(Seq((1, Option(1))))
-    ds.flattenOption(Symbol("_2")): TypedDataset[(Int, Int)]
+    ds.flattenOption("_2"): TypedDataset[(Int, Int)]
   }
 
   test("different Optional types") {
@@ -15,7 +15,7 @@ class FlattenTests extends TypedDatasetSuite {
       val tds: TypedDataset[X1[Option[A]]] = TypedDataset.create(xs)
 
       val framelessResults: Seq[Tuple1[A]] =
-        tds.flattenOption(Symbol("a")).collect().run().toVector
+        tds.flattenOption("a").collect().run().toVector
       val scalaResults = xs.flatMap(_.a).map(Tuple1(_)).toVector
 
       framelessResults ?= scalaResults

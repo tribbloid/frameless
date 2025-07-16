@@ -52,7 +52,7 @@ class SelfJoinTests extends TypedDatasetSuite {
 
       val typed = ds
         .joinInner(ds)(
-          ds.colLeft(Symbol("a")) === ds.colRight(Symbol("a"))
+          ds.colLeft("a") === ds.colRight("a")
         )
         .count()
         .run()
@@ -85,7 +85,7 @@ class SelfJoinTests extends TypedDatasetSuite {
 
           val typed =
             ds.joinInner(ds)(
-              ds.colLeft(Symbol("a")) === ds.colLeft(Symbol("a"))
+              ds.colLeft("a") === ds.colLeft("a")
             ).count()
               .run()
           vanilla ?= typed
@@ -116,8 +116,8 @@ class SelfJoinTests extends TypedDatasetSuite {
 
       val typed = ds
         .joinInner(ds)(
-          (ds.colLeft(Symbol("a")) + ds.colLeft(Symbol("b"))) === (ds
-            .colRight(Symbol("a")) + ds.colRight(Symbol("b")))
+          (ds.colLeft("a") + ds.colLeft("b")) === (ds
+            .colRight("a") + ds.colRight("b"))
         )
         .count()
         .run()
@@ -153,8 +153,8 @@ class SelfJoinTests extends TypedDatasetSuite {
 
           val typed = ds
             .joinInner(ds)(
-              (ds.col(Symbol("a")) + ds.col(Symbol("b"))) === (ds
-                .col(Symbol("a")) + ds.col(Symbol("b")))
+              (ds.col("a") + ds.col("b")) === (ds
+                .col("a") + ds.col("b"))
             )
             .count()
             .run()
@@ -175,12 +175,12 @@ class SelfJoinTests extends TypedDatasetSuite {
       ): Prop = {
       val dataset = TypedDataset.create(data)
       val selectedCol =
-        dataset.select(dataset.col[A](Symbol("a"))).collect().run().toVector
+        dataset.select(dataset.col[A]("a")).collect().run().toVector
       val selectedColLeft =
-        dataset.select(dataset.colLeft[A](Symbol("a"))).collect().run().toVector
+        dataset.select(dataset.colLeft[A]("a")).collect().run().toVector
       val selectedColRight =
         dataset
-          .select(dataset.colRight[A](Symbol("a")))
+          .select(dataset.colRight[A]("a"))
           .collect()
           .run()
           .toVector
@@ -210,12 +210,12 @@ class SelfJoinTests extends TypedDatasetSuite {
         session.read.parquet("./target/testData")
       )
       val selectedCol =
-        dataset.select(dataset.col[A](Symbol("a"))).collect().run().toVector
+        dataset.select(dataset.col[A]("a")).collect().run().toVector
       val selectedColLeft =
-        dataset.select(dataset.colLeft[A](Symbol("a"))).collect().run().toVector
+        dataset.select(dataset.colLeft[A]("a")).collect().run().toVector
       val selectedColRight =
         dataset
-          .select(dataset.colRight[A](Symbol("a")))
+          .select(dataset.colRight[A]("a"))
           .collect()
           .run()
           .toVector

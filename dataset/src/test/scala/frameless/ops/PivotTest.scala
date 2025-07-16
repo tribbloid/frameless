@@ -24,10 +24,10 @@ class PivotTest extends TypedDatasetSuite {
     def prop(data: Vector[X4[String, String, Int, Boolean]]): Prop = {
       val d = TypedDataset.create(data)
       val frameless = d
-        .groupBy(d(Symbol("a")))
-        .pivot(d(Symbol("b")))
+        .groupBy(d("a"))
+        .pivot(d("b"))
         .on("a", "b", "c")
-        .agg(sum(d(Symbol("c"))), first(d(Symbol("d"))))
+        .agg(sum(d("c")), first(d("d")))
         .collect()
         .run()
         .toVector
@@ -55,8 +55,8 @@ class PivotTest extends TypedDatasetSuite {
     val x: Seq[X3[String, Boolean, Boolean]] =
       Seq(X3("a", true, true), X3("a", true, true), X3("a", true, false))
     val d = TypedDataset.create(x)
-    d.groupByMany(d(Symbol("a")))
-      .pivot(d(Symbol("c")))
+    d.groupByMany(d("a"))
+      .pivot(d("c"))
       .on(true, false)
       .agg(count[X3[String, Boolean, Boolean]]())
       .collect()
@@ -68,8 +68,8 @@ class PivotTest extends TypedDatasetSuite {
     val x: Seq[X3[String, String, Long]] =
       Seq(X3("a", "x", 1), X3("a", "x", 1), X3("a", "c", 20))
     val d = TypedDataset.create(x)
-    d.groupBy(d(Symbol("a")), d(Symbol("b")))
-      .pivot(d(Symbol("c")))
+    d.groupBy(d("a"), d("b"))
+      .pivot(d("c"))
       .on(1L, 20L)
       .agg(count[X3[String, String, Long]]())
       .collect()
@@ -81,8 +81,8 @@ class PivotTest extends TypedDatasetSuite {
     val x: Seq[X3[String, String, Long]] =
       Seq(X3("a", "x", 1), X3("a", "x", 1), X3("a", "c", 20))
     val d = TypedDataset.create(x)
-    d.cube(d(Symbol("a")), d(Symbol("b")))
-      .pivot(d(Symbol("c")))
+    d.cube(d("a"), d("b"))
+      .pivot(d("c"))
       .on(1L, 20L)
       .agg(count[X3[String, String, Long]]())
       .collect()
@@ -94,8 +94,8 @@ class PivotTest extends TypedDatasetSuite {
     val x: Seq[X3[String, Boolean, Boolean]] =
       Seq(X3("a", true, true), X3("a", true, true), X3("a", true, false))
     val d = TypedDataset.create(x)
-    d.cube(d(Symbol("a")))
-      .pivot(d(Symbol("c")))
+    d.cube(d("a"))
+      .pivot(d("c"))
       .on(true, false)
       .agg(count[X3[String, Boolean, Boolean]]())
       .collect()
@@ -107,8 +107,8 @@ class PivotTest extends TypedDatasetSuite {
     val x: Seq[X3[String, String, Long]] =
       Seq(X3("a", "x", 1), X3("a", "x", 1), X3("a", "c", 20))
     val d = TypedDataset.create(x)
-    d.rollup(d(Symbol("a")), d(Symbol("b")))
-      .pivot(d(Symbol("c")))
+    d.rollup(d("a"), d("b"))
+      .pivot(d("c"))
       .on(1L, 20L)
       .agg(count[X3[String, String, Long]]())
       .collect()
@@ -120,8 +120,8 @@ class PivotTest extends TypedDatasetSuite {
     val x: Seq[X3[String, Boolean, Boolean]] =
       Seq(X3("a", true, true), X3("a", true, true), X3("a", true, false))
     val d = TypedDataset.create(x)
-    d.rollupMany(d(Symbol("a")))
-      .pivot(d(Symbol("c")))
+    d.rollupMany(d("a"))
+      .pivot(d("c"))
       .on(true, false)
       .agg(count[X3[String, Boolean, Boolean]]())
       .collect()

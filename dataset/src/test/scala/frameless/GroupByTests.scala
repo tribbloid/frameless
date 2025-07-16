@@ -16,8 +16,8 @@ class GroupByTests extends TypedDatasetSuite {
         widen: B => Out
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
-      val B = dataset.col[B](Symbol("b"))
+      val A = dataset.col[A]("a")
+      val B = dataset.col[B]("b")
 
       val datasetSumByA =
         dataset.groupByMany(A).agg(sum(B)).collect().run().toVector.sortBy(_._1)
@@ -40,7 +40,7 @@ class GroupByTests extends TypedDatasetSuite {
         summable: CatalystSummable[A, A]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
+      val A = dataset.col[A]("a")
 
       val datasetSum = dataset.agg(sum(A)).collect().run().toVector
       val listSum = data.map(_.a).sum
@@ -59,8 +59,8 @@ class GroupByTests extends TypedDatasetSuite {
         bs: CatalystSummable[B, B]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
-      val B = dataset.col[B](Symbol("b"))
+      val A = dataset.col[A]("a")
+      val B = dataset.col[B]("b")
 
       val datasetSum = dataset.agg(sum(A), sum(B)).collect().run().toVector
       val listSumA = data.map(_.a).sum
@@ -84,9 +84,9 @@ class GroupByTests extends TypedDatasetSuite {
         cs: CatalystSummable[C, C]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
-      val B = dataset.col[B](Symbol("b"))
-      val C = dataset.col[C](Symbol("c"))
+      val A = dataset.col[A]("a")
+      val B = dataset.col[B]("b")
+      val C = dataset.col[C]("c")
 
       val datasetSum =
         dataset.agg(sum(A), sum(B), sum(C)).collect().run().toVector
@@ -114,10 +114,10 @@ class GroupByTests extends TypedDatasetSuite {
         fo: CatalystOrdered[D]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
-      val B = dataset.col[B](Symbol("b"))
-      val C = dataset.col[C](Symbol("c"))
-      val D = dataset.col[D](Symbol("d"))
+      val A = dataset.col[A]("a")
+      val B = dataset.col[B]("b")
+      val C = dataset.col[C]("c")
+      val D = dataset.col[D]("d")
 
       val datasetSum =
         dataset.agg(sum(A), sum(B), min(C), max(D)).collect().run().toVector
@@ -151,8 +151,8 @@ class GroupByTests extends TypedDatasetSuite {
         widen: B => Out
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
-      val B = dataset.col[B](Symbol("b"))
+      val A = dataset.col[A]("a")
+      val B = dataset.col[B]("b")
 
       val datasetSumByA =
         dataset.groupBy(A).agg(sum(B)).collect().run().toVector.sortBy(_._1)
@@ -173,8 +173,8 @@ class GroupByTests extends TypedDatasetSuite {
         data: List[X2[A, B]]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
-      val B = dataset.col[B](Symbol("b"))
+      val A = dataset.col[A]("a")
+      val B = dataset.col[B]("b")
 
       val datasetSumByA = dataset
         .groupBy(A)
@@ -208,9 +208,9 @@ class GroupByTests extends TypedDatasetSuite {
         widenc: C => OutC
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
-      val B = dataset.col[B](Symbol("b"))
-      val C = dataset.col[C](Symbol("c"))
+      val A = dataset.col[A]("a")
+      val B = dataset.col[B]("b")
+      val C = dataset.col[C]("c")
 
       val framelessSumBC = dataset
         .groupBy(A)
@@ -316,9 +316,9 @@ class GroupByTests extends TypedDatasetSuite {
         widenc: C => OutC
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
-      val B = dataset.col[B](Symbol("b"))
-      val C = dataset.col[C](Symbol("c"))
+      val A = dataset.col[A]("a")
+      val B = dataset.col[B]("b")
+      val C = dataset.col[C]("c")
 
       val framelessSumC = dataset
         .groupBy(A, B)
@@ -431,10 +431,10 @@ class GroupByTests extends TypedDatasetSuite {
         widend: D => OutD
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
-      val B = dataset.col[B](Symbol("b"))
-      val C = dataset.col[C](Symbol("c"))
-      val D = dataset.col[D](Symbol("d"))
+      val A = dataset.col[A]("a")
+      val B = dataset.col[B]("b")
+      val C = dataset.col[C]("c")
+      val D = dataset.col[D]("d")
 
       val datasetSumByAB = dataset
         .groupBy(A, B)
@@ -467,9 +467,9 @@ class GroupByTests extends TypedDatasetSuite {
       ](data: List[X3[A, B, C]]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
-      val B = dataset.col[B](Symbol("b"))
-      val C = dataset.col[C](Symbol("c"))
+      val A = dataset.col[A]("a")
+      val B = dataset.col[B]("b")
+      val C = dataset.col[C]("c")
 
       val datasetSumByAB = dataset
         .groupBy(A, B)
@@ -498,7 +498,7 @@ class GroupByTests extends TypedDatasetSuite {
         data: Vector[X2[A, B]]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
+      val A = dataset.col[A]("a")
 
       val datasetGrouped = dataset
         .groupBy(A)
@@ -523,7 +523,7 @@ class GroupByTests extends TypedDatasetSuite {
         data: Vector[X2[A, B]]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val A = dataset.col[A](Symbol("a"))
+      val A = dataset.col[A]("a")
 
       val datasetGrouped = dataset
         .groupBy(A)
@@ -555,8 +555,8 @@ class GroupByTests extends TypedDatasetSuite {
       ](data: Vector[X3[A, B, C]]
       ): Prop = {
       val dataset = TypedDataset.create(data)
-      val cA = dataset.col[A](Symbol("a"))
-      val cB = dataset.col[B](Symbol("b"))
+      val cA = dataset.col[A]("a")
+      val cB = dataset.col[B]("b")
 
       val datasetGrouped = dataset
         .groupBy(cA, cB)

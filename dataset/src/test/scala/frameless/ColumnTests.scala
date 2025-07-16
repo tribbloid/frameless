@@ -60,8 +60,8 @@ final class ColumnTests extends TypedDatasetSuite with Matchers {
 
     def prop[A: TypedEncoder: CatalystOrdered: Ordering](a: A, b: A): Prop = {
       val dataset = TypedDataset.create(X2(a, b) :: Nil)
-      val A = dataset.col(Symbol("a"))
-      val B = dataset.col(Symbol("b"))
+      val A = dataset.col("a")
+      val B = dataset.col("b")
 
       val dataset2 = dataset
         .selectMany(
@@ -106,9 +106,9 @@ final class ColumnTests extends TypedDatasetSuite with Matchers {
         c: A
       ): Prop = {
       val dataset = TypedDataset.create(X3(a, b, c) :: Nil)
-      val A = dataset.col(Symbol("a"))
-      val B = dataset.col(Symbol("b"))
-      val C = dataset.col(Symbol("c"))
+      val A = dataset.col("a")
+      val B = dataset.col("b")
+      val C = dataset.col("c")
 
       val isBetweeen = dataset
         .selectMany(A.between(B, C), A.between(b, c))
@@ -137,7 +137,7 @@ final class ColumnTests extends TypedDatasetSuite with Matchers {
 
   test("toString") {
     val t = TypedDataset.create((1, 2) :: Nil)
-    t(Symbol("_1")).toString ?= t.dataset.col("_1").toString()
+    t("_1").toString ?= t.dataset.col("_1").toString()
   }
 
   test("boolean and / or") {
@@ -150,8 +150,8 @@ final class ColumnTests extends TypedDatasetSuite with Matchers {
 
         val typedBoolean = ds
           .select(
-            ds(Symbol("a")) && ds(Symbol("b")) || ds(Symbol("c")),
-            ds(Symbol("a")).and(ds(Symbol("b"))).or(ds(Symbol("c")))
+            ds("a") && ds("b") || ds("c"),
+            ds("a").and(ds("b")).or(ds("c"))
           )
           .collect()
           .run()
@@ -181,7 +181,7 @@ final class ColumnTests extends TypedDatasetSuite with Matchers {
         val ds = TypedDataset.create(X3(a, b, c) :: Nil)
 
         val typedSubstr =
-          ds.select(ds(Symbol("a")).substr(ds(Symbol("b")), ds(Symbol("c"))))
+          ds.select(ds("a").substr(ds("b"), ds("c")))
             .collect()
             .run()
             .toList
@@ -202,7 +202,7 @@ final class ColumnTests extends TypedDatasetSuite with Matchers {
         val ds = TypedDataset.create(X1(a) :: Nil)
 
         val typedSubstr =
-          ds.select(ds(Symbol("a")).substr(b, c)).collect().run().toList
+          ds.select(ds("a").substr(b, c)).collect().run().toList
 
         val untypedDs = ds.toDF()
         val untypedSubstr = untypedDs
@@ -231,7 +231,7 @@ final class ColumnTests extends TypedDatasetSuite with Matchers {
         val ds = TypedDataset.create(X2(a, b) :: Nil)
 
         val typedLike =
-          ds.select(ds(Symbol("a")).like(a), ds(Symbol("b")).like(a))
+          ds.select(ds("a").like(a), ds("b").like(a))
             .collect()
             .run()
             .toList
@@ -267,9 +267,9 @@ final class ColumnTests extends TypedDatasetSuite with Matchers {
 
         val typedLike = ds
           .select(
-            ds(Symbol("a")).rlike(a),
-            ds(Symbol("b")).rlike(a),
-            ds(Symbol("a")).rlike(".*")
+            ds("a").rlike(a),
+            ds("b").rlike(a),
+            ds("a").rlike(".*")
           )
           .collect()
           .run()
@@ -306,8 +306,8 @@ final class ColumnTests extends TypedDatasetSuite with Matchers {
 
         val typedContains = ds
           .select(
-            ds(Symbol("a")).contains(ds(Symbol("b"))),
-            ds(Symbol("b")).contains(a)
+            ds("a").contains(ds("b")),
+            ds("b").contains(a)
           )
           .collect()
           .run()
@@ -343,8 +343,8 @@ final class ColumnTests extends TypedDatasetSuite with Matchers {
 
         val typedStartsWith = ds
           .select(
-            ds(Symbol("a")).startsWith(ds(Symbol("b"))),
-            ds(Symbol("b")).startsWith(a)
+            ds("a").startsWith(ds("b")),
+            ds("b").startsWith(a)
           )
           .collect()
           .run()
@@ -379,8 +379,8 @@ final class ColumnTests extends TypedDatasetSuite with Matchers {
         val ds = TypedDataset.create(X2(a, b) :: Nil)
         val typedStartsWith = ds
           .select(
-            ds(Symbol("a")).endsWith(ds(Symbol("b"))),
-            ds(Symbol("b")).endsWith(a)
+            ds("a").endsWith(ds("b")),
+            ds("b").endsWith(a)
           )
           .collect()
           .run()
@@ -412,8 +412,8 @@ final class ColumnTests extends TypedDatasetSuite with Matchers {
 
       val defaulted: (A, A) = dataset
         .select(
-          dataset(Symbol("b")).getOrElse(dataset(Symbol("a"))),
-          dataset(Symbol("b")).getOrElse(a)
+          dataset("b").getOrElse(dataset("a")),
+          dataset("b").getOrElse(a)
         )
         .collect()
         .run()
@@ -510,11 +510,11 @@ final class ColumnTests extends TypedDatasetSuite with Matchers {
 
       val frameless: Seq[(A, X2[A, B], X2[A, B], X2[A, B], B)] =
         ds.select(
-          ds(Symbol("a")),
+          ds("a"),
           ds.asCol,
           ds.asCol,
           ds.asCol,
-          ds(Symbol("b"))
+          ds("b")
         ).collect()
           .run()
 
@@ -576,7 +576,7 @@ final class ColumnTests extends TypedDatasetSuite with Matchers {
       TypedDataset.create(Seq(new Name("lorem"), bar))
 
     val joined =
-      ds1.joinLeftSemi(ds2)(ds1.col(Symbol("name")) === ds2.asJoinColValue)
+      ds1.joinLeftSemi(ds2)(ds1.col("name") === ds2.asJoinColValue)
 
     joined.collect().run() shouldEqual Seq(Person(bar, 23))
   }
@@ -585,7 +585,7 @@ final class ColumnTests extends TypedDatasetSuite with Matchers {
     val ds = TypedDataset.create((true, false) :: Nil)
 
     val rs =
-      ds.select(!ds(Symbol("_1")), !ds(Symbol("_2"))).collect().run().head
+      ds.select(!ds("_1"), !ds("_2")).collect().run().head
 
     rs shouldEqual (false -> true)
   }
@@ -603,8 +603,8 @@ final class ColumnTests extends TypedDatasetSuite with Matchers {
     val ds = TypedDataset.create(data)
     val rs =
       ds.select(
-        ds(Symbol("_1")).opt.map(_ * 2),
-        ds(Symbol("_1")).opt.map(_ + 2)
+        ds("_1").opt.map(_ * 2),
+        ds("_1").opt.map(_ + 2)
       ).collect()
         .run()
     val expected = data.map { case (x, y) => (x.map(_ * 2), y.map(_ + 1)) }
@@ -619,7 +619,7 @@ final class ColumnTests extends TypedDatasetSuite with Matchers {
 
   test("field") {
     val ds = TypedDataset.create((1, (2.3F, "a")) :: Nil)
-    val rs = ds.select(ds(Symbol("_2")).field(Symbol("_2"))).collect().run()
+    val rs = ds.select(ds("_2").field("_2")).collect().run()
 
     rs shouldEqual Seq("a")
   }

@@ -51,7 +51,7 @@ class JoinTests extends TypedDatasetSuite {
       val rightDs = TypedDataset.create(right)
       val joinedDs =
         leftDs.joinFull(rightDs)(
-          leftDs.col(Symbol("a")) === rightDs.col(Symbol("a"))
+          leftDs.col("a") === rightDs.col("a")
         )
 
       val joinedData = joinedDs.collect().run().toVector.sorted
@@ -98,7 +98,7 @@ class JoinTests extends TypedDatasetSuite {
       val rightDs = TypedDataset.create(right)
       val joinedDs =
         leftDs.joinInner(rightDs)(
-          leftDs.col(Symbol("a")) === rightDs.col(Symbol("a"))
+          leftDs.col("a") === rightDs.col("a")
         )
 
       val joinedData = joinedDs.collect().run().toVector.sorted
@@ -135,7 +135,7 @@ class JoinTests extends TypedDatasetSuite {
       val rightDs = TypedDataset.create(right)
       val joinedDs =
         leftDs.joinLeft(rightDs)(
-          leftDs.col(Symbol("a")) === rightDs.col(Symbol("a"))
+          leftDs.col("a") === rightDs.col("a")
         )
 
       val joinedData = joinedDs.collect().run().toVector.sorted
@@ -180,7 +180,7 @@ class JoinTests extends TypedDatasetSuite {
       val rightKeys = right.map(_.a).toSet
       val joinedDs =
         leftDs.joinLeftAnti(rightDs)(
-          leftDs.col(Symbol("a")) === rightDs.col(Symbol("a"))
+          leftDs.col("a") === rightDs.col("a")
         )
 
       val joinedData = joinedDs.collect().run().toVector.sorted
@@ -212,7 +212,7 @@ class JoinTests extends TypedDatasetSuite {
       val rightKeys = right.map(_.a).toSet
       val joinedDs =
         leftDs.joinLeftSemi(rightDs)(
-          leftDs.col(Symbol("a")) === rightDs.col(Symbol("a"))
+          leftDs.col("a") === rightDs.col("a")
         )
 
       val joinedData = joinedDs.collect().run().toVector.sorted
@@ -243,7 +243,7 @@ class JoinTests extends TypedDatasetSuite {
       val rightDs = TypedDataset.create(right)
       val joinedDs =
         leftDs.joinRight(rightDs)(
-          leftDs.col(Symbol("a")) === rightDs.col(Symbol("a"))
+          leftDs.col("a") === rightDs.col("a")
         )
 
       val joinedData = joinedDs.collect().run().toVector.sorted

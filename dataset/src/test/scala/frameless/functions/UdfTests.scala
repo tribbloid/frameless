@@ -14,7 +14,7 @@ class UdfTests extends TypedDatasetSuite {
       val dataset: TypedDataset[X1[A]] = TypedDataset.create(data)
       val u1 = udf[X1[A], A, B](f1)
       val u2 = dataset.makeUDF(f1)
-      val A = dataset.col[A](Symbol("a"))
+      val A = dataset.col[A]("a")
 
       // filter forces whole codegen
       val codegen = dataset.deserialized
@@ -66,9 +66,9 @@ class UdfTests extends TypedDatasetSuite {
       val u12 = dataset.makeUDF(f1)
       val u22 = dataset.makeUDF(f2)
       val u32 = dataset.makeUDF(f3)
-      val A = dataset.col[A](Symbol("a"))
-      val B = dataset.col[B](Symbol("b"))
-      val C = dataset.col[C](Symbol("c"))
+      val A = dataset.col[A]("a")
+      val B = dataset.col[B]("b")
+      val C = dataset.col[C]("c")
 
       val dataset21 =
         dataset.select(u11(A), u21(B), u31(C)).collect().run().toVector
@@ -93,8 +93,8 @@ class UdfTests extends TypedDatasetSuite {
       val dataset = TypedDataset.create(data)
       val u1 = udf[X3[A, B, C], A, B, C](f1)
       val u2 = dataset.makeUDF(f1)
-      val A = dataset.col[A](Symbol("a"))
-      val B = dataset.col[B](Symbol("b"))
+      val A = dataset.col[A]("a")
+      val B = dataset.col[B]("b")
 
       val dataset21 = dataset.select(u1(A, B)).collect().run().toVector
       val dataset22 = dataset.select(u2(A, B)).collect().run().toVector
@@ -119,9 +119,9 @@ class UdfTests extends TypedDatasetSuite {
       val u21 = udf[X3[A, B, C], B, C, A](f2)
       val u22 = dataset.makeUDF(f2)
 
-      val A = dataset.col[A](Symbol("a"))
-      val B = dataset.col[B](Symbol("b"))
-      val C = dataset.col[C](Symbol("c"))
+      val A = dataset.col[A]("a")
+      val B = dataset.col[B]("b")
+      val C = dataset.col[C]("c")
 
       val dataset21 =
         dataset.select(u11(A, B), u21(B, C)).collect().run().toVector
@@ -145,9 +145,9 @@ class UdfTests extends TypedDatasetSuite {
       val u1 = udf[X3[A, B, C], A, B, C, C](f)
       val u2 = dataset.makeUDF(f)
 
-      val A = dataset.col[A](Symbol("a"))
-      val B = dataset.col[B](Symbol("b"))
-      val C = dataset.col[C](Symbol("c"))
+      val A = dataset.col[A]("a")
+      val B = dataset.col[B]("b")
+      val C = dataset.col[C]("c")
 
       val dataset21 = dataset.select(u1(A, B, C)).collect().run().toVector
       val dataset22 = dataset.select(u2(A, B, C)).collect().run().toVector
@@ -173,10 +173,10 @@ class UdfTests extends TypedDatasetSuite {
       val u1 = udf[X4[A, B, C, D], A, B, C, D, C](f)
       val u2 = dataset.makeUDF(f)
 
-      val A = dataset.col[A](Symbol("a"))
-      val B = dataset.col[B](Symbol("b"))
-      val C = dataset.col[C](Symbol("c"))
-      val D = dataset.col[D](Symbol("d"))
+      val A = dataset.col[A]("a")
+      val B = dataset.col[B]("b")
+      val C = dataset.col[C]("c")
+      val D = dataset.col[D]("d")
 
       val dataset21 = dataset.select(u1(A, B, C, D)).collect().run().toVector
       val dataset22 = dataset.select(u2(A, B, C, D)).collect().run().toVector
@@ -206,11 +206,11 @@ class UdfTests extends TypedDatasetSuite {
       val u1 = udf[X5[A, B, C, D, E], A, B, C, D, E, C](f)
       val u2 = dataset.makeUDF(f)
 
-      val A = dataset.col[A](Symbol("a"))
-      val B = dataset.col[B](Symbol("b"))
-      val C = dataset.col[C](Symbol("c"))
-      val D = dataset.col[D](Symbol("d"))
-      val E = dataset.col[E](Symbol("e"))
+      val A = dataset.col[A]("a")
+      val B = dataset.col[B]("b")
+      val C = dataset.col[C]("c")
+      val D = dataset.col[D]("d")
+      val E = dataset.col[E]("e")
 
       val dataset21 = dataset.select(u1(A, B, C, D, E)).collect().run().toVector
       val dataset22 = dataset.select(u2(A, B, C, D, E)).collect().run().toVector

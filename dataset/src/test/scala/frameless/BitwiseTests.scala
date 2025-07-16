@@ -63,15 +63,12 @@ class BitwiseTests extends TypedDatasetSuite with Matchers {
       val df = TypedDataset.create(X2(a, b) :: Nil)
       val result = implicitly[CatalystBitwise4Tests[A]].bitwiseAnd(a, b)
       val resultSymbolic = implicitly[CatalystBitwise4Tests[A]].&(a, b)
-      val got = df
-        .select(df.col(Symbol("a")) bitwiseAND df.col(Symbol("b")))
-        .collect()
-        .run()
-      val gotSymbolic = df.select(df.col(Symbol("a")) & b).collect().run()
+      val got = df.select(df.col("a") bitwiseAND df.col("b")).collect().run()
+      val gotSymbolic = df.select(df.col("a") & b).collect().run()
       val symbolicCol2Col =
-        df.select(df.col(Symbol("a")) & df.col(Symbol("b"))).collect().run()
+        df.select(df.col("a") & df.col("b")).collect().run()
       val canCast =
-        df.select(df.col(Symbol("a")).cast[Long] & 0L).collect().run()
+        df.select(df.col("a").cast[Long] & 0L).collect().run()
       canCast should contain theSameElementsAs Seq.fill[Long](gotSymbolic.size)(
         0L
       )
@@ -97,15 +94,12 @@ class BitwiseTests extends TypedDatasetSuite with Matchers {
       val df = TypedDataset.create(X2(a, b) :: Nil)
       val result = implicitly[CatalystBitwise4Tests[A]].bitwiseOr(a, b)
       val resultSymbolic = implicitly[CatalystBitwise4Tests[A]].|(a, b)
-      val got = df
-        .select(df.col(Symbol("a")) bitwiseOR df.col(Symbol("b")))
-        .collect()
-        .run()
-      val gotSymbolic = df.select(df.col(Symbol("a")) | b).collect().run()
+      val got = df.select(df.col("a") bitwiseOR df.col("b")).collect().run()
+      val gotSymbolic = df.select(df.col("a") | b).collect().run()
       val symbolicCol2Col =
-        df.select(df.col(Symbol("a")) | df.col(Symbol("b"))).collect().run()
+        df.select(df.col("a") | df.col("b")).collect().run()
       val canCast =
-        df.select(df.col(Symbol("a")).cast[Long] | -1L).collect().run()
+        df.select(df.col("a").cast[Long] | -1L).collect().run()
       canCast should contain theSameElementsAs Seq.fill[Long](gotSymbolic.size)(
         -1L
       )
@@ -132,13 +126,10 @@ class BitwiseTests extends TypedDatasetSuite with Matchers {
       val result = implicitly[CatalystBitwise4Tests[A]].bitwiseXor(a, b)
       val resultSymbolic = implicitly[CatalystBitwise4Tests[A]].^(a, b)
       result ?= resultSymbolic
-      val got = df
-        .select(df.col(Symbol("a")) bitwiseXOR df.col(Symbol("b")))
-        .collect()
-        .run()
-      val gotSymbolic = df.select(df.col(Symbol("a")) ^ b).collect().run()
+      val got = df.select(df.col("a") bitwiseXOR df.col("b")).collect().run()
+      val gotSymbolic = df.select(df.col("a") ^ b).collect().run()
       val zeroes =
-        df.select(df.col(Symbol("a")) ^ df.col(Symbol("a"))).collect().run()
+        df.select(df.col("a") ^ df.col("a")).collect().run()
       zeroes should contain theSameElementsAs Seq.fill[Long](gotSymbolic.size)(
         0L
       )
