@@ -1,7 +1,16 @@
 package frameless
 package ops
 
-import formless.hlist.{ Mapped, Prepend, ToList, ToTraversable, Tupler }
+import formless.hlist.{
+  ::,
+  HList,
+  HNil,
+  Mapped,
+  Prepend,
+  ToList,
+  ToTraversable,
+  Tupler
+}
 import org.apache.spark.sql.catalyst.analysis.UnresolvedAlias
 import org.apache.spark.sql.catalyst.plans.logical.Project
 import org.apache.spark.sql.{
@@ -10,8 +19,8 @@ import org.apache.spark.sql.{
   FramelessInternals,
   RelationalGroupedDataset
 }
-import shapeless._
-import shapeless.ops.hlist.Length
+import shapeless.ProductArgs
+import formless.hlist.Length
 
 class GroupedByManyOps[T, TK <: HList, K <: HList, KT](
     self: TypedDataset[T],
@@ -319,7 +328,7 @@ final case class Pivot[T, GroupedColumns <: HList, PivotType, Values <: HList](
         AggrColumns <: HList,
         AggrColumnTypes <: HList,
         GroupedColumnTypes <: HList,
-        NumValues <: Nat,
+        NumValues <: Int,
         TypesForPivotedValues <: HList,
         TypesForPivotedValuesOpt <: HList,
         OutAsHList <: HList,

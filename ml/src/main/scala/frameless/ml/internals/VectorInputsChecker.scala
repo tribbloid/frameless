@@ -3,8 +3,8 @@ package ml
 package internals
 
 import org.apache.spark.ml.linalg.Vector
-import shapeless.ops.hlist.Length
-import shapeless.{ HList, LabelledGeneric, Nat, Witness }
+import formless.hlist.Length
+import shapeless.{ HList, LabelledGeneric, Witness }
 
 import scala.annotation.implicitNotFound
 
@@ -25,7 +25,7 @@ object VectorInputsChecker {
       FeaturesK <: Symbol
     ](implicit
       i0: LabelledGeneric.Aux[Inputs, InputsRec],
-      i1: Length.Aux[InputsRec, Nat._1],
+      i1: Length.Aux[InputsRec, 1],
       i2: SelectorByValue.Aux[InputsRec, Vector, FeaturesK],
       i3: Witness.Aux[FeaturesK]
     ): VectorInputsChecker[Inputs] = {

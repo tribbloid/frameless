@@ -3,8 +3,8 @@ package ml
 package internals
 
 import org.apache.spark.ml.linalg._
-import shapeless.ops.hlist.Length
-import shapeless.{ HList, LabelledGeneric, Nat, Witness }
+import formless.hlist.Length
+import shapeless.{ HList, LabelledGeneric, Witness }
 
 import scala.annotation.implicitNotFound
 
@@ -31,7 +31,7 @@ object LinearInputsChecker {
       FeaturesK <: Symbol
     ](implicit
       i0: LabelledGeneric.Aux[Inputs, InputsRec],
-      i1: Length.Aux[InputsRec, Nat._2],
+      i1: Length.Aux[InputsRec, 2],
       i2: SelectorByValue.Aux[InputsRec, Double, LabelK],
       i3: Witness.Aux[LabelK],
       i4: SelectorByValue.Aux[InputsRec, Vector, FeaturesK],
@@ -52,7 +52,7 @@ object LinearInputsChecker {
       WeightK <: Symbol
     ](implicit
       i0: LabelledGeneric.Aux[Inputs, InputsRec],
-      i1: Length.Aux[InputsRec, Nat._3],
+      i1: Length.Aux[InputsRec, 3],
       i2: SelectorByValue.Aux[InputsRec, Vector, FeaturesK],
       i3: Witness.Aux[FeaturesK],
       i4: SelectorByValue.Aux[InputsRec, Double, LabelK],
@@ -68,5 +68,4 @@ object LinearInputsChecker {
       )
     }
   }
-
 }

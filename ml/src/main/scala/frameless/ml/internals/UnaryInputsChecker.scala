@@ -2,8 +2,8 @@ package frameless
 package ml
 package internals
 
-import shapeless.ops.hlist.Length
-import shapeless.{ HList, LabelledGeneric, Nat, Witness }
+import formless.hlist.Length
+import shapeless.{ HList, LabelledGeneric, Witness }
 
 import scala.annotation.implicitNotFound
 
@@ -26,7 +26,7 @@ object UnaryInputsChecker {
       InputK <: Symbol
     ](implicit
       i0: LabelledGeneric.Aux[Inputs, InputsRec],
-      i1: Length.Aux[InputsRec, Nat._1],
+      i1: Length.Aux[InputsRec, 1],
       i2: SelectorByValue.Aux[InputsRec, Expected, InputK],
       i3: Witness.Aux[InputK]
     ): UnaryInputsChecker[Inputs, Expected] =

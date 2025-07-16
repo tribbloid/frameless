@@ -3,8 +3,8 @@ package ml
 package internals
 
 import org.apache.spark.ml.linalg._
-import shapeless.ops.hlist.Length
-import shapeless.{ HList, LabelledGeneric, Nat, Witness }
+import formless.hlist.Length
+import shapeless.{ HList, LabelledGeneric, Witness }
 
 import scala.annotation.implicitNotFound
 
@@ -30,7 +30,7 @@ object TreesInputsChecker {
       FeaturesK <: Symbol
     ](implicit
       i0: LabelledGeneric.Aux[Inputs, InputsRec],
-      i1: Length.Aux[InputsRec, Nat._2],
+      i1: Length.Aux[InputsRec, 2],
       i2: SelectorByValue.Aux[InputsRec, Double, LabelK],
       i3: Witness.Aux[LabelK],
       i4: SelectorByValue.Aux[InputsRec, Vector, FeaturesK],
