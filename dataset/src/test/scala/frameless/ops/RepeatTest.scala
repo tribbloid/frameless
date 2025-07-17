@@ -1,7 +1,7 @@
 package frameless
 package ops
 
-import shapeless.test.illTyped
+import frameless.compat.illTyped
 import shapeless.{ ::, HNil, Nat }
 
 class RepeatTest extends TypedDatasetSuite {

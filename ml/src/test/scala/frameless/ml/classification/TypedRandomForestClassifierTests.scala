@@ -7,7 +7,7 @@ import org.apache.spark.ml.linalg._
 import org.scalacheck.Prop._
 import org.scalacheck.{ Arbitrary, Gen }
 import org.scalatest.matchers.must.Matchers
-import shapeless.test.illTyped
+import frameless.compat.illTyped
 
 class TypedRandomForestClassifierTests extends FramelessMlSuite with Matchers {
 

@@ -4,7 +4,7 @@ package internals
 
 import org.apache.spark.ml.linalg._
 import shapeless.ops.hlist.Length
-import shapeless.{ HList, LabelledGeneric, Nat, Witness }
+import shapeless.{ HList, LabelledGeneric, Nat }
 
 import scala.annotation.implicitNotFound
 
@@ -27,19 +27,19 @@ object LinearInputsChecker {
   implicit def checkLinearInputs[
       Inputs,
       InputsRec <: HList,
-      LabelK <: Symbol,
-      FeaturesK <: Symbol
+      LabelK <: String,
+      FeaturesK <: String
     ](implicit
       i0: LabelledGeneric.Aux[Inputs, InputsRec],
       i1: Length.Aux[InputsRec, Nat._2],
       i2: SelectorByValue.Aux[InputsRec, Double, LabelK],
-      i3: Witness.Aux[LabelK],
+      i3: ValueOf[LabelK],
       i4: SelectorByValue.Aux[InputsRec, Vector, FeaturesK],
-      i5: Witness.Aux[FeaturesK]
+      i5: ValueOf[FeaturesK]
     ): LinearInputsChecker[Inputs] = {
     new LinearInputsChecker[Inputs] {
-      val labelCol: String = implicitly[Witness.Aux[LabelK]].value.name
-      val featuresCol: String = implicitly[Witness.Aux[FeaturesK]].value.name
+      val labelCol: String = i3.value
+      val featuresCol: String = i5.value
       val weightCol: Option[String] = None
     }
   }
@@ -47,24 +47,24 @@ object LinearInputsChecker {
   implicit def checkLinearInputs2[
       Inputs,
       InputsRec <: HList,
-      LabelK <: Symbol,
-      FeaturesK <: Symbol,
-      WeightK <: Symbol
+      LabelK <: String,
+      FeaturesK <: String,
+      WeightK <: String
     ](implicit
       i0: LabelledGeneric.Aux[Inputs, InputsRec],
       i1: Length.Aux[InputsRec, Nat._3],
       i2: SelectorByValue.Aux[InputsRec, Vector, FeaturesK],
-      i3: Witness.Aux[FeaturesK],
+      i3: ValueOf[FeaturesK],
       i4: SelectorByValue.Aux[InputsRec, Double, LabelK],
-      i5: Witness.Aux[LabelK],
+      i5: ValueOf[LabelK],
       i6: SelectorByValue.Aux[InputsRec, Float, WeightK],
-      i7: Witness.Aux[WeightK]
+      i7: ValueOf[WeightK]
     ): LinearInputsChecker[Inputs] = {
     new LinearInputsChecker[Inputs] {
-      val labelCol: String = implicitly[Witness.Aux[LabelK]].value.name
-      val featuresCol: String = implicitly[Witness.Aux[FeaturesK]].value.name
+      val labelCol: String = i5.value
+      val featuresCol: String = i3.value
       val weightCol: Option[String] = Some(
-        implicitly[Witness.Aux[WeightK]].value.name
+        i7.value
       )
     }
   }

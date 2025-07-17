@@ -59,12 +59,12 @@ private[ml] object TypedVectorAssemblerInputsChecker {
     ](implicit
       inputsGen: LabelledGeneric.Aux[Inputs, InputsRec],
       inputsKeys: Keys.Aux[InputsRec, InputsKeys],
-      inputsKeysTraverse: ToTraversable.Aux[InputsKeys, Seq, Symbol],
+      inputsKeysTraverse: ToTraversable.Aux[InputsKeys, Seq, String],
       inputsValues: Values.Aux[InputsRec, InputsVals],
       inputsTypeCheck: TypedVectorAssemblerInputsValueChecker[InputsVals]
     ): TypedVectorAssemblerInputsChecker[Inputs] =
     new TypedVectorAssemblerInputsChecker[Inputs] {
-      val inputCols: Seq[String] = inputsKeys.apply().to[Seq].map(_.name)
+      val inputCols: Seq[String] = inputsKeys.apply().to[Seq]
     }
 }
 

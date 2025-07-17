@@ -3,24 +3,24 @@ package ml
 package internals
 
 import shapeless.labelled.FieldType
-import shapeless.{ ::, DepFn1, HList, Witness }
+import shapeless.{ ::, DepFn1, HList }
 
 /**
  * Typeclass supporting record selection by value type (returning the first key whose value is of type `Value`)
  */
 trait SelectorByValue[L <: HList, Value] extends DepFn1[L] with Serializable {
-  type Out <: Symbol
+  type Out <: String
 }
 
 object SelectorByValue {
 
-  type Aux[L <: HList, Value, Out0 <: Symbol] = SelectorByValue[L, Value] {
+  type Aux[L <: HList, Value, Out0 <: String] = SelectorByValue[L, Value] {
     type Out = Out0
   }
 
-  implicit def select[K <: Symbol, T <: HList, Value](
+  implicit def select[K <: String, T <: HList, Value](
       implicit
-      wk: Witness.Aux[K]
+      wk: ValueOf[K]
     ): Aux[FieldType[K, Value] :: T, Value, K] = {
     new SelectorByValue[FieldType[K, Value] :: T, Value] {
       type Out = K

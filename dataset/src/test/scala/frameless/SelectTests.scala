@@ -2,7 +2,7 @@ package frameless
 
 import org.scalacheck.Prop
 import org.scalacheck.Prop._
-import shapeless.test.illTyped
+import frameless.compat.illTyped
 
 import scala.reflect.ClassTag
 

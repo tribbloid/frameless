@@ -1,6 +1,7 @@
 package frameless
 
 import formless.hlist.IsHCons
+import frameless.compat.XString
 import org.apache.spark.sql.catalyst.expressions.Literal
 import org.apache.spark.sql.{ reflection => ScalaReflection }
 import shapeless._
@@ -76,10 +77,10 @@ package object functions extends Udf with UnaryFunctions {
       A: IsValueClass,
       T,
       G <: ::[_, HNil],
-      H <: ::[_ <: FieldType[_ <: Symbol, _], HNil],
-      K <: Symbol,
+      H <: ::[_ <: FieldType[_ <: XString, _], HNil],
+      K <: XString,
       V,
-      KS <: ::[_ <: Symbol, HNil],
+      KS <: ::[_ <: XString, HNil],
       VS <: HList
     ](value: A
     )(implicit
@@ -124,10 +125,10 @@ package object functions extends Udf with UnaryFunctions {
       A: IsValueClass,
       T,
       G <: ::[_, HNil],
-      H <: ::[_ <: FieldType[_ <: Symbol, _], HNil],
-      K <: Symbol,
+      H <: ::[_ <: FieldType[_ <: XString, _], HNil],
+      K <: XString,
       V,
-      KS <: ::[_ <: Symbol, HNil],
+      KS <: ::[_ <: XString, HNil],
       VS <: HList
     ](value: Option[A]
     )(implicit

@@ -4,7 +4,7 @@ package internals
 
 import org.apache.spark.ml.linalg._
 import shapeless.ops.hlist.Length
-import shapeless.{ HList, LabelledGeneric, Nat, Witness }
+import shapeless.{ HList, LabelledGeneric, Nat }
 
 import scala.annotation.implicitNotFound
 
@@ -26,19 +26,19 @@ object TreesInputsChecker {
   implicit def checkTreesInputs[
       Inputs,
       InputsRec <: HList,
-      LabelK <: Symbol,
-      FeaturesK <: Symbol
+      LabelK <: String,
+      FeaturesK <: String
     ](implicit
       i0: LabelledGeneric.Aux[Inputs, InputsRec],
       i1: Length.Aux[InputsRec, Nat._2],
       i2: SelectorByValue.Aux[InputsRec, Double, LabelK],
-      i3: Witness.Aux[LabelK],
+      i3: ValueOf[LabelK],
       i4: SelectorByValue.Aux[InputsRec, Vector, FeaturesK],
-      i5: Witness.Aux[FeaturesK]
+      i5: ValueOf[FeaturesK]
     ): TreesInputsChecker[Inputs] = {
     new TreesInputsChecker[Inputs] {
-      val labelCol: String = implicitly[Witness.Aux[LabelK]].value.name
-      val featuresCol: String = implicitly[Witness.Aux[FeaturesK]].value.name
+      val labelCol: String = i3.value
+      val featuresCol: String = i5.value
     }
   }
 

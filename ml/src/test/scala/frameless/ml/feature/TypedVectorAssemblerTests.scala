@@ -5,7 +5,7 @@ package feature
 import org.apache.spark.ml.linalg._
 import org.scalacheck.Arbitrary
 import org.scalacheck.Prop._
-import shapeless.test.illTyped
+import frameless.compat.illTyped
 
 class TypedVectorAssemblerTests extends FramelessMlSuite {
 

@@ -3,7 +3,7 @@ package ops
 
 import org.scalacheck.Prop
 import org.scalacheck.Prop._
-import shapeless.test.illTyped
+import frameless.compat.illTyped
 
 case class Foo(i: Int, j: Int, x: String)
 case class Bar(i: Int, x: String)

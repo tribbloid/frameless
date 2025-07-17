@@ -3,7 +3,7 @@ package ml
 package internals
 
 import shapeless.ops.hlist.Length
-import shapeless.{ HList, LabelledGeneric, Nat, Witness }
+import shapeless.{ HList, LabelledGeneric, Nat }
 
 import scala.annotation.implicitNotFound
 
@@ -23,15 +23,15 @@ object UnaryInputsChecker {
       Inputs,
       Expected,
       InputsRec <: HList,
-      InputK <: Symbol
+      InputK <: String
     ](implicit
       i0: LabelledGeneric.Aux[Inputs, InputsRec],
       i1: Length.Aux[InputsRec, Nat._1],
       i2: SelectorByValue.Aux[InputsRec, Expected, InputK],
-      i3: Witness.Aux[InputK]
+      i3: ValueOf[InputK]
     ): UnaryInputsChecker[Inputs, Expected] =
     new UnaryInputsChecker[Inputs, Expected] {
-      val inputCol: String = implicitly[Witness.Aux[InputK]].value.name
+      val inputCol: String = i3.value
     }
 
 }

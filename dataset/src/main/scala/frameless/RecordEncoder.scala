@@ -1,6 +1,7 @@
 package frameless
 
 import formless.hlist.IsHCons
+import frameless.compat.XString
 import org.apache.spark.sql.FramelessInternals
 import org.apache.spark.sql.catalyst.expressions._
 import org.apache.spark.sql.catalyst.expressions.objects.{
@@ -30,18 +31,18 @@ trait RecordEncoderFields[T <: HList] extends Serializable {
 
 object RecordEncoderFields {
 
-  implicit def deriveRecordLast[K <: Symbol, H](
+  implicit def deriveRecordLast[K <: XString, H](
       implicit
-      key: Witness.Aux[K],
+      key: ValueOf[K],
       head: RecordFieldEncoder[H]
     ): RecordEncoderFields[FieldType[K, H] :: HNil] =
     new RecordEncoderFields[FieldType[K, H] :: HNil] {
       def value: List[RecordEncoderField] = fieldEncoder[K, H] :: Nil
     }
 
-  implicit def deriveRecordCons[K <: Symbol, H, T <: HList](
+  implicit def deriveRecordCons[K <: XString, H, T <: HList](
       implicit
-      key: Witness.Aux[K],
+      key: ValueOf[K],
       head: RecordFieldEncoder[H],
       tail: RecordEncoderFields[T]
     ): RecordEncoderFields[FieldType[K, H] :: T] =
@@ -52,11 +53,11 @@ object RecordEncoderFields {
         )
     }
 
-  private def fieldEncoder[K <: Symbol, H](
+  private def fieldEncoder[K <: XString, H](
       implicit
-      key: Witness.Aux[K],
+      key: ValueOf[K],
       e: RecordFieldEncoder[H]
-    ): RecordEncoderField = RecordEncoderField(0, key.value.name, e.encoder)
+    ): RecordEncoderField = RecordEncoderField(0, key.value, e.encoder)
 }
 
 /**
@@ -75,7 +76,7 @@ object NewInstanceExprs {
     def from(exprs: List[Expression]): Seq[Expression] = Nil
   }
 
-  implicit def deriveUnit[K <: Symbol, T <: HList](
+  implicit def deriveUnit[K <: XString, T <: HList](
       implicit
       tail: NewInstanceExprs[T]
     ): NewInstanceExprs[FieldType[K, Unit] :: T] =
@@ -84,7 +85,7 @@ object NewInstanceExprs {
         Literal.fromObject(()) +: tail.from(exprs)
     }
 
-  implicit def deriveNonUnit[K <: Symbol, V, T <: HList](
+  implicit def deriveNonUnit[K <: XString, V, T <: HList](
       implicit
       notUnit: V =:!= Unit,
       tail: NewInstanceExprs[T]
@@ -118,7 +119,7 @@ object DropUnitValues {
     def apply(l: HNil): Out = HNil
   }
 
-  implicit def deriveUnit[K <: Symbol, T <: HList, OutT <: HList](
+  implicit def deriveUnit[K <: XString, T <: HList, OutT <: HList](
       implicit
       dropUnitValues: DropUnitValues.Aux[T, OutT]
     ): Aux[FieldType[K, Unit] :: T, OutT] =
@@ -127,7 +128,7 @@ object DropUnitValues {
       def apply(l: FieldType[K, Unit] :: T): Out = dropUnitValues(l.tail)
     }
 
-  implicit def deriveNonUnit[K <: Symbol, V, T <: HList, OutH, OutT <: HList](
+  implicit def deriveNonUnit[K <: XString, V, T <: HList, OutH, OutT <: HList](
       implicit
       nonUnit: V =:!= Unit,
       dropUnitValues: DropUnitValues.Aux[T, OutT]
@@ -219,10 +220,10 @@ object RecordFieldEncoder extends RecordFieldEncoderLowPriority {
   implicit def optionValueClass[
       F: IsValueClass,
       G <: ::[_, HNil],
-      H <: ::[_ <: FieldType[_ <: Symbol, _], HNil],
-      K <: Symbol,
+      H <: ::[_ <: FieldType[_ <: XString, _], HNil],
+      K <: XString,
       V,
-      KS <: ::[_ <: Symbol, HNil]
+      KS <: ::[_ <: XString, HNil]
     ](implicit
       i0: LabelledGeneric.Aux[F, G],
       i1: DropUnitValues.Aux[G, H],
@@ -232,7 +233,7 @@ object RecordFieldEncoder extends RecordFieldEncoderLowPriority {
       i5: TypedEncoder[V],
       i6: ClassTag[F]
     ): RecordFieldEncoder[Option[F]] = {
-    val fieldName = i4.head(i3()).name
+    val fieldName = i4.head(i3())
     val innerJvmRepr = ObjectType(i6.runtimeClass)
 
     val catalyst: Expression => Expression = { path =>
@@ -286,10 +287,10 @@ object RecordFieldEncoder extends RecordFieldEncoderLowPriority {
   implicit def valueClass[
       F: IsValueClass,
       G <: ::[_, HNil],
-      H <: ::[_ <: FieldType[_ <: Symbol, _], HNil],
-      K <: Symbol,
+      H <: ::[_ <: FieldType[_ <: XString, _], HNil],
+      K <: XString,
       V,
-      KS <: ::[_ <: Symbol, HNil]
+      KS <: ::[_ <: XString, HNil]
     ](implicit
       i0: LabelledGeneric.Aux[F, G],
       i1: DropUnitValues.Aux[G, H],
@@ -301,7 +302,7 @@ object RecordFieldEncoder extends RecordFieldEncoderLowPriority {
     ): RecordFieldEncoder[F] = {
     val cls = i6.runtimeClass
     val jvmr = i5.jvmRepr
-    val fieldName = i4.head(i3()).name
+    val fieldName = i4.head(i3())
 
     new RecordFieldEncoder[F](
       encoder = new TypedEncoder[F] {

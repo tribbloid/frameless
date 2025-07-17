@@ -1,7 +1,7 @@
 package frameless
 
 import org.scalatest.matchers.should.Matchers
-import shapeless.test.illTyped
+import frameless.compat.illTyped
 
 case class MyClass1(a: Int, b: String, c: MyClass2, g: Option[MyClass4])
 case class MyClass2(d: Long, e: MyClass3)

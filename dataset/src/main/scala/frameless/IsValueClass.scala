@@ -13,7 +13,7 @@ object IsValueClass {
   implicit def apply[
       A <: AnyVal,
       G <: ::[_, HNil],
-      H <: ::[_ <: FieldType[_ <: Symbol, _], HNil]
+      H <: ::[_ <: FieldType[_ <: String, _], HNil]
     ](implicit
       i0: LabelledGeneric.Aux[A, G],
       i1: DropUnitValues.Aux[G, H]

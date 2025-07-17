@@ -49,7 +49,7 @@ class GroupedBy1Ops[K1, V](
   private implicit def eg1: frameless.TypedEncoder[K1] = g1.uencoder
 
   def agg[U1](c1: TypedAggregate[V, U1]): TypedDataset[(K1, U1)] = {
-    implicit val e1 = c1.uencoder
+    implicit val e1: TypedEncoder[U1] = c1.uencoder
     underlying.agg(c1)
   }
 
@@ -57,7 +57,8 @@ class GroupedBy1Ops[K1, V](
       c1: TypedAggregate[V, U1],
       c2: TypedAggregate[V, U2]
     ): TypedDataset[(K1, U1, U2)] = {
-    implicit val e1 = c1.uencoder; implicit val e2 = c2.uencoder
+    implicit val e1: TypedEncoder[U1] = c1.uencoder;
+    implicit val e2: TypedEncoder[U2] = c2.uencoder
     underlying.agg(c1, c2)
   }
 
@@ -66,8 +67,9 @@ class GroupedBy1Ops[K1, V](
       c2: TypedAggregate[V, U2],
       c3: TypedAggregate[V, U3]
     ): TypedDataset[(K1, U1, U2, U3)] = {
-    implicit val e1 = c1.uencoder; implicit val e2 = c2.uencoder;
-    implicit val e3 = c3.uencoder
+    implicit val e1: TypedEncoder[U1] = c1.uencoder;
+    implicit val e2: TypedEncoder[U2] = c2.uencoder;
+    implicit val e3: TypedEncoder[U3] = c3.uencoder
     underlying.agg(c1, c2, c3)
   }
 
@@ -77,8 +79,10 @@ class GroupedBy1Ops[K1, V](
       c3: TypedAggregate[V, U3],
       c4: TypedAggregate[V, U4]
     ): TypedDataset[(K1, U1, U2, U3, U4)] = {
-    implicit val e1 = c1.uencoder; implicit val e2 = c2.uencoder;
-    implicit val e3 = c3.uencoder; implicit val e4 = c4.uencoder
+    implicit val e1: TypedEncoder[U1] = c1.uencoder;
+    implicit val e2: TypedEncoder[U2] = c2.uencoder;
+    implicit val e3: TypedEncoder[U3] = c3.uencoder;
+    implicit val e4: TypedEncoder[U4] = c4.uencoder
     underlying.agg(c1, c2, c3, c4)
   }
 
@@ -89,9 +93,11 @@ class GroupedBy1Ops[K1, V](
       c4: TypedAggregate[V, U4],
       c5: TypedAggregate[V, U5]
     ): TypedDataset[(K1, U1, U2, U3, U4, U5)] = {
-    implicit val e1 = c1.uencoder; implicit val e2 = c2.uencoder;
-    implicit val e3 = c3.uencoder; implicit val e4 = c4.uencoder;
-    implicit val e5 = c5.uencoder
+    implicit val e1: TypedEncoder[U1] = c1.uencoder;
+    implicit val e2: TypedEncoder[U2] = c2.uencoder;
+    implicit val e3: TypedEncoder[U3] = c3.uencoder;
+    implicit val e4: TypedEncoder[U4] = c4.uencoder;
+    implicit val e5: TypedEncoder[U5] = c5.uencoder
     underlying.agg(c1, c2, c3, c4, c5)
   }
 
@@ -129,7 +135,7 @@ class GroupedBy2Ops[K1, K2, V](
   private implicit def eg2: frameless.TypedEncoder[K2] = g2.uencoder
 
   def agg[U1](c1: TypedAggregate[V, U1]): TypedDataset[(K1, K2, U1)] = {
-    implicit val e1 = c1.uencoder
+    implicit val e1: TypedEncoder[U1] = c1.uencoder
     underlying.agg(c1)
   }
 
@@ -137,7 +143,8 @@ class GroupedBy2Ops[K1, K2, V](
       c1: TypedAggregate[V, U1],
       c2: TypedAggregate[V, U2]
     ): TypedDataset[(K1, K2, U1, U2)] = {
-    implicit val e1 = c1.uencoder; implicit val e2 = c2.uencoder
+    implicit val e1: TypedEncoder[U1] = c1.uencoder;
+    implicit val e2: TypedEncoder[U2] = c2.uencoder
     underlying.agg(c1, c2)
   }
 
@@ -146,8 +153,9 @@ class GroupedBy2Ops[K1, K2, V](
       c2: TypedAggregate[V, U2],
       c3: TypedAggregate[V, U3]
     ): TypedDataset[(K1, K2, U1, U2, U3)] = {
-    implicit val e1 = c1.uencoder; implicit val e2 = c2.uencoder;
-    implicit val e3 = c3.uencoder
+    implicit val e1: TypedEncoder[U1] = c1.uencoder;
+    implicit val e2: TypedEncoder[U2] = c2.uencoder;
+    implicit val e3: TypedEncoder[U3] = c3.uencoder
     underlying.agg(c1, c2, c3)
   }
 
@@ -157,8 +165,10 @@ class GroupedBy2Ops[K1, K2, V](
       c3: TypedAggregate[V, U3],
       c4: TypedAggregate[V, U4]
     ): TypedDataset[(K1, K2, U1, U2, U3, U4)] = {
-    implicit val e1 = c1.uencoder; implicit val e2 = c2.uencoder;
-    implicit val e3 = c3.uencoder; implicit val e4 = c4.uencoder
+    implicit val e1: TypedEncoder[U1] = c1.uencoder;
+    implicit val e2: TypedEncoder[U2] = c2.uencoder;
+    implicit val e3: TypedEncoder[U3] = c3.uencoder;
+    implicit val e4: TypedEncoder[U4] = c4.uencoder
     underlying.agg(c1, c2, c3, c4)
   }
 
@@ -169,9 +179,11 @@ class GroupedBy2Ops[K1, K2, V](
       c4: TypedAggregate[V, U4],
       c5: TypedAggregate[V, U5]
     ): TypedDataset[(K1, K2, U1, U2, U3, U4, U5)] = {
-    implicit val e1 = c1.uencoder; implicit val e2 = c2.uencoder;
-    implicit val e3 = c3.uencoder; implicit val e4 = c4.uencoder;
-    implicit val e5 = c5.uencoder
+    implicit val e1: TypedEncoder[U1] = c1.uencoder;
+    implicit val e2: TypedEncoder[U2] = c2.uencoder;
+    implicit val e3: TypedEncoder[U3] = c3.uencoder;
+    implicit val e4: TypedEncoder[U4] = c4.uencoder;
+    implicit val e5: TypedEncoder[U5] = c5.uencoder
     underlying.agg(c1, c2, c3, c4, c5)
   }
 
@@ -250,7 +262,7 @@ private[ops] abstract class AggregatingOps[T, TK <: HList, K <: HList, KT](
       )(implicit
         e: TypedEncoder[KT]
       ): TypedDataset[U] = {
-      implicit val tendcoder = self.encoder
+      implicit val tendcoder: TypedEncoder[T] = self.encoder
 
       val cols = groupedBy.toList[UntypedExpression[T]]
       val logicalPlan = FramelessInternals.logicalPlan(self.dataset)

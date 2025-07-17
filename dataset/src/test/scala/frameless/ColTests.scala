@@ -2,7 +2,7 @@ package frameless
 
 import org.scalacheck.Prop
 import org.scalacheck.Prop._
-import shapeless.test.illTyped
+import frameless.compat.illTyped
 
 class ColTests extends TypedDatasetSuite {
   test("col") {

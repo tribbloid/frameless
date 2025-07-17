@@ -73,7 +73,14 @@ lazy val `root-spark33` = project
   )
 
 lazy val core =
-  project.settings(name := "frameless-core").settings(framelessSettings)
+  project
+    .settings(name := "frameless-core")
+    .settings(framelessSettings)
+    .settings(
+      addCompilerPlugin(
+        "io.tryp" % "splain" % "1.1.0" cross CrossVersion.patch
+      )
+    )
 
 lazy val cats = project
   .settings(name := "frameless-cats")
@@ -289,7 +296,11 @@ lazy val scalac212Options = Seq(
   "-language:implicitConversions",
   "-language:higherKinds",
   "-Xfuture",
-  "-Ypartial-unification"
+  "-Ypartial-unification",
+  //
+  "-Vimplicits",
+  "-Vimplicits-verbose-tree",
+  "-Vtype-diffs"
 )
 
 lazy val scalac213Options = {

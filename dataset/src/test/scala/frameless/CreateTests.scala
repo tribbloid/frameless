@@ -3,7 +3,7 @@ package frameless
 import org.scalacheck.Prop._
 import org.scalacheck.{ Arbitrary, Prop }
 import org.scalatest.matchers.should.Matchers
-import shapeless.test.illTyped
+import frameless.compat.illTyped
 
 import scala.reflect.ClassTag
 

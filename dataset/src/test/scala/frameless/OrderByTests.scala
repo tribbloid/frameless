@@ -4,7 +4,7 @@ import org.apache.spark.sql.Column
 import org.scalacheck.Prop
 import org.scalacheck.Prop._
 import org.scalatest.matchers.should.Matchers
-import shapeless.test.illTyped
+import frameless.compat.illTyped
 
 class OrderByTests extends TypedDatasetSuite with Matchers {
 

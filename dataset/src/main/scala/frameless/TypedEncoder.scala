@@ -21,8 +21,10 @@ import java.math.BigInteger
 import java.sql.Timestamp
 import java.time.{ Duration, Instant, LocalDate, Period }
 import java.util.Date
+import scala.annotation.implicitNotFound
 import scala.reflect.ClassTag
 
+@implicitNotFound("No TypedEncoder for ${T}")
 abstract class TypedEncoder[T](
     implicit
     val classTag: ClassTag[T])

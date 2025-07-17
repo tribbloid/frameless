@@ -1245,13 +1245,13 @@ abstract class AbstractTypedColumn[T, U](
    * @param symbol the field symbol
    * @tparam V the type of the nested field
    */
-  def field[V](
-      symbol: Witness.Lt[String]
+  def field[V, S <: String](
+      symbol: S
     )(implicit
-      i0: TypedColumn.Exists[U, symbol.T, V],
+      i0: TypedColumn.Exists[U, S, V],
       i1: TypedEncoder[V]
     ): ThisType[T, V] =
-    typed(self.untyped.getField(symbol.value))
+    typed(self.untyped.getField(symbol))
 
 }
 
@@ -1322,11 +1322,11 @@ object TypedColumn {
 
   object Exists {
 
-    def apply[T, V](
-        column: Witness
+    def apply[T, V, K](
+        column: K
       )(implicit
-        e: Exists[T, column.T, V]
-      ): Exists[T, column.T, V] = e
+        e: Exists[T, K, V]
+      ): Exists[T, K, V] = e
 
     implicit def deriveRecord[T, H <: HList, K, V](
         implicit

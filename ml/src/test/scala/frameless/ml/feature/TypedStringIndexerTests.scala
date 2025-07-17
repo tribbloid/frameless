@@ -6,7 +6,7 @@ import frameless.ml.feature.TypedStringIndexer.HandleInvalid
 import org.scalacheck.Prop._
 import org.scalacheck.{ Arbitrary, Gen }
 import org.scalatest.matchers.must.Matchers
-import shapeless.test.illTyped
+import frameless.compat.illTyped
 
 class TypedStringIndexerTests extends FramelessMlSuite with Matchers {
 

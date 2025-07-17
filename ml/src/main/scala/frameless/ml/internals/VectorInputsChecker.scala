@@ -4,7 +4,7 @@ package internals
 
 import org.apache.spark.ml.linalg.Vector
 import shapeless.ops.hlist.Length
-import shapeless.{ HList, LabelledGeneric, Nat, Witness }
+import shapeless.{ HList, LabelledGeneric, Nat }
 
 import scala.annotation.implicitNotFound
 
@@ -22,15 +22,15 @@ object VectorInputsChecker {
   implicit def checkVectorInput[
       Inputs,
       InputsRec <: HList,
-      FeaturesK <: Symbol
+      FeaturesK <: String
     ](implicit
       i0: LabelledGeneric.Aux[Inputs, InputsRec],
       i1: Length.Aux[InputsRec, Nat._1],
       i2: SelectorByValue.Aux[InputsRec, Vector, FeaturesK],
-      i3: Witness.Aux[FeaturesK]
+      i3: ValueOf[FeaturesK]
     ): VectorInputsChecker[Inputs] = {
     new VectorInputsChecker[Inputs] {
-      val featuresCol: String = i3.value.name
+      val featuresCol: String = i3.value
     }
   }
 }

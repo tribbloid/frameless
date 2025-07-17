@@ -14,7 +14,7 @@ import org.apache.spark.sql.types.{
 }
 import org.apache.spark.sql.{ Row, functions => F }
 import org.scalatest.matchers.should.Matchers
-import shapeless.test.illTyped
+import frameless.compat.illTyped
 import shapeless.{ HList, LabelledGeneric }
 
 final class RecordEncoderTests extends TypedDatasetSuite with Matchers {
