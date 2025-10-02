@@ -1,7 +1,7 @@
 val sparkVersion = "3.5.6"
 val spark34Version = "3.4.4"
 val spark33Version = "3.3.4"
-val spark40Version = "4.0.0"
+val spark40Version = "4.0.1"
 val catsCoreVersion = "2.13.0"
 val catsEffectVersion = "3.6.3"
 val catsMtlVersion = "1.6.0"
@@ -155,6 +155,9 @@ lazy val `dataset-spark40` = project
   .settings(sourceDirectory := (dataset / sourceDirectory).value)
   .settings(
     Compile / unmanagedSourceDirectories += (dataset / baseDirectory).value / "src" / "main" / "spark-3.4+"
+  )
+  .settings(
+    Compile / unmanagedSourceDirectories += (dataset / baseDirectory).value / "src" / "main" / "spark-4.0+"
   )
   .settings(
     Test / unmanagedSourceDirectories += (dataset / baseDirectory).value / "src" / "test" / "spark-3.3+"
