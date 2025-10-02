@@ -157,9 +157,6 @@ lazy val `dataset-spark40` = project
     Compile / unmanagedSourceDirectories += (dataset / baseDirectory).value / "src" / "main" / "spark-3.4+"
   )
   .settings(
-    Compile / unmanagedSourceDirectories += (dataset / baseDirectory).value / "src" / "main" / "spark-4.0+"
-  )
-  .settings(
     Test / unmanagedSourceDirectories += (dataset / baseDirectory).value / "src" / "test" / "spark-3.3+"
   )
   .settings(datasetSettings)

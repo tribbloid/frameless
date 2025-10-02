@@ -17,14 +17,92 @@ object FramelessInternals {
 
   def resolveExpr(ds: Dataset[_], colNames: Seq[String]): NamedExpression = {
     ds.toDF().queryExecution.analyzed.resolve(colNames, ds.sparkSession.sessionState.analyzer.resolver).getOrElse {
-      throw new AnalysisException(
-        s"""Cannot resolve column name "$colNames" among (${ds.schema.fieldNames.mkString(", ")})""")
+      val errorMsg = s"""Cannot resolve column name "$colNames" among (${ds.schema.fieldNames.mkString(", ")})"""
+      // Spark 4 changed AnalysisException constructor - use SparkException instead
+      try {
+        val sparkExceptionClass = Class.forName("org.apache.spark.SparkException")
+        val internalErrorMethod = sparkExceptionClass.getMethod("internalError", classOf[String])
+        throw internalErrorMethod.invoke(null, errorMsg).asInstanceOf[Throwable]
+      } catch {
+        case _: ClassNotFoundException | _: NoSuchMethodException | _: IllegalAccessException =>
+          // Spark 3.x - use old constructor with single String parameter
+          val analysisExceptionClass = classOf[AnalysisException]
+          try {
+            // Try single-parameter constructor first (Spark 3.2+)
+            val constructor = analysisExceptionClass.getConstructor(classOf[String])
+            throw constructor.newInstance(errorMsg)
+          } catch {
+            case _: NoSuchMethodException =>
+              // Fall back to creating a runtime exception
+              throw new RuntimeException(errorMsg)
+          }
+      }
     }
   }
 
-  def expr(column: Column): Expression = column.expr
+  def expr(column: Column): Expression = {
+    try {
+      // Spark 4.x: column.node.toExpr
+      val nodeMethod = classOf[Column].getMethod("node")
+      val columnNode = nodeMethod.invoke(column)
+      val toExprMethod = columnNode.getClass.getMethod("toExpr")
+      toExprMethod.invoke(columnNode).asInstanceOf[Expression]
+    } catch {
+      case _: NoSuchMethodException =>
+        // Spark 3.x: column.expr
+        val exprMethod = classOf[Column].getMethod("expr")
+        exprMethod.invoke(column).asInstanceOf[Expression]
+    }
+  }
 
-  def logicalPlan(ds: Dataset[_]): LogicalPlan = ds.logicalPlan
+  /** Creates a Column from a Catalyst Expression.
+    * This method provides a consistent API across Spark versions.
+    * In Spark 3.x, Column constructor accepts Expression directly.
+    * In Spark 4.x, Column constructor requires ColumnNode.
+    */
+  def column(expr: Expression): Column = {
+    try {
+      // Try Spark 4.x approach first: new Column(ColumnNode.fromExpr(expr))
+      val columnNodeClass = Class.forName("org.apache.spark.sql.internal.ColumnNode")
+      val fromExprMethod = columnNodeClass.getMethod("fromExpr", classOf[Expression])
+      val columnNode = fromExprMethod.invoke(null, expr)
+      val columnConstructor = classOf[Column].getConstructor(columnNodeClass)
+      columnConstructor.newInstance(columnNode)
+    } catch {
+      case _: ClassNotFoundException | _: NoSuchMethodException =>
+        // Fall back to Spark 3.x approach: new Column(expr)
+        val columnConstructor = classOf[Column].getConstructor(classOf[Expression])
+        columnConstructor.newInstance(expr)
+    }
+  }
+
+  /** Helper to access SQLContext for Spark version compatibility.
+    * In Spark 3.x, Dataset has sqlContext field directly.
+    * In Spark 4.x, it was removed, use sparkSession.sqlContext instead.
+    */
+  def sqlContext(ds: Dataset[_]): SQLContext = {
+    try {
+      // Spark 3.x: ds.sqlContext
+      val sqlContextMethod = ds.getClass.getMethod("sqlContext")
+      sqlContextMethod.invoke(ds).asInstanceOf[SQLContext]
+    } catch {
+      case _: NoSuchMethodException =>
+        // Spark 4.x: ds.sparkSession.sqlContext
+        ds.sparkSession.sqlContext
+    }
+  }
+
+  def logicalPlan(ds: Dataset[_]): LogicalPlan = {
+    try {
+      // Spark 3.x: ds.logicalPlan
+      val logicalPlanMethod = ds.getClass.getMethod("logicalPlan")
+      logicalPlanMethod.invoke(ds).asInstanceOf[LogicalPlan]
+    } catch {
+      case _: NoSuchMethodException =>
+        // Spark 4.x: ds.queryExecution.logical
+        ds.queryExecution.logical
+    }
+  }
 
   def executePlan(ds: Dataset[_], plan: LogicalPlan): QueryExecution =
     ds.sparkSession.sessionState.executePlan(plan)
@@ -42,12 +120,26 @@ object FramelessInternals {
 
   def mkDataset[T](sqlContext: SQLContext, plan: LogicalPlan, encoder: Encoder[T]): Dataset[T] =
     {
-      val df = Dataset.ofRows(sqlContext.sparkSession, plan)
+      val df = ofRows(sqlContext.sparkSession, plan)
       df.as[T](encoder)
     }
 
-  def ofRows(sparkSession: SparkSession, logicalPlan: LogicalPlan): DataFrame =
-    Dataset.ofRows(sparkSession, logicalPlan)
+  def ofRows(sparkSession: SparkSession, logicalPlan: LogicalPlan): DataFrame = {
+    try {
+      // Spark 3.x: Dataset.ofRows(sparkSession, logicalPlan)
+      val ofRowsMethod = Class.forName("org.apache.spark.sql.Dataset").getMethod("ofRows", classOf[SparkSession], classOf[LogicalPlan])
+      ofRowsMethod.invoke(null, sparkSession, logicalPlan).asInstanceOf[DataFrame]
+    } catch {
+      case _: NoSuchMethodException =>
+        // Spark 4.x: new Dataset[Row](sparkSession, logicalPlan, RowEncoder(sparkSession))
+        val rowEncoderClass = Class.forName("org.apache.spark.sql.catalyst.encoders.RowEncoder")
+        val rowEncoderMethod = rowEncoderClass.getMethod("apply", classOf[SparkSession])
+        val encoder = rowEncoderMethod.invoke(null, sparkSession).asInstanceOf[Encoder[Row]]
+        
+        val datasetConstructor = classOf[Dataset[_]].getConstructor(classOf[SparkSession], classOf[LogicalPlan], classOf[Encoder[_]])
+        datasetConstructor.newInstance(sparkSession, logicalPlan, encoder).asInstanceOf[DataFrame]
+    }
+  }
 
   // because org.apache.spark.sql.types.UserDefinedType is private[spark]
   type UserDefinedType[A >: Null] =  org.apache.spark.sql.types.UserDefinedType[A]

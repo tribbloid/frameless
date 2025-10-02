@@ -103,16 +103,16 @@ abstract class AbstractTypedColumn[T, U]
   def opt[X](implicit x: U <:< Option[X]): Mapper[X] = new Mapper[X] {}
 
   /** Fall back to an untyped Column */
-  def untyped: Column = new Column(expr)
+  def untyped: Column = FramelessInternals.column(expr)
 
-  private def equalsTo[TT, W](other: ThisType[TT, U])(implicit w: With.Aux[T, TT, W]): ThisType[W, Boolean] = typed {
+  private def equalsTo[TT, W](other: ThisType[TT, U])(implicit w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] = typed {
     if (uencoder.nullable) EqualNullSafe(self.expr, other.expr)
     else EqualTo(self.expr, other.expr)
   }
 
   /** Creates a typed column of either TypedColumn or TypedAggregate from an expression. */
   protected def typed[W, U1: TypedEncoder](e: Expression): ThisType[W, U1] =
-    typed(new Column(e))
+    typed(FramelessInternals.column(e))
 
   /** Creates a typed column of either TypedColumn or TypedAggregate. */
   def typed[W, U1: TypedEncoder](c: Column): ThisType[W, U1]
@@ -137,7 +137,7 @@ abstract class AbstractTypedColumn[T, U]
     *
     * apache/spark
     */
-  def ===[TT, W](other: ThisType[TT, U])(implicit w: With.Aux[T, TT, W]): ThisType[W, Boolean] =
+  def ===[TT, W](other: ThisType[TT, U])(implicit w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] =
     equalsTo(other)
 
   /** Inequality test.
@@ -148,7 +148,7 @@ abstract class AbstractTypedColumn[T, U]
     *
     * apache/spark
     */
-  def =!=[TT, W](other: ThisType[TT, U])(implicit w: With.Aux[T, TT, W]): ThisType[W, Boolean] =
+  def =!=[TT, W](other: ThisType[TT, U])(implicit w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] =
     typed(Not(equalsTo(other).expr))
 
   /** Inequality test.
@@ -214,7 +214,7 @@ abstract class AbstractTypedColumn[T, U]
     * df(df('opt).getOrElse(df('defaultValue)))
     * }}}
     */
-  def getOrElse[TT, W, Out](default: ThisType[TT, Out])(implicit i0: U =:= Option[Out], i1: With.Aux[T, TT, W]): ThisType[W, Out] =
+  def getOrElse[TT, W, Out](default: ThisType[TT, Out])(implicit i0: U =:= Option[Out], i1: frameless.With.Aux[T, TT, W]): ThisType[W, Out] =
     typed(Coalesce(Seq(expr, default.expr)))(default.uencoder)
 
   /** Convert an Optional column by providing a default value.
@@ -235,7 +235,7 @@ abstract class AbstractTypedColumn[T, U]
     *
     * apache/spark
     */
-  def plus[TT, W](other: ThisType[TT, U])(implicit n: CatalystNumeric[U], w: With.Aux[T, TT, W]): ThisType[W, U] =
+  def plus[TT, W](other: ThisType[TT, U])(implicit n: CatalystNumeric[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, U] =
     typed(self.untyped.plus(other.untyped))
 
   /** Sum of this expression and another expression.
@@ -246,7 +246,7 @@ abstract class AbstractTypedColumn[T, U]
     *
     * apache/spark
     */
-  def +[TT, W](other: ThisType[TT, U])(implicit n: CatalystNumeric[U], w: With.Aux[T, TT, W]): ThisType[W, U] =
+  def +[TT, W](other: ThisType[TT, U])(implicit n: CatalystNumeric[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, U] =
     plus(other)
 
   /** Sum of this expression (column) with a constant.
@@ -292,7 +292,7 @@ abstract class AbstractTypedColumn[T, U]
     *
     * apache/spark
     */
-  def minus[TT, W](other: ThisType[TT, U])(implicit n: CatalystNumeric[U], w: With.Aux[T, TT, W]): ThisType[W, U] =
+  def minus[TT, W](other: ThisType[TT, U])(implicit n: CatalystNumeric[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, U] =
     typed(self.untyped.minus(other.untyped))
 
   /** Subtraction. Subtract the other expression from this expression.
@@ -303,7 +303,7 @@ abstract class AbstractTypedColumn[T, U]
     *
     * apache/spark
     */
-  def -[TT, W](other: ThisType[TT, U])(implicit n: CatalystNumeric[U], w: With.Aux[T, TT, W]): ThisType[W, U] =
+  def -[TT, W](other: ThisType[TT, U])(implicit n: CatalystNumeric[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, U] =
     minus(other)
 
   /** Subtraction. Subtract the other expression from this expression.
@@ -330,7 +330,7 @@ abstract class AbstractTypedColumn[T, U]
     (other: ThisType[TT, U])
     (implicit
       n: CatalystNumeric[U],
-      w: With.Aux[T, TT, W],
+      w: frameless.With.Aux[T, TT, W],
       t: ClassTag[U]
     ): ThisType[W, U] = typed {
       if (t.runtimeClass == BigDecimal(0).getClass) {
@@ -351,7 +351,7 @@ abstract class AbstractTypedColumn[T, U]
     *
     * apache/spark
     */
-  def *[TT, W](other: ThisType[TT, U])(implicit n: CatalystNumeric[U], w: With.Aux[T, TT, W], t: ClassTag[U]): ThisType[W, U] =
+  def *[TT, W](other: ThisType[TT, U])(implicit n: CatalystNumeric[U], w: frameless.With.Aux[T, TT, W], t: ClassTag[U]): ThisType[W, U] =
     multiply(other)
 
   /** Multiplication of this expression a constant.
@@ -369,14 +369,14 @@ abstract class AbstractTypedColumn[T, U]
     *
     * apache/spark
     */
-  def mod[Out: TypedEncoder, TT, W](other: ThisType[TT, U])(implicit n: CatalystNumeric[U], w: With.Aux[T, TT, W]): ThisType[W, Out] =
+  def mod[Out: TypedEncoder, TT, W](other: ThisType[TT, U])(implicit n: CatalystNumeric[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, Out] =
     typed(self.untyped.mod(other.untyped))
 
   /** Modulo (a.k.a. remainder) expression.
     *
     * apache/spark
     */
-  def %[TT, W](other: ThisType[TT, U])(implicit n: CatalystNumeric[U], w: With.Aux[T, TT, W]): ThisType[W, U] =
+  def %[TT, W](other: ThisType[TT, U])(implicit n: CatalystNumeric[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, U] =
     mod(other)
 
   /** Modulo (a.k.a. remainder) expression.
@@ -395,7 +395,7 @@ abstract class AbstractTypedColumn[T, U]
     * @param other another column of the same type
     * apache/spark
     */
-  def divide[Out: TypedEncoder, TT, W](other: ThisType[TT, U])(implicit n: CatalystDivisible[U, Out], w: With.Aux[T, TT, W]): ThisType[W, Out] =
+  def divide[Out: TypedEncoder, TT, W](other: ThisType[TT, U])(implicit n: CatalystDivisible[U, Out], w: frameless.With.Aux[T, TT, W]): ThisType[W, Out] =
     typed(self.untyped.divide(other.untyped))
 
   /** Division this expression by another expression.
@@ -407,7 +407,7 @@ abstract class AbstractTypedColumn[T, U]
     * @param other another column of the same type
     * apache/spark
     */
-  def /[Out, TT, W](other: ThisType[TT, U])(implicit n: CatalystDivisible[U, Out], e: TypedEncoder[Out], w: With.Aux[T, TT, W]): ThisType[W, Out] =
+  def /[Out, TT, W](other: ThisType[TT, U])(implicit n: CatalystDivisible[U, Out], e: TypedEncoder[Out], w: frameless.With.Aux[T, TT, W]): ThisType[W, Out] =
     divide(other)
 
   /** Division this expression by another expression.
@@ -455,7 +455,7 @@ abstract class AbstractTypedColumn[T, U]
     * @param u a constant of the same type
     * apache/spark
     */
-  def bitwiseAND[TT, W](other: ThisType[TT, U])(implicit n: CatalystBitwise[U], w: With.Aux[T, TT, W]): ThisType[W, U] =
+  def bitwiseAND[TT, W](other: ThisType[TT, U])(implicit n: CatalystBitwise[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, U] =
     typed(self.untyped.bitwiseAND(other.untyped))
 
   /** Bitwise AND this expression and another expression (of same type).
@@ -477,7 +477,7 @@ abstract class AbstractTypedColumn[T, U]
     * @param other a constant of the same type
     * apache/spark
     */
-  def &[TT, W](other: ThisType[TT, U])(implicit n: CatalystBitwise[U], w: With.Aux[T, TT, W]): ThisType[W, U] =
+  def &[TT, W](other: ThisType[TT, U])(implicit n: CatalystBitwise[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, U] =
     bitwiseAND(other)
 
   /** Bitwise OR this expression and another expression.
@@ -499,7 +499,7 @@ abstract class AbstractTypedColumn[T, U]
     * @param other a constant of the same type
     * apache/spark
     */
-  def bitwiseOR[TT, W](other: ThisType[TT, U])(implicit n: CatalystBitwise[U], w: With.Aux[T, TT, W]): ThisType[W, U] =
+  def bitwiseOR[TT, W](other: ThisType[TT, U])(implicit n: CatalystBitwise[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, U] =
     typed(self.untyped.bitwiseOR(other.untyped))
 
   /** Bitwise OR this expression and another expression (of same type).
@@ -521,7 +521,7 @@ abstract class AbstractTypedColumn[T, U]
     * @param other a constant of the same type
     * apache/spark
     */
-  def |[TT, W](other: ThisType[TT, U])(implicit n: CatalystBitwise[U], w: With.Aux[T, TT, W]): ThisType[W, U] =
+  def |[TT, W](other: ThisType[TT, U])(implicit n: CatalystBitwise[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, U] =
     bitwiseOR(other)
 
   /** Bitwise XOR this expression and another expression.
@@ -543,7 +543,7 @@ abstract class AbstractTypedColumn[T, U]
     * @param other a constant of the same type
     * apache/spark
     */
-  def bitwiseXOR[TT, W](other: ThisType[TT, U])(implicit n: CatalystBitwise[U], w: With.Aux[T, TT, W]): ThisType[W, U] =
+  def bitwiseXOR[TT, W](other: ThisType[TT, U])(implicit n: CatalystBitwise[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, U] =
     typed(self.untyped.bitwiseXOR(other.untyped))
 
   /** Bitwise XOR this expression and another expression (of same type).
@@ -565,7 +565,7 @@ abstract class AbstractTypedColumn[T, U]
     * @param other a constant of the same type
     * apache/spark
     */
-  def ^[TT, W](other: ThisType[TT, U])(implicit n: CatalystBitwise[U], w: With.Aux[T, TT, W]): ThisType[W, U] =
+  def ^[TT, W](other: ThisType[TT, U])(implicit n: CatalystBitwise[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, U] =
     bitwiseXOR(other)
 
   /** Casts the column to a different type.
@@ -600,8 +600,8 @@ abstract class AbstractTypedColumn[T, U]
   def substr[TT1, TT2, W1, W2](startPos: ThisType[TT1, Int], len: ThisType[TT2, Int])
                    (implicit
                     ev: U =:= String,
-                    w1: With.Aux[T, TT1, W1],
-                    w2: With.Aux[W1, TT2, W2]): ThisType[W2, String] =
+                    w1: frameless.With.Aux[T, TT1, W1],
+                    w2: frameless.With.Aux[W1, TT2, W2]): ThisType[W2, String] =
     typed(self.untyped.substr(startPos.untyped, len.untyped))
 
   /** SQL like expression. Returns a boolean column based on a SQL LIKE match.
@@ -651,7 +651,7 @@ abstract class AbstractTypedColumn[T, U]
     * @param other a column which values is used as a string that is being tested against.
     * apache/spark
     */
-  def contains[TT, W](other: ThisType[TT, U])(implicit ev: U =:= String, w: With.Aux[T, TT, W]): ThisType[W, Boolean] =
+  def contains[TT, W](other: ThisType[TT, U])(implicit ev: U =:= String, w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] =
     typed(self.untyped.contains(other.untyped))
 
   /** String starts with another string literal.
@@ -673,7 +673,7 @@ abstract class AbstractTypedColumn[T, U]
     * @param other a column which values is used as a prefix that is being tested against.
     * apache/spark
     */
-  def startsWith[TT, W](other: ThisType[TT, U])(implicit ev: U =:= String, w: With.Aux[T, TT, W]): ThisType[W, Boolean] =
+  def startsWith[TT, W](other: ThisType[TT, U])(implicit ev: U =:= String, w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] =
     typed(self.untyped.startsWith(other.untyped))
 
   /** String ends with another string literal.
@@ -695,7 +695,7 @@ abstract class AbstractTypedColumn[T, U]
     * @param other a column which values is used as a suffix that is being tested against.
     * apache/spark
     */
-  def endsWith[TT, W](other: ThisType[TT, U])(implicit ev: U =:= String, w: With.Aux[T, TT, W]): ThisType[W, Boolean] =
+  def endsWith[TT, W](other: ThisType[TT, U])(implicit ev: U =:= String, w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] =
     typed(self.untyped.endsWith(other.untyped))
 
   /** Boolean AND.
@@ -703,7 +703,7 @@ abstract class AbstractTypedColumn[T, U]
     *   df.filter ( (df.col('a) === 1).and(df.col('b) > 5) )
     * }}}
     */
-  def and[TT, W](other: ThisType[TT, Boolean])(implicit w: With.Aux[T, TT, W]): ThisType[W, Boolean] =
+  def and[TT, W](other: ThisType[TT, Boolean])(implicit w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] =
     typed(self.untyped.and(other.untyped))
 
   /** Boolean AND.
@@ -711,7 +711,7 @@ abstract class AbstractTypedColumn[T, U]
     *   df.filter ( df.col('a) === 1 && df.col('b) > 5)
     * }}}
     */
-  def && [TT, W](other: ThisType[TT, Boolean])(implicit w: With.Aux[T, TT, W]): ThisType[W, Boolean] =
+  def && [TT, W](other: ThisType[TT, Boolean])(implicit w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] =
     and(other)
 
   /** Boolean OR.
@@ -719,7 +719,7 @@ abstract class AbstractTypedColumn[T, U]
     *   df.filter ( (df.col('a) === 1).or(df.col('b) > 5) )
     * }}}
     */
-  def or[TT, W](other: ThisType[TT, Boolean])(implicit w: With.Aux[T, TT, W]): ThisType[W, Boolean] =
+  def or[TT, W](other: ThisType[TT, Boolean])(implicit w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] =
     typed(self.untyped.or(other.untyped))
 
   /** Boolean OR.
@@ -727,7 +727,7 @@ abstract class AbstractTypedColumn[T, U]
     *   df.filter ( df.col('a) === 1 || df.col('b) > 5)
     * }}}
     */
-  def || [TT, W](other: ThisType[TT, Boolean])(implicit w: With.Aux[T, TT, W]): ThisType[W, Boolean] =
+  def || [TT, W](other: ThisType[TT, Boolean])(implicit w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] =
     or(other)
 
   /** Less than.
@@ -740,7 +740,7 @@ abstract class AbstractTypedColumn[T, U]
     * @param other another column of the same type
     * apache/spark
     */
-  def <[TT, W](other: ThisType[TT, U])(implicit i0: CatalystOrdered[U], w: With.Aux[T, TT, W]): ThisType[W, Boolean] =
+  def <[TT, W](other: ThisType[TT, U])(implicit i0: CatalystOrdered[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] =
     typed(self.untyped < other.untyped)
 
   /** Less than or equal to.
@@ -753,7 +753,7 @@ abstract class AbstractTypedColumn[T, U]
     * @param other another column of the same type
     * apache/spark
     */
-  def <=[TT, W](other: ThisType[TT, U])(implicit i0: CatalystOrdered[U], w: With.Aux[T, TT, W]): ThisType[W, Boolean] =
+  def <=[TT, W](other: ThisType[TT, U])(implicit i0: CatalystOrdered[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] =
     typed(self.untyped <= other.untyped)
 
   /** Greater than.
@@ -765,7 +765,7 @@ abstract class AbstractTypedColumn[T, U]
     * @param other another column of the same type
     * apache/spark
     */
-  def >[TT, W](other: ThisType[TT, U])(implicit i0: CatalystOrdered[U], w: With.Aux[T, TT, W]): ThisType[W, Boolean] =
+  def >[TT, W](other: ThisType[TT, U])(implicit i0: CatalystOrdered[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] =
     typed(self.untyped > other.untyped)
 
   /** Greater than or equal.
@@ -777,7 +777,7 @@ abstract class AbstractTypedColumn[T, U]
     * @param other another column of the same type
     * apache/spark
     */
-  def >=[TT, W](other: ThisType[TT, U])(implicit i0: CatalystOrdered[U], w: With.Aux[T, TT, W]): ThisType[W, Boolean] =
+  def >=[TT, W](other: ThisType[TT, U])(implicit i0: CatalystOrdered[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] =
     typed(self.untyped >= other.untyped)
 
   /** Less than.
@@ -861,8 +861,8 @@ abstract class AbstractTypedColumn[T, U]
   def between[TT1, TT2, W1, W2](lowerBound: ThisType[TT1, U], upperBound: ThisType[TT2, U])
     (implicit
       i0: CatalystOrdered[U],
-      w0: With.Aux[T, TT1, W1],
-      w1: With.Aux[TT2, W1, W2]
+      w0: frameless.With.Aux[T, TT1, W1],
+      w1: frameless.With.Aux[TT2, W1, W2]
     ): ThisType[W2, Boolean] =
       typed(self.untyped.between(lowerBound.untyped, upperBound.untyped))
 
@@ -890,7 +890,7 @@ sealed class SortedTypedColumn[T, U](val expr: Expression)(
     this(FramelessInternals.expr(column))
   }
 
-  def untyped: Column = new Column(expr)
+  def untyped: Column = FramelessInternals.column(expr)
 }
 
 object SortedTypedColumn {

@@ -39,11 +39,24 @@ object TypedExpressionEncoder {
       }
     }
 
-    new ExpressionEncoder[T](
-      objSerializer = serializer,
-      objDeserializer = encoder.fromCatalyst(out),
-      clsTag = encoder.classTag
-    )
+    // Spark 3.x uses clsTag parameter, Spark 4.x uses classTag
+    try {
+      val constructor = classOf[ExpressionEncoder[_]].getConstructors.find { c =>
+        c.getParameterCount == 3 && c.getParameterTypes()(2).getName.contains("ClassTag")
+      }.get
+      constructor.newInstance(serializer, encoder.fromCatalyst(out), encoder.classTag).asInstanceOf[Encoder[T]]
+    } catch {
+      case _: Exception =>
+        // Fallback: create with reflection looking for proper parameter name
+        val clazz = classOf[ExpressionEncoder[_]]
+        val constructors = clazz.getConstructors
+        // Try the first 3-parameter constructor we find
+        constructors.find(_.getParameterCount == 3).map { constructor =>
+          constructor.newInstance(serializer, encoder.fromCatalyst(out), encoder.classTag).asInstanceOf[Encoder[T]]
+        }.getOrElse{
+          throw new RuntimeException("Could not find suitable ExpressionEncoder constructor")
+        }
+    }
   }
 }
 
