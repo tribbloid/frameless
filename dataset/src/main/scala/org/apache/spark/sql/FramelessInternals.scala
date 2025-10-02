@@ -41,7 +41,10 @@ object FramelessInternals {
   }
 
   def mkDataset[T](sqlContext: SQLContext, plan: LogicalPlan, encoder: Encoder[T]): Dataset[T] =
-    new Dataset(sqlContext, plan, encoder)
+    {
+      val df = Dataset.ofRows(sqlContext.sparkSession, plan)
+      df.as[T](encoder)
+    }
 
   def ofRows(sparkSession: SparkSession, logicalPlan: LogicalPlan): DataFrame =
     Dataset.ofRows(sparkSession, logicalPlan)
