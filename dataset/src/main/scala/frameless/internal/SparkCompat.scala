@@ -1,8 +1,10 @@
 package frameless.internal
 
 object SparkCompat {
+
   lazy val isSpark4: Boolean = {
-    val encCls = classOf[org.apache.spark.sql.catalyst.encoders.ExpressionEncoder[_]]
+    val encCls =
+      classOf[org.apache.spark.sql.catalyst.encoders.ExpressionEncoder[_]]
     val spark4Ctor = findCtorByParamFQNs(
       encCls,
       List(
@@ -38,21 +40,36 @@ object SparkCompat {
           val none = Class.forName("scala.None$").getField("MODULE$").get(null)
           // 9 Options parameters in Spark 4 Origin
           val ctor = originCls.getConstructor(
-            classOf[Option[_]], classOf[Option[_]], classOf[Option[_]],
-            classOf[Option[_]], classOf[Option[_]], classOf[Option[_]],
-            classOf[Option[_]], classOf[Option[_]], classOf[Option[_]]
+            classOf[Option[_]],
+            classOf[Option[_]],
+            classOf[Option[_]],
+            classOf[Option[_]],
+            classOf[Option[_]],
+            classOf[Option[_]],
+            classOf[Option[_]],
+            classOf[Option[_]],
+            classOf[Option[_]]
           )
-          ctor.newInstance(none, none, none, none, none, none, none, none, none).asInstanceOf[AnyRef]
-        } catch { case e: Throwable =>
-          // Last resort - try default constructor
-          val originCls = Class.forName(originFqn)
-          originCls.getDeclaredConstructor().newInstance().asInstanceOf[AnyRef]
+          ctor
+            .newInstance(none, none, none, none, none, none, none, none, none)
+            .asInstanceOf[AnyRef]
+        } catch {
+          case e: Throwable =>
+            // Last resort - try default constructor
+            val originCls = Class.forName(originFqn)
+            originCls
+              .getDeclaredConstructor()
+              .newInstance()
+              .asInstanceOf[AnyRef]
         }
     }
   }
 
   /** Find a public constructor whose erased parameter type FQNs match one of the provided signatures. */
-  def findCtorByParamFQNs(c: Class[_], wanted: List[List[String]]): Option[java.lang.reflect.Constructor[_]] = {
+  def findCtorByParamFQNs(
+      c: Class[_],
+      wanted: List[List[String]]
+    ): Option[java.lang.reflect.Constructor[_]] = {
     val ctors = c.getConstructors.toList
     val ctorsWithNames = ctors.map { ctor =>
       ctor -> ctor.getParameterTypes.toList.map(_.getName)
@@ -64,7 +81,8 @@ object SparkCompat {
 
   def debugConstructors(c: Class[_]): String =
     c.getConstructors.map { ctor =>
-      val params = ctor.getParameterTypes.map(_.getName).mkString("(", ", ", ")")
+      val params =
+        ctor.getParameterTypes.map(_.getName).mkString("(", ", ", ")")
       s"<init>$params"
     }.mkString("\n")
 }
