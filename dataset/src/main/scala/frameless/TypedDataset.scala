@@ -6,6 +6,8 @@ import frameless.ops._
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Column, DataFrame, Dataset, FramelessInternals, SparkSession}
 import org.apache.spark.sql.catalyst.expressions.{Attribute, AttributeReference, Literal}
+import org.apache.spark.sql.catalyst.expressions._
+import org.apache.spark.sql.catalyst.expressions.aggregate.{AggregateFunction, AggregateExpression}
 import org.apache.spark.sql.catalyst.plans.logical.{Join, JoinHint}
 import org.apache.spark.sql.catalyst.plans.Inner
 import org.apache.spark.sql.types.StructType
@@ -107,9 +109,89 @@ class TypedDataset[T] protected[frameless](val dataset: Dataset[T])(implicit val
       ): TypedDataset[Out] = {
 
       val underlyingColumns = columns.toList[UntypedExpression[T]]
-      val cols: Seq[Column] = for {
-        (c, i) <- columns.toList[UntypedExpression[T]].zipWithIndex
-      } yield FramelessInternals.column(c.expr).as(s"_${i+1}")
+
+      // Split each expression into (aggregatePart, rebuildPost) where rebuildPost re-applies
+      // any non-aggregate wrappers (e.g., Coalesce, Multiply with literal) around the aggregate.
+      def splitAggregate(e: Expression): (Expression, Expression => Expression) = e match {
+        // If expression is a Coalesce of an aggregate and some default, peel it off
+        case Coalesce(children) if children.nonEmpty =>
+          val (aggChild, rebuildInner) = splitAggregate(children.head)
+          val rest = children.tail
+          val rebuild: Expression => Expression = (aggExpr: Expression) =>
+            Coalesce(aggExpr +: rest)
+          (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
+
+        // Arithmetic wrappers with a literal on either side
+        case m: Multiply if m.right.isInstanceOf[Literal] =>
+          val (aggChild, rebuildInner) = splitAggregate(m.left)
+          val lit = m.right.asInstanceOf[Literal]
+          val rebuild: Expression => Expression = (aggExpr: Expression) => Multiply(aggExpr, lit)
+          (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
+        case m: Multiply if m.left.isInstanceOf[Literal] =>
+          val (aggChild, rebuildInner) = splitAggregate(m.right)
+          val lit = m.left.asInstanceOf[Literal]
+          val rebuild: Expression => Expression = (aggExpr: Expression) => Multiply(lit, aggExpr)
+          (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
+
+        case a: Add if a.right.isInstanceOf[Literal] =>
+          val (aggChild, rebuildInner) = splitAggregate(a.left)
+          val lit = a.right.asInstanceOf[Literal]
+          val rebuild: Expression => Expression = (aggExpr: Expression) => Add(aggExpr, lit)
+          (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
+        case a: Add if a.left.isInstanceOf[Literal] =>
+          val (aggChild, rebuildInner) = splitAggregate(a.right)
+          val lit = a.left.asInstanceOf[Literal]
+          val rebuild: Expression => Expression = (aggExpr: Expression) => Add(lit, aggExpr)
+          (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
+
+        case s: Subtract if s.right.isInstanceOf[Literal] =>
+          val (aggChild, rebuildInner) = splitAggregate(s.left)
+          val lit = s.right.asInstanceOf[Literal]
+          val rebuild: Expression => Expression = (aggExpr: Expression) => Subtract(aggExpr, lit)
+          (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
+        case s: Subtract if s.left.isInstanceOf[Literal] =>
+          val (aggChild, rebuildInner) = splitAggregate(s.right)
+          val lit = s.left.asInstanceOf[Literal]
+          val rebuild: Expression => Expression = (aggExpr: Expression) => Subtract(lit, aggExpr)
+          (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
+
+        case d: Divide if d.right.isInstanceOf[Literal] =>
+          val (aggChild, rebuildInner) = splitAggregate(d.left)
+          val lit = d.right.asInstanceOf[Literal]
+          val rebuild: Expression => Expression = (aggExpr: Expression) => Divide(aggExpr, lit)
+          (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
+        case d: Divide if d.left.isInstanceOf[Literal] =>
+          val (aggChild, rebuildInner) = splitAggregate(d.right)
+          val lit = d.left.asInstanceOf[Literal]
+          val rebuild: Expression => Expression = (aggExpr: Expression) => Divide(lit, aggExpr)
+          (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
+
+        // Base case: if it's already an aggregate function or expression, return it
+        case a: AggregateFunction => (a, identity)
+        case a: AggregateExpression => (a, identity)
+
+        // Otherwise, no aggregate inside; treat whole as aggregate input (will fail later)
+        case other => (other, identity)
+      }
+
+      val splitCols: Seq[((Expression, Expression => Expression), Int)] =
+        underlyingColumns.zipWithIndex.map { case (c, i) => (splitAggregate(c.expr), i) }
+
+      val aggCols: Seq[Column] = splitCols.map { case ((aggExpr, _), i) =>
+        FramelessInternals.column(aggExpr).as(s"_${i+1}")
+      }
+
+      val dfAgg = dataset.toDF().agg(aggCols.head, aggCols.tail:_*)
+
+      // After aggregation, re-apply any non-aggregate wrappers around each output
+      val postCols: Seq[Column] = splitCols.map { case ((_, rebuild), i) =>
+        val refExpr: Expression = FramelessInternals.expr(dfAgg.col(s"_${i+1}"))
+        val rebuiltExpr = rebuild(refExpr)
+        FramelessInternals.column(rebuiltExpr).as(s"_${i+1}")
+      }
+
+      val selected0 = if (postCols.nonEmpty) dfAgg.select(postCols: _*) else dfAgg
+      val selected = selected0.as[Out](TypedExpressionEncoder[Out])
 
       // Workaround to SPARK-20346. One alternative is to allow the result to be Vector(null) for empty DataFrames.
       // Another one would be to return an Option.
@@ -120,7 +202,6 @@ class TypedDataset[T] protected[frameless](val dataset: Dataset[T])(implicit val
         } yield s"_${i+1} is not null"
         ).mkString(" or ")
 
-      val selected = dataset.toDF().agg(cols.head, cols.tail:_*).as[Out](TypedExpressionEncoder[Out])
       TypedDataset.create[Out](if (filterStr.isEmpty) selected else selected.filter(filterStr))
     }
   }
@@ -330,7 +411,10 @@ class TypedDataset[T] protected[frameless](val dataset: Dataset[T])(implicit val
     * Differs from `Dataset#collect` by wrapping its result into an effect-suspending `F[_]`.
     */
   def collect[F[_]]()(implicit F: SparkDelay[F]): F[Seq[T]] =
-    F.delay(dataset.collect().toSeq)
+    F.delay {
+      import scala.jdk.CollectionConverters._
+      dataset.toLocalIterator().asScala.toVector
+    }
 
   /** Optionally returns the first element in this [[TypedDataset]].
     *
@@ -338,11 +422,10 @@ class TypedDataset[T] protected[frameless](val dataset: Dataset[T])(implicit val
     */
   def firstOption[F[_]]()(implicit F: SparkDelay[F]): F[Option[T]] =
     F.delay {
-      try {
-        Option(dataset.first())
-      } catch {
-        case e: NoSuchElementException => None
-      }
+      import scala.jdk.CollectionConverters._
+      val it = dataset.toLocalIterator()
+      val sIt = it.asScala
+      if (sIt.hasNext) Some(sIt.next()) else None
     }
 
   /** Returns the first `num` elements of this [[TypedDataset]] as a `Seq`.
@@ -355,7 +438,14 @@ class TypedDataset[T] protected[frameless](val dataset: Dataset[T])(implicit val
     * apache/spark
     */
   def take[F[_]](num: Int)(implicit F: SparkDelay[F]): F[Seq[T]] =
-    F.delay(dataset.take(num).toSeq)
+    F.delay {
+      import scala.jdk.CollectionConverters._
+      val b = Vector.newBuilder[T]
+      val it = dataset.toLocalIterator().asScala
+      var i = 0
+      while (i < num && it.hasNext) { b += it.next(); i += 1 }
+      b.result()
+    }
 
   /** Return an iterator that contains all rows in this [[TypedDataset]].
     *
@@ -692,19 +782,54 @@ class TypedDataset[T] protected[frameless](val dataset: Dataset[T])(implicit val
       .as[(Option[T], U)](TypedExpressionEncoder[(Option[T], U)]))
 
   private def disambiguate(join: Join): Join = {
-    val plan = FramelessInternals.ofRows(dataset.sparkSession, join).queryExecution.analyzed.asInstanceOf[Join]
-    val disambiguated = plan.condition.map(_.transform {
+    import org.apache.spark.sql.catalyst.analysis.DeduplicateRelations
+    
+    // First, check if this is a self-join (left and right plans are the same)
+    // If so, we need to deduplicate them to assign distinct attribute IDs
+    val deduplicatedJoin = if (join.left.sameResult(join.right)) {
+      // Self-join detected: use Spark's DeduplicateRelations to create distinct attribute IDs
+      val deduplicated = DeduplicateRelations(join)
+      deduplicated.asInstanceOf[Join]
+    } else {
+      join
+    }
+    
+    val df = FramelessInternals.ofRows(dataset.sparkSession, deduplicatedJoin)
+    val analyzed = df.queryExecution.analyzed
+    
+    // Spark 4.0: Handle case where plan becomes LogicalRDD instead of preserving Join structure
+    val actualJoin = analyzed match {
+      case j: org.apache.spark.sql.catalyst.plans.logical.Join => j
+      case _ =>
+        // In Spark 4.0, ofRows may convert to LogicalRDD losing plan structure
+        // Fall back to using the original logical plan
+        df.queryExecution.logical match {
+          case j: org.apache.spark.sql.catalyst.plans.logical.Join => j
+          case _ =>
+            // If logical plan also doesn't have Join, use the deduplicated join directly
+            // This means we can't properly analyze it, but we can still work with the deduplicated version
+            deduplicatedJoin
+        }
+    }
+    
+    val disambiguated = actualJoin.condition.map(_.transform {
       case FramelessInternals.DisambiguateLeft(tagged: AttributeReference) =>
-        val leftDs = FramelessInternals.ofRows(spark, plan.left)
-        FramelessInternals.resolveExpr(leftDs, Seq(tagged.name))
+        // Use the analyzed left child plan to resolve attributes
+        // This ensures attribute IDs match between the condition and child plans
+        actualJoin.left.output.find(_.name == tagged.name).getOrElse(
+          throw new RuntimeException(s"Attribute ${tagged.name} not found in left plan output")
+        )
 
       case FramelessInternals.DisambiguateRight(tagged: AttributeReference) =>
-        val rightDs = FramelessInternals.ofRows(spark, plan.right)
-        FramelessInternals.resolveExpr(rightDs, Seq(tagged.name))
+        // Use the analyzed right child plan to resolve attributes
+        // This ensures attribute IDs match between the condition and child plans
+        actualJoin.right.output.find(_.name == tagged.name).getOrElse(
+          throw new RuntimeException(s"Attribute ${tagged.name} not found in right plan output")
+        )
 
       case x => x
     })
-    plan.copy(condition = disambiguated)
+    actualJoin.copy(condition = disambiguated)
   }
 
   /** Takes a function from A => R and converts it to a UDF for TypedColumn[T, A] => TypedColumn[T, R].

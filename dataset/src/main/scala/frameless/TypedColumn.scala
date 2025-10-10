@@ -179,8 +179,11 @@ abstract class AbstractTypedColumn[T, U]
     *
     * apache/spark
     */
-  def isNaN(implicit n: CatalystNaN[U]): ThisType[T, Boolean] =
-    typed(self.untyped.isNaN)
+  def isNaN(implicit n: CatalystNaN[U]): ThisType[T, Boolean] = {
+    // Use Catalyst IsNaN expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.IsNaN
+    typed(IsNaN(expr))
+  }
 
   /**
     * True if the value for this optional column `exists` as expected
@@ -236,7 +239,7 @@ abstract class AbstractTypedColumn[T, U]
     * apache/spark
     */
   def plus[TT, W](other: ThisType[TT, U])(implicit n: CatalystNumeric[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, U] =
-    typed(self.untyped.plus(other.untyped))
+    typed(Add(self.expr, other.expr))
 
   /** Sum of this expression and another expression.
     * {{{
@@ -259,7 +262,7 @@ abstract class AbstractTypedColumn[T, U]
     * apache/spark
     */
   def +(u: U)(implicit n: CatalystNumeric[U]): ThisType[T, U] =
-    typed(self.untyped.plus(u))
+    typed(Add(self.expr, Literal.create(u, uencoder.catalystRepr)))
 
   /**
     * Inversion of boolean expression, i.e. NOT.
@@ -270,8 +273,11 @@ abstract class AbstractTypedColumn[T, U]
     *
     * apache/spark
     */
-  def unary_!(implicit i0: U <:< Boolean): ThisType[T, Boolean] =
-    typed(!untyped)
+  def unary_!(implicit i0: U <:< Boolean): ThisType[T, Boolean] = {
+    // Use Catalyst Not expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.Not
+    typed(Not(expr))
+  }
 
   /** Unary minus, i.e. negate the expression.
     * {{{
@@ -282,7 +288,7 @@ abstract class AbstractTypedColumn[T, U]
     * apache/spark
     */
   def unary_-(implicit n: CatalystNumeric[U]): ThisType[T, U] =
-    typed(-self.untyped)
+    typed(UnaryMinus(self.expr))
 
   /** Subtraction. Subtract the other expression from this expression.
     * {{{
@@ -293,7 +299,7 @@ abstract class AbstractTypedColumn[T, U]
     * apache/spark
     */
   def minus[TT, W](other: ThisType[TT, U])(implicit n: CatalystNumeric[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, U] =
-    typed(self.untyped.minus(other.untyped))
+    typed(Subtract(self.expr, other.expr))
 
   /** Subtraction. Subtract the other expression from this expression.
     * {{{
@@ -316,7 +322,7 @@ abstract class AbstractTypedColumn[T, U]
     * apache/spark
     */
   def -(u: U)(implicit n: CatalystNumeric[U]): ThisType[T, U] =
-    typed(self.untyped.minus(u))
+    typed(Subtract(self.expr, Literal.create(u, uencoder.catalystRepr)))
 
   /** Multiplication of this expression and another expression.
     * {{{
@@ -332,14 +338,15 @@ abstract class AbstractTypedColumn[T, U]
       n: CatalystNumeric[U],
       w: frameless.With.Aux[T, TT, W],
       t: ClassTag[U]
-    ): ThisType[W, U] = typed {
+    ): ThisType[W, U] = {
       if (t.runtimeClass == BigDecimal(0).getClass) {
-        // That's apparently the only way to get sound multiplication.
-        // See https://issues.apache.org/jira/browse/SPARK-22036
-        val dt = DecimalType(20, 14)
-        self.untyped.cast(dt).multiply(other.untyped.cast(dt))
+        // Keep decimal widening with Cast + Multiply expressions for soundness
+        import org.apache.spark.sql.catalyst.expressions.{Cast, Multiply}
+        import org.apache.spark.sql.types.DecimalType
+        val targetType = DecimalType(20, 14)
+        typed(Multiply(Cast(self.expr, targetType), Cast(other.expr, targetType)))
       } else {
-        self.untyped.multiply(other.untyped)
+        typed(Multiply(self.expr, other.expr))
       }
     }
 
@@ -363,14 +370,17 @@ abstract class AbstractTypedColumn[T, U]
     * apache/spark
     */
   def *(u: U)(implicit n: CatalystNumeric[U]): ThisType[T, U] =
-    typed(self.untyped.multiply(u))
+    typed(Multiply(self.expr, Literal.create(u, uencoder.catalystRepr)))
 
   /** Modulo (a.k.a. remainder) expression.
     *
     * apache/spark
     */
-  def mod[Out: TypedEncoder, TT, W](other: ThisType[TT, U])(implicit n: CatalystNumeric[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, Out] =
-    typed(self.untyped.mod(other.untyped))
+  def mod[Out: TypedEncoder, TT, W](other: ThisType[TT, U])(implicit n: CatalystNumeric[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, Out] = {
+    // Use Catalyst Remainder expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.Remainder
+    typed(Remainder(self.expr, other.expr))
+  }
 
   /** Modulo (a.k.a. remainder) expression.
     *
@@ -383,8 +393,11 @@ abstract class AbstractTypedColumn[T, U]
     *
     * apache/spark
     */
-  def %(u: U)(implicit n: CatalystNumeric[U]): ThisType[T, U] =
-    typed(self.untyped.mod(u))
+  def %(u: U)(implicit n: CatalystNumeric[U]): ThisType[T, U] = {
+    // Use Catalyst Remainder expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.Remainder
+    typed(Remainder(self.expr, Literal.create(u, uencoder.catalystRepr)))
+  }
 
   /** Division this expression by another expression.
     * {{{
@@ -396,7 +409,7 @@ abstract class AbstractTypedColumn[T, U]
     * apache/spark
     */
   def divide[Out: TypedEncoder, TT, W](other: ThisType[TT, U])(implicit n: CatalystDivisible[U, Out], w: frameless.With.Aux[T, TT, W]): ThisType[W, Out] =
-    typed(self.untyped.divide(other.untyped))
+    typed(Divide(self.expr, other.expr))
 
   /** Division this expression by another expression.
     * {{{
@@ -420,21 +433,27 @@ abstract class AbstractTypedColumn[T, U]
     * apache/spark
     */
   def /(u: U)(implicit n: CatalystNumeric[U]): ThisType[T, Double] =
-    typed(self.untyped.divide(u))
+    typed(Divide(self.expr, Literal.create(u, uencoder.catalystRepr)))(implicitly[TypedEncoder[Double]])
 
   /** Returns a descending ordering used in sorting
     *
     * apache/spark
     */
-  def desc(implicit catalystOrdered: CatalystOrdered[U]): SortedTypedColumn[T, U] =
-    new SortedTypedColumn[T, U](untyped.desc)
+  def desc(implicit catalystOrdered: CatalystOrdered[U]): SortedTypedColumn[T, U] = {
+    // Use Catalyst SortOrder expression directly to avoid Spark 4.0 SortOrder node issue
+    import org.apache.spark.sql.catalyst.expressions.{SortOrder, Descending, NullsLast}
+    new SortedTypedColumn[T, U](SortOrder(expr, Descending, NullsLast, Seq.empty))(uencoder)
+  }
 
   /** Returns an ascending ordering used in sorting
     *
     * apache/spark
     */
-  def asc(implicit catalystOrdered: CatalystOrdered[U]): SortedTypedColumn[T, U] =
-    new SortedTypedColumn[T, U](untyped.asc)
+  def asc(implicit catalystOrdered: CatalystOrdered[U]): SortedTypedColumn[T, U] = {
+    // Use Catalyst SortOrder expression directly to avoid Spark 4.0 SortOrder node issue
+    import org.apache.spark.sql.catalyst.expressions.{SortOrder, Ascending, NullsFirst}
+    new SortedTypedColumn[T, U](SortOrder(expr, Ascending, NullsFirst, Seq.empty))(uencoder)
+  }
 
   /** Bitwise AND this expression and another expression.
     * {{{
@@ -444,8 +463,11 @@ abstract class AbstractTypedColumn[T, U]
     * @param u a constant of the same type
     * apache/spark
     */
-  def bitwiseAND(u: U)(implicit n: CatalystBitwise[U]): ThisType[T, U] =
-    typed(self.untyped.bitwiseAND(u))
+  def bitwiseAND(u: U)(implicit n: CatalystBitwise[U]): ThisType[T, U] = {
+    // Use Catalyst BitwiseAnd expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.BitwiseAnd
+    typed(BitwiseAnd(self.expr, Literal.create(u, uencoder.catalystRepr)))
+  }
 
   /** Bitwise AND this expression and another expression.
     * {{{
@@ -455,8 +477,11 @@ abstract class AbstractTypedColumn[T, U]
     * @param u a constant of the same type
     * apache/spark
     */
-  def bitwiseAND[TT, W](other: ThisType[TT, U])(implicit n: CatalystBitwise[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, U] =
-    typed(self.untyped.bitwiseAND(other.untyped))
+  def bitwiseAND[TT, W](other: ThisType[TT, U])(implicit n: CatalystBitwise[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, U] = {
+    // Use Catalyst BitwiseAnd expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.BitwiseAnd
+    typed(BitwiseAnd(self.expr, other.expr))
+  }
 
   /** Bitwise AND this expression and another expression (of same type).
     * {{{
@@ -488,8 +513,11 @@ abstract class AbstractTypedColumn[T, U]
     * @param u a constant of the same type
     * apache/spark
     */
-  def bitwiseOR(u: U)(implicit n: CatalystBitwise[U]): ThisType[T, U] =
-    typed(self.untyped.bitwiseOR(u))
+  def bitwiseOR(u: U)(implicit n: CatalystBitwise[U]): ThisType[T, U] = {
+    // Use Catalyst BitwiseOr expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.BitwiseOr
+    typed(BitwiseOr(self.expr, Literal.create(u, uencoder.catalystRepr)))
+  }
 
   /** Bitwise OR this expression and another expression.
     * {{{
@@ -499,8 +527,11 @@ abstract class AbstractTypedColumn[T, U]
     * @param other a constant of the same type
     * apache/spark
     */
-  def bitwiseOR[TT, W](other: ThisType[TT, U])(implicit n: CatalystBitwise[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, U] =
-    typed(self.untyped.bitwiseOR(other.untyped))
+  def bitwiseOR[TT, W](other: ThisType[TT, U])(implicit n: CatalystBitwise[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, U] = {
+    // Use Catalyst BitwiseOr expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.BitwiseOr
+    typed(BitwiseOr(self.expr, other.expr))
+  }
 
   /** Bitwise OR this expression and another expression (of same type).
     * {{{
@@ -532,8 +563,11 @@ abstract class AbstractTypedColumn[T, U]
     * @param u a constant of the same type
     * apache/spark
     */
-  def bitwiseXOR(u: U)(implicit n: CatalystBitwise[U]): ThisType[T, U] =
-    typed(self.untyped.bitwiseXOR(u))
+  def bitwiseXOR(u: U)(implicit n: CatalystBitwise[U]): ThisType[T, U] = {
+    // Use Catalyst BitwiseXor expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.BitwiseXor
+    typed(BitwiseXor(self.expr, Literal.create(u, uencoder.catalystRepr)))
+  }
 
   /** Bitwise XOR this expression and another expression.
     * {{{
@@ -543,8 +577,11 @@ abstract class AbstractTypedColumn[T, U]
     * @param other a constant of the same type
     * apache/spark
     */
-  def bitwiseXOR[TT, W](other: ThisType[TT, U])(implicit n: CatalystBitwise[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, U] =
-    typed(self.untyped.bitwiseXOR(other.untyped))
+  def bitwiseXOR[TT, W](other: ThisType[TT, U])(implicit n: CatalystBitwise[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, U] = {
+    // Use Catalyst BitwiseXor expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.BitwiseXor
+    typed(BitwiseXor(self.expr, other.expr))
+  }
 
   /** Bitwise XOR this expression and another expression (of same type).
     * {{{
@@ -574,7 +611,7 @@ abstract class AbstractTypedColumn[T, U]
     * }}}
     */
   def cast[A: TypedEncoder](implicit c: CatalystCast[U, A]): ThisType[T, A] =
-    typed(self.untyped.cast(TypedEncoder[A].catalystRepr))
+    typed(Cast(self.expr, TypedEncoder[A].catalystRepr))
 
   /**
     * An expression that returns a substring
@@ -585,8 +622,11 @@ abstract class AbstractTypedColumn[T, U]
     * @param startPos starting position
     * @param len length of the substring
     */
-  def substr(startPos: Int, len: Int)(implicit ev: U =:= String): ThisType[T, String] =
-    typed(self.untyped.substr(startPos, len))
+  def substr(startPos: Int, len: Int)(implicit ev: U =:= String): ThisType[T, String] = {
+    // Use Catalyst Substring expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.Substring
+    typed(Substring(self.expr, Literal(startPos), Literal(len)))
+  }
 
   /**
     * An expression that returns a substring
@@ -601,8 +641,11 @@ abstract class AbstractTypedColumn[T, U]
                    (implicit
                     ev: U =:= String,
                     w1: frameless.With.Aux[T, TT1, W1],
-                    w2: frameless.With.Aux[W1, TT2, W2]): ThisType[W2, String] =
-    typed(self.untyped.substr(startPos.untyped, len.untyped))
+                    w2: frameless.With.Aux[W1, TT2, W2]): ThisType[W2, String] = {
+    // Use Catalyst Substring expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.Substring
+    typed(Substring(self.expr, startPos.expr, len.expr))
+  }
 
   /** SQL like expression. Returns a boolean column based on a SQL LIKE match.
     * {{{
@@ -615,8 +658,12 @@ abstract class AbstractTypedColumn[T, U]
     * }}}
     * apache/spark
     */
-  def like(literal: String)(implicit ev: U =:= String): ThisType[T, Boolean] =
-    typed(self.untyped.like(literal))
+  def like(literal: String)(implicit ev: U =:= String): ThisType[T, Boolean] = {
+    // Use Catalyst Like expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.Like
+    // Spark 4.0 requires escapeChar parameter; use '\\' as default escape character
+    typed(Like(self.expr, Literal(literal), '\\'))
+  }
 
   /** SQL RLIKE expression (LIKE with Regex). Returns a boolean column based on a regex match.
     * {{{
@@ -629,8 +676,11 @@ abstract class AbstractTypedColumn[T, U]
     * }}}
     * apache/spark
     */
-  def rlike(literal: String)(implicit ev: U =:= String): ThisType[T, Boolean] =
-    typed(self.untyped.rlike(literal))
+  def rlike(literal: String)(implicit ev: U =:= String): ThisType[T, Boolean] = {
+    // Use Catalyst RLike expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.RLike
+    typed(RLike(self.expr, Literal(literal)))
+  }
 
   /** String contains another string literal.
     * {{{
@@ -640,8 +690,11 @@ abstract class AbstractTypedColumn[T, U]
     * @param other a string that is being tested against.
     * apache/spark
     */
-  def contains(other: String)(implicit ev: U =:= String): ThisType[T, Boolean] =
-    typed(self.untyped.contains(other))
+  def contains(other: String)(implicit ev: U =:= String): ThisType[T, Boolean] = {
+    // Use Catalyst Contains expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.Contains
+    typed(Contains(self.expr, Literal(other)))
+  }
 
   /** String contains.
     * {{{
@@ -651,8 +704,11 @@ abstract class AbstractTypedColumn[T, U]
     * @param other a column which values is used as a string that is being tested against.
     * apache/spark
     */
-  def contains[TT, W](other: ThisType[TT, U])(implicit ev: U =:= String, w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] =
-    typed(self.untyped.contains(other.untyped))
+  def contains[TT, W](other: ThisType[TT, U])(implicit ev: U =:= String, w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] = {
+    // Use Catalyst Contains expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.Contains
+    typed(Contains(self.expr, other.expr))
+  }
 
   /** String starts with another string literal.
     * {{{
@@ -662,8 +718,11 @@ abstract class AbstractTypedColumn[T, U]
     * @param other a prefix that is being tested against.
     * apache/spark
     */
-  def startsWith(other: String)(implicit ev: U =:= String): ThisType[T, Boolean] =
-    typed(self.untyped.startsWith(other))
+  def startsWith(other: String)(implicit ev: U =:= String): ThisType[T, Boolean] = {
+    // Use Catalyst StartsWith expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.StartsWith
+    typed(StartsWith(self.expr, Literal(other)))
+  }
 
   /** String starts with.
     * {{{
@@ -673,8 +732,11 @@ abstract class AbstractTypedColumn[T, U]
     * @param other a column which values is used as a prefix that is being tested against.
     * apache/spark
     */
-  def startsWith[TT, W](other: ThisType[TT, U])(implicit ev: U =:= String, w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] =
-    typed(self.untyped.startsWith(other.untyped))
+  def startsWith[TT, W](other: ThisType[TT, U])(implicit ev: U =:= String, w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] = {
+    // Use Catalyst StartsWith expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.StartsWith
+    typed(StartsWith(self.expr, other.expr))
+  }
 
   /** String ends with another string literal.
     * {{{
@@ -684,8 +746,11 @@ abstract class AbstractTypedColumn[T, U]
     * @param other a suffix that is being tested against.
     * apache/spark
     */
-  def endsWith(other: String)(implicit ev: U =:= String): ThisType[T, Boolean] =
-    typed(self.untyped.endsWith(other))
+  def endsWith(other: String)(implicit ev: U =:= String): ThisType[T, Boolean] = {
+    // Use Catalyst EndsWith expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.EndsWith
+    typed(EndsWith(self.expr, Literal(other)))
+  }
 
   /** String ends with.
     * {{{
@@ -695,16 +760,22 @@ abstract class AbstractTypedColumn[T, U]
     * @param other a column which values is used as a suffix that is being tested against.
     * apache/spark
     */
-  def endsWith[TT, W](other: ThisType[TT, U])(implicit ev: U =:= String, w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] =
-    typed(self.untyped.endsWith(other.untyped))
+  def endsWith[TT, W](other: ThisType[TT, U])(implicit ev: U =:= String, w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] = {
+    // Use Catalyst EndsWith expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.EndsWith
+    typed(EndsWith(self.expr, other.expr))
+  }
 
   /** Boolean AND.
     * {{{
     *   df.filter ( (df.col('a) === 1).and(df.col('b) > 5) )
     * }}}
     */
-  def and[TT, W](other: ThisType[TT, Boolean])(implicit w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] =
-    typed(self.untyped.and(other.untyped))
+  def and[TT, W](other: ThisType[TT, Boolean])(implicit w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] = {
+    // Use Catalyst And expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.And
+    typed(And(self.expr, other.expr))
+  }
 
   /** Boolean AND.
     * {{{
@@ -719,8 +790,11 @@ abstract class AbstractTypedColumn[T, U]
     *   df.filter ( (df.col('a) === 1).or(df.col('b) > 5) )
     * }}}
     */
-  def or[TT, W](other: ThisType[TT, Boolean])(implicit w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] =
-    typed(self.untyped.or(other.untyped))
+  def or[TT, W](other: ThisType[TT, Boolean])(implicit w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] = {
+    // Use Catalyst Or expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.Or
+    typed(Or(self.expr, other.expr))
+  }
 
   /** Boolean OR.
     * {{{
@@ -741,7 +815,7 @@ abstract class AbstractTypedColumn[T, U]
     * apache/spark
     */
   def <[TT, W](other: ThisType[TT, U])(implicit i0: CatalystOrdered[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] =
-    typed(self.untyped < other.untyped)
+    typed(LessThan(self.expr, other.expr))
 
   /** Less than or equal to.
     * 
@@ -754,7 +828,7 @@ abstract class AbstractTypedColumn[T, U]
     * apache/spark
     */
   def <=[TT, W](other: ThisType[TT, U])(implicit i0: CatalystOrdered[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] =
-    typed(self.untyped <= other.untyped)
+    typed(LessThanOrEqual(self.expr, other.expr))
 
   /** Greater than.
     * {{{
@@ -766,7 +840,7 @@ abstract class AbstractTypedColumn[T, U]
     * apache/spark
     */
   def >[TT, W](other: ThisType[TT, U])(implicit i0: CatalystOrdered[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] =
-    typed(self.untyped > other.untyped)
+    typed(GreaterThan(self.expr, other.expr))
 
   /** Greater than or equal.
     * {{{
@@ -778,7 +852,7 @@ abstract class AbstractTypedColumn[T, U]
     * apache/spark
     */
   def >=[TT, W](other: ThisType[TT, U])(implicit i0: CatalystOrdered[U], w: frameless.With.Aux[T, TT, W]): ThisType[W, Boolean] =
-    typed(self.untyped >= other.untyped)
+    typed(GreaterThanOrEqual(self.expr, other.expr))
 
   /** Less than.
     * {{{
@@ -790,7 +864,7 @@ abstract class AbstractTypedColumn[T, U]
     * apache/spark
     */
   def <(u: U)(implicit i0: CatalystOrdered[U]): ThisType[T, Boolean] =
-    typed(self.untyped < lit(u)(self.uencoder).untyped)
+    typed(LessThan(self.expr, Literal.create(u, uencoder.catalystRepr)))
 
   /** Less than or equal to.
     * {{{
@@ -802,7 +876,7 @@ abstract class AbstractTypedColumn[T, U]
     * apache/spark
     */
   def <=(u: U)(implicit i0: CatalystOrdered[U]): ThisType[T, Boolean] =
-    typed(self.untyped <= lit(u)(self.uencoder).untyped)
+    typed(LessThanOrEqual(self.expr, Literal.create(u, uencoder.catalystRepr)))
 
   /** Greater than.
     * {{{
@@ -814,7 +888,7 @@ abstract class AbstractTypedColumn[T, U]
     * apache/spark
     */
   def >(u: U)(implicit i0: CatalystOrdered[U]): ThisType[T, Boolean] =
-    typed(self.untyped > lit(u)(self.uencoder).untyped)
+    typed(GreaterThan(self.expr, Literal.create(u, uencoder.catalystRepr)))
 
   /** Greater than or equal.
     * {{{
@@ -826,7 +900,7 @@ abstract class AbstractTypedColumn[T, U]
     * apache/spark
     */
   def >=(u: U)(implicit i0: CatalystOrdered[U]): ThisType[T, Boolean] =
-    typed(self.untyped >= lit(u)(self.uencoder).untyped)
+    typed(GreaterThanOrEqual(self.expr, Literal.create(u, uencoder.catalystRepr)))
 
   /**
     * Returns true if the value of this column is contained in of the arguments.
@@ -839,7 +913,7 @@ abstract class AbstractTypedColumn[T, U]
     * apache/spark
     */
   def isin(values: U*)(implicit e: CatalystIsin[U]): ThisType[T, Boolean] =
-    typed(self.untyped.isin(values:_*))
+    typed(In(self.expr, values.map(v => Literal.create(v, uencoder.catalystRepr))))
 
   /**
     * True if the current column is between the lower bound and upper bound, inclusive.
@@ -848,8 +922,14 @@ abstract class AbstractTypedColumn[T, U]
     * @param upperBound a constant of the same type
     * apache/spark
     */
-  def between(lowerBound: U, upperBound: U)(implicit i0: CatalystOrdered[U]): ThisType[T, Boolean] =
-    typed(self.untyped.between(lit(lowerBound)(self.uencoder).untyped, lit(upperBound)(self.uencoder).untyped))
+  def between(lowerBound: U, upperBound: U)(implicit i0: CatalystOrdered[U]): ThisType[T, Boolean] = {
+    // Use Catalyst And/GreaterThanOrEqual/LessThanOrEqual expressions directly
+    import org.apache.spark.sql.catalyst.expressions.{And, GreaterThanOrEqual, LessThanOrEqual}
+    typed(And(
+      GreaterThanOrEqual(self.expr, Literal.create(lowerBound, uencoder.catalystRepr)),
+      LessThanOrEqual(self.expr, Literal.create(upperBound, uencoder.catalystRepr))
+    ))
+  }
 
   /**
     * True if the current column is between the lower bound and upper bound, inclusive.
@@ -863,8 +943,14 @@ abstract class AbstractTypedColumn[T, U]
       i0: CatalystOrdered[U],
       w0: frameless.With.Aux[T, TT1, W1],
       w1: frameless.With.Aux[TT2, W1, W2]
-    ): ThisType[W2, Boolean] =
-      typed(self.untyped.between(lowerBound.untyped, upperBound.untyped))
+    ): ThisType[W2, Boolean] = {
+      // Use Catalyst And/GreaterThanOrEqual/LessThanOrEqual expressions directly
+      import org.apache.spark.sql.catalyst.expressions.{And, GreaterThanOrEqual, LessThanOrEqual}
+      typed(And(
+        GreaterThanOrEqual(self.expr, lowerBound.expr),
+        LessThanOrEqual(self.expr, upperBound.expr)
+      ))
+    }
 
   /**
     * Returns a nested column matching the field `symbol`.
@@ -875,8 +961,18 @@ abstract class AbstractTypedColumn[T, U]
   def field[V](symbol: Witness.Lt[Symbol])(implicit
       i0: TypedColumn.Exists[U, symbol.T, V],
       i1: TypedEncoder[V]
-    ): ThisType[T, V] = 
-    typed(self.untyped.getField(symbol.value.name))
+    ): ThisType[T, V] = {
+    // Use Catalyst GetStructField expression directly to avoid Spark 4.0 UnresolvedFunction issue
+    import org.apache.spark.sql.catalyst.expressions.GetStructField
+    import org.apache.spark.sql.types.StructType
+    
+    // Get the field index from the struct schema
+    val structType = self.expr.dataType.asInstanceOf[StructType]
+    val fieldName = symbol.value.name
+    val fieldIndex = structType.fieldIndex(fieldName)
+    
+    typed(GetStructField(self.expr, fieldIndex, Some(fieldName)))
+  }
 
 }
 
@@ -895,7 +991,7 @@ sealed class SortedTypedColumn[T, U](val expr: Expression)(
 
 object SortedTypedColumn {
   implicit def defaultAscending[T, U : CatalystOrdered](typedColumn: TypedColumn[T, U]): SortedTypedColumn[T, U] =
-    new SortedTypedColumn[T, U](typedColumn.untyped.asc)(typedColumn.uencoder)
+    typedColumn.asc
 
     object defaultAscendingPoly extends Poly1 {
       implicit def caseTypedColumn[T, U : CatalystOrdered] = at[TypedColumn[T, U]](c => defaultAscending(c))

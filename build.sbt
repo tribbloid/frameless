@@ -378,7 +378,7 @@ lazy val framelessSettings = Seq(
     "org.scalatestplus" %% "scalatestplus-scalacheck" % scalatestplus % Test,
     "org.scalacheck" %% "scalacheck" % scalacheck % Test
   ),
-  Test / javaOptions ++= Seq("-Xmx1G", "-ea"),
+  Test / javaOptions ++= Seq("-Xmx4G", "-ea"),
   Test / fork := true,
   Test / parallelExecution := false,
   mimaPreviousArtifacts ~= {

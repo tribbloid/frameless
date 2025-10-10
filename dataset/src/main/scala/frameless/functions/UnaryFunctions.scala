@@ -2,6 +2,8 @@ package frameless
 package functions
 
 import org.apache.spark.sql.{Column, functions => sparkFunctions}
+import org.apache.spark.sql.catalyst.expressions._
+import org.apache.spark.sql.types.BooleanType
 
 import scala.math.Ordering
 
@@ -10,15 +12,17 @@ trait UnaryFunctions {
     *
     * apache/spark
     */
-  def size[T, A, V[_] : CatalystSizableCollection](column: TypedColumn[T, V[A]]): TypedColumn[T, Int] =
-    new TypedColumn[T, Int](implicitly[CatalystSizableCollection[V]].sizeOp(column.untyped))
+  def size[T, A, V[_] : CatalystSizableCollection](column: TypedColumn[T, V[A]]): TypedColumn[T, Int] = {
+    val expr = implicitly[CatalystSizableCollection[V]].sizeExpr(column.expr)
+    new TypedColumn[T, Int](expr)
+  }
 
   /** Returns length of Map
     *
     * apache/spark
     */
   def size[T, A, B](column: TypedColumn[T, Map[A, B]]): TypedColumn[T, Int] =
-    new TypedColumn[T, Int](sparkFunctions.size(column.untyped))
+    new TypedColumn[T, Int](Size(column.expr))
 
   /** Sorts the input array for the given column in ascending order, according to
     * the natural ordering of the array elements.
@@ -26,7 +30,7 @@ trait UnaryFunctions {
     * apache/spark
     */
   def sortAscending[T, A: Ordering, V[_] : CatalystSortableCollection](column: TypedColumn[T, V[A]]): TypedColumn[T, V[A]] =
-    new TypedColumn[T, V[A]](implicitly[CatalystSortableCollection[V]].sortOp(column.untyped, sortAscending = true))(column.uencoder)
+    new TypedColumn[T, V[A]](implicitly[CatalystSortableCollection[V]].sortExpr(column.expr, sortAscending = true))(column.uencoder)
 
   /** Sorts the input array for the given column in descending order, according to
     * the natural ordering of the array elements.
@@ -34,7 +38,7 @@ trait UnaryFunctions {
     * apache/spark
     */
   def sortDescending[T, A: Ordering, V[_] : CatalystSortableCollection](column: TypedColumn[T, V[A]]): TypedColumn[T, V[A]] =
-    new TypedColumn[T, V[A]](implicitly[CatalystSortableCollection[V]].sortOp(column.untyped, sortAscending = false))(column.uencoder)
+    new TypedColumn[T, V[A]](implicitly[CatalystSortableCollection[V]].sortExpr(column.expr, sortAscending = false))(column.uencoder)
 
 
   /** Creates a new row for each element in the given collection. The column types
@@ -49,20 +53,20 @@ trait UnaryFunctions {
 }
 
 trait CatalystSizableCollection[V[_]] {
-  def sizeOp(col: Column): Column
+  def sizeExpr(expr: Expression): Expression
 }
 
 object CatalystSizableCollection {
   implicit def sizableVector: CatalystSizableCollection[Vector] = new CatalystSizableCollection[Vector] {
-    def sizeOp(col: Column): Column = sparkFunctions.size(col)
+    def sizeExpr(expr: Expression): Expression = Size(expr)
   }
 
   implicit def sizableArray: CatalystSizableCollection[Array] = new CatalystSizableCollection[Array] {
-    def sizeOp(col: Column): Column = sparkFunctions.size(col)
+    def sizeExpr(expr: Expression): Expression = Size(expr)
   }
 
   implicit def sizableList: CatalystSizableCollection[List] = new CatalystSizableCollection[List] {
-    def sizeOp(col: Column): Column = sparkFunctions.size(col)
+    def sizeExpr(expr: Expression): Expression = Size(expr)
   }
 
 }
@@ -77,19 +81,19 @@ object CatalystExplodableCollection {
 }
 
 trait CatalystSortableCollection[V[_]] {
-  def sortOp(col: Column, sortAscending: Boolean): Column
+  def sortExpr(expr: Expression, sortAscending: Boolean): Expression
 }
 
 object CatalystSortableCollection {
   implicit def sortableVector: CatalystSortableCollection[Vector] = new CatalystSortableCollection[Vector] {
-    def sortOp(col: Column, sortAscending: Boolean): Column = sparkFunctions.sort_array(col, sortAscending)
+    def sortExpr(expr: Expression, sortAscending: Boolean): Expression = SortArray(expr, Literal.create(sortAscending, BooleanType))
   }
 
   implicit def sortableArray: CatalystSortableCollection[Array] = new CatalystSortableCollection[Array] {
-    def sortOp(col: Column, sortAscending: Boolean): Column = sparkFunctions.sort_array(col, sortAscending)
+    def sortExpr(expr: Expression, sortAscending: Boolean): Expression = SortArray(expr, Literal.create(sortAscending, BooleanType))
   }
 
   implicit def sortableList: CatalystSortableCollection[List] = new CatalystSortableCollection[List] {
-    def sortOp(col: Column, sortAscending: Boolean): Column = sparkFunctions.sort_array(col, sortAscending)
+    def sortExpr(expr: Expression, sortAscending: Boolean): Expression = SortArray(expr, Literal.create(sortAscending, BooleanType))
   }
 }
