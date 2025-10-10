@@ -140,46 +140,73 @@ object TypedExpressionEncoder {
         .newInstance(agnostic, spark4Serializer, deserializerExpr)
         .asInstanceOf[Encoder[T]]
     } else {
-      // Spark 3.x: ExpressionEncoder(serializer: Seq[Expression], deserializer: Expression, clsTag: ClassTag)
-      val wanted = List(
-        List(
-          "scala.collection.Seq",
-          "org.apache.spark.sql.catalyst.expressions.Expression",
-          "scala.reflect.ClassTag"
-        ),
-        List(
-          "scala.collection.Seq",
-          "org.apache.spark.sql.catalyst.expressions.Expression",
-          "scala.reflect.Manifest"
-        )
-      )
-      val ctor = SparkCompat.findCtorByParamFQNs(encCls, wanted).getOrElse(
-        throw new RuntimeException(
-          s"Spark 3.x ExpressionEncoder constructor not found. Found constructors:\n${SparkCompat.debugConstructors(encCls)}"
-        )
-      )
-
       // Build scala.reflect.ClassTag for runtimeClass reflectively
       val classTagComp = Class.forName("scala.reflect.ClassTag$")
       val classTagMod = classTagComp.getField("MODULE$").get(null)
       val classTagApply = classTagComp.getMethod("apply", classOf[Class[_]])
       val classTag = classTagApply.invoke(classTagMod, runtimeClass)
 
-      // Shape serializer as a Seq of NamedExpressions matching top-level schema fields
-      val serializerSeq: scala.collection.Seq[Expression] = {
-        val fields = schema.fields
-        if (fields.length == 1) {
-          val name = fields.head.name
-          scala.collection.Seq(Alias(serializerExpr, name)())
-        } else {
-          val namedFields: Seq[Expression] = fields.zipWithIndex.map { case (sf, i) =>
-            Alias(GetStructField(serializerExpr, i, Some(sf.name)), sf.name)()
+      // Spark 3.5+: ExpressionEncoder(serializer: Expression, deserializer: Expression, clsTag: ClassTag)
+      val spark35Wanted = List(
+        List(
+          "org.apache.spark.sql.catalyst.expressions.Expression",
+          "org.apache.spark.sql.catalyst.expressions.Expression",
+          "scala.reflect.ClassTag"
+        )
+      )
+      val spark35Ctor = SparkCompat.findCtorByParamFQNs(encCls, spark35Wanted)
+      
+      if (spark35Ctor.isDefined) {
+        // Spark 3.5+ path: single Expression serializer (similar to Spark 4.x structure)
+        val spark35Serializer = {
+          val fields = schema.fields
+          if (fields.length == 1) {
+            serializerExpr
+          } else {
+            val namedFields = fields.zipWithIndex.map { case (sf, i) =>
+              Alias(GetStructField(serializerExpr, i, Some(sf.name)), sf.name)()
+            }
+            org.apache.spark.sql.catalyst.expressions.CreateStruct(namedFields)
           }
-          scala.collection.Seq(namedFields: _*)
         }
-      }
+        
+        spark35Ctor.get.newInstance(spark35Serializer, deserializerExpr, classTag).asInstanceOf[Encoder[T]]
+      } else {
+        // Spark 3.3-3.4: ExpressionEncoder(serializer: Seq[Expression], deserializer: Expression, clsTag: ClassTag)
+        val wanted = List(
+          List(
+            "scala.collection.Seq",
+            "org.apache.spark.sql.catalyst.expressions.Expression",
+            "scala.reflect.ClassTag"
+          ),
+          List(
+            "scala.collection.Seq",
+            "org.apache.spark.sql.catalyst.expressions.Expression",
+            "scala.reflect.Manifest"
+          )
+        )
+        val ctor = SparkCompat.findCtorByParamFQNs(encCls, wanted).getOrElse(
+          throw new RuntimeException(
+            s"Spark 3.x ExpressionEncoder constructor not found. Found constructors:\n${SparkCompat.debugConstructors(encCls)}"
+          )
+        )
 
-      ctor.newInstance(serializerSeq, deserializerExpr, classTag).asInstanceOf[Encoder[T]]
+        // Shape serializer as a Seq of NamedExpressions matching top-level schema fields
+        val serializerSeq: scala.collection.Seq[Expression] = {
+          val fields = schema.fields
+          if (fields.length == 1) {
+            val name = fields.head.name
+            scala.collection.Seq(Alias(serializerExpr, name)())
+          } else {
+            val namedFields: Seq[Expression] = fields.zipWithIndex.map { case (sf, i) =>
+              Alias(GetStructField(serializerExpr, i, Some(sf.name)), sf.name)()
+            }
+            scala.collection.Seq(namedFields: _*)
+          }
+        }
+
+        ctor.newInstance(serializerSeq, deserializerExpr, classTag).asInstanceOf[Encoder[T]]
+      }
     }
   }
 }

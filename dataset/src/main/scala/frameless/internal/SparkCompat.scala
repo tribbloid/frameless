@@ -1,9 +1,20 @@
 package frameless.internal
 
 object SparkCompat {
-  lazy val isSpark4: Boolean =
-    classExists("org.apache.spark.sql.classic.ColumnNode") ||
-      classExists("org.apache.spark.sql.catalyst.encoders.AgnosticEncoder")
+  lazy val isSpark4: Boolean = {
+    val encCls = classOf[org.apache.spark.sql.catalyst.encoders.ExpressionEncoder[_]]
+    val spark4Ctor = findCtorByParamFQNs(
+      encCls,
+      List(
+        List(
+          "org.apache.spark.sql.catalyst.encoders.AgnosticEncoder",
+          "org.apache.spark.sql.catalyst.expressions.Expression",
+          "org.apache.spark.sql.catalyst.expressions.Expression"
+        )
+      )
+    )
+    spark4Ctor.isDefined
+  }
 
   def classExists(fqn: String): Boolean =
     try {
