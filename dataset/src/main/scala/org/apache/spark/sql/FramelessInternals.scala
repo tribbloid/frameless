@@ -401,14 +401,39 @@ object FramelessInternals {
         )
     }
 
-    // Strategy 3: Last resort - we couldn't extract the expression
-    // This should rarely happen in Spark 4.0 since Strategy 2 should handle most cases
-    val debugInfo =
-      strategy2Error.map(err => s" Strategy 2 debug: $err").getOrElse("")
-    throw new UnsupportedOperationException(
-      s"Cannot extract Expression from Column: All strategies failed. " +
-        s"Column class: ${column.getClass.getName}.$debugInfo"
-    )
+    // Strategy 3: Analyzer fallback - resolve through Spark's analyzer
+    try {
+      val spark = org.apache.spark.sql.SparkSession.active
+      val dummyDf = spark.range(1).select(column)
+      val analyzed = dummyDf.queryExecution.analyzed
+
+      analyzed match {
+        case Project(projectList, _) if projectList.nonEmpty =>
+          projectList.head match {
+            case Alias(child, _) => child
+            case e: Expression   => e
+            case other           =>
+              throw new UnsupportedOperationException(
+                s"Unsupported analyzed project element: ${other.getClass.getName}"
+              )
+          }
+        case other =>
+          throw new UnsupportedOperationException(
+            s"Cannot extract Expression from Column. Analyzed plan: ${other.getClass.getName}"
+          )
+      }
+    } catch {
+      case e: Exception =>
+        val debugInfo = strategy2Error
+          .map(err => s" Strategy 2 debug: $err")
+          .getOrElse("")
+        throw new UnsupportedOperationException(
+          s"Cannot extract Expression from Column using any strategy. " +
+            s"This may indicate an incompatible Spark version or Column type. Error: ${e.getMessage}." +
+            debugInfo,
+          e
+        )
+    }
   }
 
   /**
@@ -420,15 +445,13 @@ object FramelessInternals {
   def column(expr: Expression): Column = {
     try {
       // Try Spark 3.x approach first: new Column(expr)
-      val columnConstructor =
-        classOf[Column].getConstructor(classOf[Expression])
+      val columnConstructor = classOf[Column].getConstructor(classOf[Expression])
       columnConstructor.newInstance(expr)
     } catch {
       case _: NoSuchMethodException =>
         // Spark 4.x approach: new Column(ExpressionColumnNode(expr, Origin()))
         try {
-          val exprColNodeClass =
-            Class.forName("org.apache.spark.sql.classic.ExpressionColumnNode")
+          val exprColNodeClass = Class.forName("org.apache.spark.sql.classic.ExpressionColumnNode")
           val origin = SparkCompat.newOrigin()
 
           // Prefer (Expression, Origin) constructor, fallback to (Expression)
@@ -476,14 +499,24 @@ object FramelessInternals {
           columnConstructor.newInstance(exprColNode).asInstanceOf[Column]
         } catch {
           case e: Exception =>
-            throw new RuntimeException(
-              s"Could not create Column from Expression in Spark 3 or 4: ${e.getMessage}",
-              e
-            )
+            // Fallback: construct Column via SQL string representation
+            // This avoids relying on internal ColumnNode classes in Spark 4.x
+            try {
+              val sqlMethod = classOf[Expression].getMethod("sql")
+              val sqlString = sqlMethod.invoke(expr).asInstanceOf[String]
+              val functionsClass = Class.forName("org.apache.spark.sql.functions")
+              val exprMethod = functionsClass.getMethod("expr", classOf[String])
+              exprMethod.invoke(null, sqlString).asInstanceOf[Column]
+            } catch {
+              case ee: Exception =>
+                throw new RuntimeException(
+                  s"Could not create Column from Expression in Spark 3 or 4 (both direct and SQL fallback failed): ${ee.getMessage}",
+                  ee
+                )
+            }
         }
     }
   }
-
   /**
    * Helper to access SQLContext for Spark version compatibility.
    * In Spark 3.x, Dataset has sqlContext field directly.
