@@ -61,6 +61,8 @@ This document guides automated agents and contributors working in this repositor
         - `sbt "++ 2.12" "project root-spark35" compile test`
     - Scala 2.13:
         - `sbt "++ 2.13" "project root-spark35" compile test`
+- **Re-run previously failed tests**
+    - `sbt "project root-spark35" testQuick`
 - **Cross Spark roots (when relevant to change)**
     - `sbt "++ 2.12" "project root-spark34" compile test`
     - `sbt "++ 2.12" "project root-spark33" compile test`
