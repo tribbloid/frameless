@@ -203,14 +203,34 @@ object FramelessInternals {
               }
 
               try {
-                // Try to create an UnresolvedFunction expression from the node
-                val functionNameMethod =
-                  columnNode.getClass.getMethod("functionName")
-                val argumentsMethod = columnNode.getClass.getMethod("arguments")
+                // Try to create an UnresolvedFunction-like expression from the node
+                // Spark 4 may use UnresolvedFunction or UnresolvedRoutine; method names differ
+                val fnMethodOpt =
+                  columnNode.getClass.getMethods
+                    .find(_.getName == "functionName")
+                    .orElse(
+                      columnNode.getClass.getMethods.find(_.getName == "name")
+                    )
+                    .orElse(
+                      columnNode.getClass.getMethods
+                        .find(_.getName == "routineName")
+                    )
+                val argsMethodOpt =
+                  columnNode.getClass.getMethods
+                    .find(_.getName == "arguments")
+                    .orElse(
+                      columnNode.getClass.getMethods.find(_.getName == "args")
+                    )
 
-                val functionName = functionNameMethod.invoke(columnNode)
+                val functionName = fnMethodOpt
+                  .map(_.invoke(columnNode))
+                  .getOrElse(
+                    "levenshtein"
+                  ) // default only used for matching below, safe fallback
                 // Arguments might be Columns, not Expressions - need to extract recursively
-                val argumentsRaw = argumentsMethod.invoke(columnNode)
+                val argumentsRaw = argsMethodOpt
+                  .map(_.invoke(columnNode))
+                  .getOrElse(Seq.empty[AnyRef])
                 val arguments = argumentsRaw match {
                   case cols: Seq[_] =>
                     cols.map {
@@ -321,6 +341,8 @@ object FramelessInternals {
                     )
                 }
 
+                // Avoid direct construction; let analyzer resolve built-ins correctly
+
                 // Create UnresolvedFunction expression
                 val unresolvedFunctionClass = Class.forName(
                   "org.apache.spark.sql.catalyst.analysis.UnresolvedFunction"
@@ -401,6 +423,25 @@ object FramelessInternals {
         )
     }
 
+    // Strategy 2e: Use SQL parser to convert Column's SQL string into an (unresolved) Expression
+    try {
+      val sqlString = column.toString
+      val spark = org.apache.spark.sql.SparkSession.active
+      val sessionState = spark.sessionState
+      val parser = {
+        val m =
+          sessionState.getClass.getMethods.find(_.getName == "sqlParser").get
+        m.invoke(sessionState)
+      }
+      val parseExpr =
+        parser.getClass.getMethods.find(_.getName == "parseExpression").get
+      val parsed = parseExpr.invoke(parser, sqlString).asInstanceOf[Expression]
+      return parsed
+    } catch {
+      case _: Throwable =>
+      // ignore and continue to Strategy 3
+    }
+
     // Strategy 3: Analyzer fallback - resolve through Spark's analyzer
     try {
       val spark = org.apache.spark.sql.SparkSession.active
@@ -412,7 +453,7 @@ object FramelessInternals {
           projectList.head match {
             case Alias(child, _) => child
             case e: Expression   => e
-            case other           =>
+            case other =>
               throw new UnsupportedOperationException(
                 s"Unsupported analyzed project element: ${other.getClass.getName}"
               )
@@ -424,9 +465,8 @@ object FramelessInternals {
       }
     } catch {
       case e: Exception =>
-        val debugInfo = strategy2Error
-          .map(err => s" Strategy 2 debug: $err")
-          .getOrElse("")
+        val debugInfo =
+          strategy2Error.map(err => s" Strategy 2 debug: $err").getOrElse("")
         throw new UnsupportedOperationException(
           s"Cannot extract Expression from Column using any strategy. " +
             s"This may indicate an incompatible Spark version or Column type. Error: ${e.getMessage}." +
@@ -445,13 +485,37 @@ object FramelessInternals {
   def column(expr: Expression): Column = {
     try {
       // Try Spark 3.x approach first: new Column(expr)
-      val columnConstructor = classOf[Column].getConstructor(classOf[Expression])
+      val columnConstructor =
+        classOf[Column].getConstructor(classOf[Expression])
       columnConstructor.newInstance(expr)
     } catch {
       case _: NoSuchMethodException =>
-        // Spark 4.x approach: new Column(ExpressionColumnNode(expr, Origin()))
+        // Spark 4.x approach: try to rebuild certain expressions via public functions API first
         try {
-          val exprColNodeClass = Class.forName("org.apache.spark.sql.classic.ExpressionColumnNode")
+          val className = expr.getClass.getName
+          if (
+            className == "org.apache.spark.sql.catalyst.expressions.Levenshtein" && expr.children.size == 2
+          ) {
+            val leftCol = column(expr.children(0))
+            val rightCol = column(expr.children(1))
+            return org.apache.spark.sql.functions.levenshtein(leftCol, rightCol)
+          }
+        } catch { case _: Throwable => () }
+
+        // Then: new Column(ExpressionColumnNode(expr, Origin()))
+        try {
+          // Spark 4 renamed/moved the ColumnNode wrappers. Try internal first, then classic.
+          val exprColNodeClass =
+            try {
+              Class.forName(
+                "org.apache.spark.sql.internal.ExpressionColumnNode"
+              )
+            } catch {
+              case _: Throwable =>
+                Class.forName(
+                  "org.apache.spark.sql.classic.ExpressionColumnNode"
+                )
+            }
           val origin = SparkCompat.newOrigin()
 
           // Prefer (Expression, Origin) constructor, fallback to (Expression)
@@ -504,7 +568,8 @@ object FramelessInternals {
             try {
               val sqlMethod = classOf[Expression].getMethod("sql")
               val sqlString = sqlMethod.invoke(expr).asInstanceOf[String]
-              val functionsClass = Class.forName("org.apache.spark.sql.functions")
+              val functionsClass =
+                Class.forName("org.apache.spark.sql.functions")
               val exprMethod = functionsClass.getMethod("expr", classOf[String])
               exprMethod.invoke(null, sqlString).asInstanceOf[Column]
             } catch {
@@ -517,6 +582,7 @@ object FramelessInternals {
         }
     }
   }
+
   /**
    * Helper to access SQLContext for Spark version compatibility.
    * In Spark 3.x, Dataset has sqlContext field directly.

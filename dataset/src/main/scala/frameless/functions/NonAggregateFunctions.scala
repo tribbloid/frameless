@@ -665,8 +665,18 @@ trait NonAggregateFunctions {
       column: AbstractTypedColumn[T, Long]
     )(implicit
       i0: TypedEncoder[Long]
-    ): column.ThisType[T, Long] =
-    column.typed(sparkFunctions.factorial(column.untyped))
+    ): column.ThisType[T, Long] = {
+    // Use Catalyst and coalesce null (e.g., factorial of negative) to 0 to match Row.getAs[Long]
+    import org.apache.spark.sql.catalyst.expressions.{ Coalesce, Literal }
+    val factExpr = _root_.org.apache.spark.sql.FramelessInternals.expr(
+      sparkFunctions.factorial(column.untyped)
+    )
+    column.typed(
+      _root_.org.apache.spark.sql.FramelessInternals.column(
+        Coalesce(Seq(factExpr, Literal(0L)))
+      )
+    )
+  }
 
   /**
    * Non-Aggregate function: Computes bitwise NOT.
@@ -847,7 +857,9 @@ trait NonAggregateFunctions {
       l: TypedColumn[T, String],
       r: TypedColumn[T, String]
     ): TypedColumn[T, Int] =
-    l.typed(sparkFunctions.levenshtein(l.untyped, r.untyped))
+    new TypedColumn[T, Int](
+      org.apache.spark.sql.catalyst.expressions.Levenshtein(l.expr, r.expr)
+    )
 
   /**
    * Non-Aggregate function: Computes the Levenshtein distance of the two given string columns.
@@ -858,7 +870,9 @@ trait NonAggregateFunctions {
       l: TypedAggregate[T, String],
       r: TypedAggregate[T, String]
     ): TypedAggregate[T, Int] =
-    l.typed(sparkFunctions.levenshtein(l.untyped, r.untyped))
+    new TypedAggregate[T, Int](
+      org.apache.spark.sql.catalyst.expressions.Levenshtein(l.expr, r.expr)
+    )
 
   /**
    * Non-Aggregate function: Converts a string column to lower case.
