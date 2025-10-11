@@ -26,8 +26,10 @@ package object functions extends Udf with UnaryFunctions {
     )(implicit
       i0: TypedEncoder[A],
       i1: Refute[IsValueClass[A]]
-    ): TypedAggregate[T, A] =
-    new TypedAggregate[T, A](lit(value).expr)
+    ): TypedAggregate[T, A] = {
+    val col = _root_.org.apache.spark.sql.functions.lit(value)
+    new TypedAggregate[T, A](col)
+  }
 
   /**
    * Creates a [[frameless.TypedColumn]] of literal value. If A is to be encoded using an Injection make
@@ -43,27 +45,8 @@ package object functions extends Udf with UnaryFunctions {
     )(implicit
       encoder: TypedEncoder[A]
     ): TypedColumn[T, A] = {
-
-    if (
-      ScalaReflection.isNativeType(
-        encoder.jvmRepr
-      ) && encoder.catalystRepr == encoder.jvmRepr
-    ) {
-      val expr = Literal(value, encoder.catalystRepr)
-
-      new TypedColumn(expr)
-    } else {
-      val expr = new Literal(value, encoder.jvmRepr)
-
-      new TypedColumn[T, A](
-        Lit(
-          dataType = encoder.catalystRepr,
-          nullable = encoder.nullable,
-          show = () => value.toString,
-          catalystExpr = encoder.toCatalyst(expr)
-        )
-      )
-    }
+    val col = _root_.org.apache.spark.sql.functions.lit(value)
+    new TypedColumn[T, A](col)
   }
 
   /**

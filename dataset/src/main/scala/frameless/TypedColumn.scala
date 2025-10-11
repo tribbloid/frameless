@@ -37,12 +37,16 @@ sealed class TypedColumn[T, U](
 
   type ThisType[A, B] = TypedColumn[A, B]
 
+  private[frameless] var originalColumnOpt: Option[Column] = None
+
   def this(
       column: Column
     )(implicit
       uencoder: TypedEncoder[U]
-    ) =
+    ) = {
     this(FramelessInternals.expr(column))
+    originalColumnOpt = Some(column)
+  }
 
   override def typed[W, U1: TypedEncoder](c: Column): TypedColumn[W, U1] =
     c.typedColumn
@@ -61,12 +65,15 @@ sealed class TypedAggregate[T, U](
 
   type ThisType[A, B] = TypedAggregate[A, B]
 
+  private[frameless] var originalColumnOpt: Option[Column] = None
+
   def this(
       column: Column
     )(implicit
       uencoder: TypedEncoder[U]
     ) = {
     this(FramelessInternals.expr(column))
+    originalColumnOpt = Some(column)
   }
 
   override def typed[W, U1: TypedEncoder](c: Column): TypedAggregate[W, U1] =
@@ -152,7 +159,13 @@ abstract class AbstractTypedColumn[T, U](
     ): Mapper[X] = new Mapper[X] {}
 
   /** Fall back to an untyped Column */
-  def untyped: Column = FramelessInternals.column(expr)
+  def untyped: Column = this match {
+    case tc: TypedColumn[_, _] if tc.originalColumnOpt.nonEmpty =>
+      tc.originalColumnOpt.get
+    case ta: TypedAggregate[_, _] if ta.originalColumnOpt.nonEmpty =>
+      ta.originalColumnOpt.get
+    case _ => FramelessInternals.column(expr)
+  }
 
   private def equalsTo[TT, W](
       other: ThisType[TT, U]

@@ -113,11 +113,14 @@ trait AggregateFunctions {
       oencoder: TypedEncoder[Out],
       aencoder: TypedEncoder[A]
     ): TypedAggregate[T, Out] = {
-    val zeroExpr = Literal.create(summable.zero, TypedEncoder[A].catalystRepr)
-    val sumExpr = Sum(column.expr)
-    val sumOrZero = Coalesce(Seq(sumExpr, zeroExpr))
+    val sumAgg = AggregateExpression(
+      Sum(column.expr),
+      Complete,
+      isDistinct = false,
+      filter = None
+    )
 
-    new TypedAggregate[T, Out](sumOrZero)
+    new TypedAggregate[T, Out](sumAgg)
   }
 
   /**
@@ -133,16 +136,14 @@ trait AggregateFunctions {
       oencoder: TypedEncoder[Out],
       aencoder: TypedEncoder[A]
     ): TypedAggregate[T, Out] = {
-    val zeroExpr = Literal.create(summable.zero, TypedEncoder[A].catalystRepr)
     val sumAgg = AggregateExpression(
       Sum(column.expr),
       Complete,
       isDistinct = true,
       filter = None
     )
-    val sumOrZero = Coalesce(Seq(sumAgg, zeroExpr))
 
-    new TypedAggregate[T, Out](sumOrZero)
+    new TypedAggregate[T, Out](sumAgg)
   }
 
   /**

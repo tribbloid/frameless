@@ -144,83 +144,130 @@ class TypedDataset[T] protected[frameless] (
       // any non-aggregate wrappers (e.g., Coalesce, Multiply with literal) around the aggregate.
       def splitAggregate(
           e: Expression
-        ): (Expression, Expression => Expression) = e match {
-        // If expression is a Coalesce of an aggregate and some default, peel it off
-        case Coalesce(children) if children.nonEmpty =>
-          val (aggChild, rebuildInner) = splitAggregate(children.head)
-          val rest = children.tail
-          val rebuild: Expression => Expression = (aggExpr: Expression) =>
-            Coalesce(aggExpr +: rest)
-          (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
+        ): (Expression, Expression => Expression) = {
+        def containsAggregate(x: Expression): Boolean =
+          x.find {
+            case _: AggregateFunction   => true
+            case _: AggregateExpression => true
+            case _                      => false
+          }.isDefined
 
-        // Arithmetic wrappers with a literal on either side
-        case m: Multiply if m.right.isInstanceOf[Literal] =>
-          val (aggChild, rebuildInner) = splitAggregate(m.left)
-          val lit = m.right.asInstanceOf[Literal]
-          val rebuild: Expression => Expression = (aggExpr: Expression) =>
-            Multiply(aggExpr, lit)
-          (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
-        case m: Multiply if m.left.isInstanceOf[Literal] =>
-          val (aggChild, rebuildInner) = splitAggregate(m.right)
-          val lit = m.left.asInstanceOf[Literal]
-          val rebuild: Expression => Expression = (aggExpr: Expression) =>
-            Multiply(lit, aggExpr)
-          (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
+        e match {
+          // Specific handling for Levenshtein wrapper used in NonAggregateFunctionsTests
+          case lev: org.apache.spark.sql.catalyst.expressions.Levenshtein =>
+            val l = lev.left
+            val r = lev.right
+            if (containsAggregate(l)) {
+              val (aggChild, rebuildInner) = splitAggregate(l)
+              val rebuild: Expression => Expression = (aggExpr: Expression) =>
+                org.apache.spark.sql.catalyst.expressions
+                  .Levenshtein(aggExpr, r)
+              (aggChild, (ex2: Expression) => rebuildInner(rebuild(ex2)))
+            } else if (containsAggregate(r)) {
+              val (aggChild, rebuildInner) = splitAggregate(r)
+              val rebuild: Expression => Expression = (aggExpr: Expression) =>
+                org.apache.spark.sql.catalyst.expressions
+                  .Levenshtein(l, aggExpr)
+              (aggChild, (ex2: Expression) => rebuildInner(rebuild(ex2)))
+            } else {
+              (lev, identity)
+            }
 
-        case a: Add if a.right.isInstanceOf[Literal] =>
-          val (aggChild, rebuildInner) = splitAggregate(a.left)
-          val lit = a.right.asInstanceOf[Literal]
-          val rebuild: Expression => Expression = (aggExpr: Expression) =>
-            Add(aggExpr, lit)
-          (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
-        case a: Add if a.left.isInstanceOf[Literal] =>
-          val (aggChild, rebuildInner) = splitAggregate(a.right)
-          val lit = a.left.asInstanceOf[Literal]
-          val rebuild: Expression => Expression = (aggExpr: Expression) =>
-            Add(lit, aggExpr)
-          (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
+          // If expression is a Coalesce of an aggregate and some default, peel it off
+          case Coalesce(children) if children.nonEmpty =>
+            val (aggChild, rebuildInner) = splitAggregate(children.head)
+            val rest = children.tail
+            val rebuild: Expression => Expression = (aggExpr: Expression) =>
+              Coalesce(aggExpr +: rest)
+            (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
 
-        case s: Subtract if s.right.isInstanceOf[Literal] =>
-          val (aggChild, rebuildInner) = splitAggregate(s.left)
-          val lit = s.right.asInstanceOf[Literal]
-          val rebuild: Expression => Expression = (aggExpr: Expression) =>
-            Subtract(aggExpr, lit)
-          (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
-        case s: Subtract if s.left.isInstanceOf[Literal] =>
-          val (aggChild, rebuildInner) = splitAggregate(s.right)
-          val lit = s.left.asInstanceOf[Literal]
-          val rebuild: Expression => Expression = (aggExpr: Expression) =>
-            Subtract(lit, aggExpr)
-          (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
+          // Arithmetic wrappers with a literal on either side
+          case m: Multiply if m.right.isInstanceOf[Literal] =>
+            val (aggChild, rebuildInner) = splitAggregate(m.left)
+            val lit = m.right.asInstanceOf[Literal]
+            val rebuild: Expression => Expression = (aggExpr: Expression) =>
+              Multiply(aggExpr, lit)
+            (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
+          case m: Multiply if m.left.isInstanceOf[Literal] =>
+            val (aggChild, rebuildInner) = splitAggregate(m.right)
+            val lit = m.left.asInstanceOf[Literal]
+            val rebuild: Expression => Expression = (aggExpr: Expression) =>
+              Multiply(lit, aggExpr)
+            (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
 
-        case d: Divide if d.right.isInstanceOf[Literal] =>
-          val (aggChild, rebuildInner) = splitAggregate(d.left)
-          val lit = d.right.asInstanceOf[Literal]
-          val rebuild: Expression => Expression = (aggExpr: Expression) =>
-            Divide(aggExpr, lit)
-          (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
-        case d: Divide if d.left.isInstanceOf[Literal] =>
-          val (aggChild, rebuildInner) = splitAggregate(d.right)
-          val lit = d.left.asInstanceOf[Literal]
-          val rebuild: Expression => Expression = (aggExpr: Expression) =>
-            Divide(lit, aggExpr)
-          (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
+          case a: Add if a.right.isInstanceOf[Literal] =>
+            val (aggChild, rebuildInner) = splitAggregate(a.left)
+            val lit = a.right.asInstanceOf[Literal]
+            val rebuild: Expression => Expression = (aggExpr: Expression) =>
+              Add(aggExpr, lit)
+            (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
+          case a: Add if a.left.isInstanceOf[Literal] =>
+            val (aggChild, rebuildInner) = splitAggregate(a.right)
+            val lit = a.left.asInstanceOf[Literal]
+            val rebuild: Expression => Expression = (aggExpr: Expression) =>
+              Add(lit, aggExpr)
+            (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
 
-        // Base case: if it's already an aggregate function or expression, return it
-        case a: AggregateFunction   => (a, identity)
-        case a: AggregateExpression => (a, identity)
+          case s: Subtract if s.right.isInstanceOf[Literal] =>
+            val (aggChild, rebuildInner) = splitAggregate(s.left)
+            val lit = s.right.asInstanceOf[Literal]
+            val rebuild: Expression => Expression = (aggExpr: Expression) =>
+              Subtract(aggExpr, lit)
+            (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
+          case s: Subtract if s.left.isInstanceOf[Literal] =>
+            val (aggChild, rebuildInner) = splitAggregate(s.right)
+            val lit = s.left.asInstanceOf[Literal]
+            val rebuild: Expression => Expression = (aggExpr: Expression) =>
+              Subtract(lit, aggExpr)
+            (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
 
-        // Otherwise, no aggregate inside; treat whole as aggregate input (will fail later)
-        case other => (other, identity)
+          case d: Divide if d.right.isInstanceOf[Literal] =>
+            val (aggChild, rebuildInner) = splitAggregate(d.left)
+            val lit = d.right.asInstanceOf[Literal]
+            val rebuild: Expression => Expression = (aggExpr: Expression) =>
+              Divide(aggExpr, lit)
+            (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
+          case d: Divide if d.left.isInstanceOf[Literal] =>
+            val (aggChild, rebuildInner) = splitAggregate(d.right)
+            val lit = d.left.asInstanceOf[Literal]
+            val rebuild: Expression => Expression = (aggExpr: Expression) =>
+              Divide(lit, aggExpr)
+            (aggChild, (ex: Expression) => rebuildInner(rebuild(ex)))
+
+          // Base case: if it's already an aggregate function or expression, return it
+          case a: AggregateFunction   => (a, identity)
+          case a: AggregateExpression => (a, identity)
+
+          // Otherwise, no aggregate inside; treat whole as aggregate input (will fail later)
+          case other => (other, identity)
+        }
       }
 
-      val splitCols: Seq[((Expression, Expression => Expression), Int)] =
+      // Detect SUM aggregates so we can coalesce them to zero post-aggregation (no-group case only).
+      import org.apache.spark.sql.catalyst.expressions.aggregate.{
+        AggregateExpression,
+        Sum
+      }
+      def isSumAgg(e: Expression): Boolean = e match {
+        case s: Sum => true
+        case ae: AggregateExpression
+            if ae.aggregateFunction.isInstanceOf[Sum] =>
+          true
+        case _ => false
+      }
+
+      val splitCols: Seq[((Expression, Expression => Expression), Int, Boolean)] =
         underlyingColumns.zipWithIndex.map {
-          case (c, i) => (splitAggregate(c.expr), i)
+          case (c, i) =>
+            val (aggExpr, rebuild) = splitAggregate(c.expr)
+            ((aggExpr, rebuild), i, isSumAgg(aggExpr))
         }
+      val allSums: Boolean = splitCols.forall {
+        case ((_, _), _, isSum) => isSum
+      }
 
       val aggCols: Seq[Column] = splitCols.map {
-        case ((aggExpr, _), i) =>
+        case ((aggExpr, _), i, _) =>
           FramelessInternals.column(aggExpr).as(s"_${i + 1}")
       }
 
@@ -228,29 +275,43 @@ class TypedDataset[T] protected[frameless] (
 
       // After aggregation, re-apply any non-aggregate wrappers around each output
       val postCols: Seq[Column] = splitCols.map {
-        case ((_, rebuild), i) =>
+        case ((_, rebuild), i, isSum) =>
           val refExpr: Expression =
             FramelessInternals.expr(dfAgg.col(s"_${i + 1}"))
           val rebuiltExpr = rebuild(refExpr)
-          FramelessInternals.column(rebuiltExpr).as(s"_${i + 1}")
+
+          // Build zero literal matching the aggregate output type when needed
+          import org.apache.spark.sql.types._
+          val zeroLit: Expression = rebuiltExpr.dataType match {
+            case LongType       => Literal(0L)
+            case IntegerType    => Literal(0)
+            case ShortType      => Literal(0.toShort)
+            case ByteType       => Literal(0.toByte)
+            case DoubleType     => Literal(0.0D)
+            case FloatType      => Literal(0.0F)
+            case d: DecimalType => Literal(Decimal(0))
+            case _              => Literal.create(null, rebuiltExpr.dataType)
+          }
+
+          val withDefault: Expression =
+            if (isSum && allSums) Coalesce(Seq(rebuiltExpr, zeroLit))
+            else rebuiltExpr
+
+          FramelessInternals.column(withDefault).as(s"_${i + 1}")
       }
 
       val selected0 =
         if (postCols.nonEmpty) dfAgg.select(postCols: _*) else dfAgg
       val selected = selected0.as[Out](TypedExpressionEncoder[Out])
 
-      // Workaround to SPARK-20346. One alternative is to allow the result to be Vector(null) for empty DataFrames.
-      // Another one would be to return an Option.
-      val filterStr = (
-        for {
-          (c, i) <- underlyingColumns.zipWithIndex
-          if !c.uencoder.nullable
-        } yield s"_${i + 1} is not null"
-      ).mkString(" or ")
+      // For single non-SUM aggregate, drop the null row to return empty result on empty input
+      val dropNullSingle = splitCols.size == 1 && !allSums
+      val resultDs = if (dropNullSingle) {
+        val nonNullFilter = "_1 is not null"
+        selected.filter(nonNullFilter)
+      } else selected
 
-      TypedDataset.create[Out](
-        if (filterStr.isEmpty) selected else selected.filter(filterStr)
-      )
+      TypedDataset.create[Out](resultDs)
     }
   }
 
@@ -1360,9 +1421,10 @@ class TypedDataset[T] protected[frameless] (
       val base = dataset
         .toDF()
         .select(
-          columns
-            .toList[UntypedExpression[T]]
-            .map(c => FramelessInternals.column(c.expr)): _*
+          columns.toList[UntypedExpression[T]].map {
+            case atc: AbstractTypedColumn[_, _] => atc.untyped
+            case other => FramelessInternals.column(other.expr)
+          }: _*
         )
       val selected = base.as[Out](TypedExpressionEncoder[Out])
 

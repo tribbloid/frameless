@@ -1,0 +1,104 @@
+[info] welcome to sbt 1.11.6 (Ubuntu Java 17.0.16)
+[info] loading global plugins from /home/peng/.sbt/1.0/plugins
+[info] loading settings for project frameless-build-build-build from metals.sbt...
+[info] loading project definition from /home/peng/git-release/__LEGACY/frameless/project/project/project
+[info] loading settings for project frameless-build-build from metals.sbt...
+[info] loading project definition from /home/peng/git-release/__LEGACY/frameless/project/project
+[success] Generated .bloop/frameless-build-build.json
+[success] Total time: 2 s, completed Oct. 11, 2025, 6:39:06 p.m.
+[info] loading settings for project frameless-build from metals.sbt, plugins.sbt...
+[info] loading project definition from /home/peng/git-release/__LEGACY/frameless/project
+[success] Generated .bloop/frameless-build.json
+[success] Total time: 2 s, completed Oct. 11, 2025, 6:39:08 p.m.
+[info] loading settings for project root from build.sbt, github.sbt...
+[info] resolving key references (21985 settings) ...
+[info] set scmInfo to https://github.com/typelevel/frameless
+[info] set current project to root (in build file:/home/peng/git-release/__LEGACY/frameless/)
+[warn] there are 23 keys that are not used by any other settings/tasks:
+[warn]  
+[warn] * cats / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * cats-spark33 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * cats-spark34 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * cats-spark40 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * core / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * dataset / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * dataset-spark33 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * dataset-spark34 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * dataset-spark40 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * docs / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * ml / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * ml-spark33 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * ml-spark34 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * ml-spark40 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * refined / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * refined-spark33 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * refined-spark34 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * refined-spark40 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * root / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * root-spark33 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * root-spark34 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * root-spark35 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * root-spark40 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn]  
+[warn] note: a setting might still be used by a command; to exclude a key from this `lintUnused` check
+[warn] either append it to `Global / excludeLintKeys` or call .withRank(KeyRanks.Invisible) on the key
+[info] set current project to frameless-dataset-spark40 (in build file:/home/peng/git-release/__LEGACY/frameless/)
+[info] compiling 1 Scala source to /home/peng/git-release/__LEGACY/frameless/dataset-spark40/target/scala-2.13/classes ...
+[error] /home/peng/git-release/__LEGACY/frameless/dataset/src/main/scala/frameless/TypedColumn.scala:114:69: object Invoke is not a member of package org.apache.spark.sql.catalyst.expressions
+[error] did you mean Encode or Inline?
+[error]       import org.apache.spark.sql.catalyst.expressions.{If, IsNull, Invoke}
+[error]                                                                     ^
+[error] /home/peng/git-release/__LEGACY/frameless/dataset/src/main/scala/frameless/TypedColumn.scala:121:11: not found: value Invoke
+[error]           Invoke(
+[error]           ^
+[error] /home/peng/git-release/__LEGACY/frameless/dataset/src/main/scala/frameless/TypedColumn.scala:127:11: not found: value Invoke
+[error]           Invoke(
+[error]           ^
+[error] /home/peng/git-release/__LEGACY/frameless/dataset/src/main/scala/frameless/TypedColumn.scala:133:11: not found: value Invoke
+[error]           Invoke(
+[error]           ^
+[error] /home/peng/git-release/__LEGACY/frameless/dataset/src/main/scala/frameless/TypedColumn.scala:139:11: not found: value Invoke
+[error]           Invoke(
+[error]           ^
+[error] /home/peng/git-release/__LEGACY/frameless/dataset/src/main/scala/frameless/TypedColumn.scala:145:11: not found: value Invoke
+[error]           Invoke(
+[error]           ^
+[error] /home/peng/git-release/__LEGACY/frameless/dataset/src/main/scala/frameless/TypedColumn.scala:151:11: not found: value Invoke
+[error]           Invoke(
+[error]           ^
+[error] /home/peng/git-release/__LEGACY/frameless/dataset/src/main/scala/frameless/TypedColumn.scala:157:11: not found: value Invoke
+[error]           Invoke(
+[error]           ^
+[warn] /home/peng/git-release/__LEGACY/frameless/dataset/src/main/scala/frameless/TypedColumn.scala:1535:18: Implicit definition should have explicit type (inferred frameless.SortedTypedColumn.defaultAscendingPoly.Case.Aux[frameless.TypedColumn[T,U],frameless.SortedTypedColumn[T,U]]) [quickfixable]
+[warn]     implicit def caseTypedColumn[T, U: CatalystOrdered] =
+[warn]                  ^
+[warn] /home/peng/git-release/__LEGACY/frameless/dataset/src/main/scala/frameless/TypedColumn.scala:1538:18: Implicit definition should have explicit type (inferred frameless.SortedTypedColumn.defaultAscendingPoly.Case.Aux[frameless.SortedTypedColumn[T,U],frameless.SortedTypedColumn[T,U]]) [quickfixable]
+[warn]     implicit def caseTypeSortedColumn[T, U] =
+[warn]                  ^
+[warn] two warnings found
+[error] 8 errors found
+[error] (Compile / compileIncremental) Compilation failed
+[error] Total time: 4 s, completed Oct. 11, 2025, 6:39:16 p.m.

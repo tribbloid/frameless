@@ -41,7 +41,6 @@ This document guides automated agents and contributors working in this repositor
 
 ## Local Environment
 
-- **Java**: JDK 8 (CI uses Temurin 8).
 - **Scala**: 2.13 only.
 - **sbt**: 1.x.
 - **Env (helpful)**:
@@ -51,7 +50,7 @@ This document guides automated agents and contributors working in this repositor
         - `FRAMELESS_GEN_MIN_SIZE` (default 0)
         - `FRAMELESS_GEN_SIZE_RANGE` (default 20)
 
-## Common Workflows (copy-paste friendly)
+## Common Workflows
 
 - **Format & Lint**
     - `sbt scalafmtAll scalafmtSbt`

@@ -857,9 +857,7 @@ trait NonAggregateFunctions {
       l: TypedColumn[T, String],
       r: TypedColumn[T, String]
     ): TypedColumn[T, Int] =
-    new TypedColumn[T, Int](
-      org.apache.spark.sql.catalyst.expressions.Levenshtein(l.expr, r.expr)
-    )
+    l.typed(sparkFunctions.levenshtein(l.untyped, r.untyped))
 
   /**
    * Non-Aggregate function: Computes the Levenshtein distance of the two given string columns.
