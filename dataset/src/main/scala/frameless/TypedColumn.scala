@@ -4,8 +4,13 @@ import frameless.functions.{ litAggr, lit => flit }
 import frameless.syntax._
 
 import org.apache.spark.sql.catalyst.expressions._
+import org.apache.spark.sql.catalyst.expressions.objects._
 import org.apache.spark.sql.types.DecimalType
-import org.apache.spark.sql.{ Column, FramelessInternals }
+import org.apache.spark.sql.{
+  Column,
+  FramelessInternals,
+  reflection => ScalaReflection
+}
 
 import shapeless._
 import shapeless.ops.record.Selector
@@ -106,10 +111,28 @@ abstract class AbstractTypedColumn[T, U](
     def map[G, OutputType[_, _]](
         u: ThisType[T, X] => OutputType[T, G]
       )(implicit
-        ev: OutputType[T, G] <:< AbstractTypedColumn[T, G]
+        ev: OutputType[T, G] <:< AbstractTypedColumn[T, G],
+        encX: TypedEncoder[X],
+        encG: TypedEncoder[G],
+        encOptG: TypedEncoder[Option[G]]
       ): OutputType[T, Option[G]] = {
-      u(self.asInstanceOf[ThisType[T, X]])
-        .asInstanceOf[OutputType[T, Option[G]]]
+      import org.apache.spark.sql.catalyst.expressions.{ If, IsNull }
+
+      // self.expr already represents the underlying Catalyst value of X (nullable)
+      val base: ThisType[T, X] = typed[T, X](self.expr)
+
+      // Apply mapping to X
+      val mappedAbs: AbstractTypedColumn[T, G] = ev(u(base))
+
+      // Guard with null: if original Option is null, result is null (None); else mapped value
+      val guarded: Expression = If(
+        IsNull(self.expr),
+        Literal.create(null, mappedAbs.expr.dataType),
+        mappedAbs.expr
+      )
+
+      val optCol: ThisType[T, Option[G]] = typed[T, Option[G]](guarded)
+      optCol.asInstanceOf[OutputType[T, Option[G]]]
     }
   }
 
@@ -250,7 +273,8 @@ abstract class AbstractTypedColumn[T, U](
   def isSome[V](
       exists: ThisType[T, V] => ThisType[T, Boolean]
     )(implicit
-      i0: U <:< Option[V]
+      i0: U <:< Option[V],
+      encV: TypedEncoder[V]
     ): ThisType[T, Boolean] = someOr[V](exists, false)
 
   /**
@@ -264,18 +288,20 @@ abstract class AbstractTypedColumn[T, U](
   def isSomeOrNone[V](
       exists: ThisType[T, V] => ThisType[T, Boolean]
     )(implicit
-      i0: U <:< Option[V]
+      i0: U <:< Option[V],
+      encV: TypedEncoder[V]
     ): ThisType[T, Boolean] = someOr[V](exists, true)
 
   private def someOr[V](
       exists: ThisType[T, V] => ThisType[T, Boolean],
       default: Boolean
     )(implicit
-      i0: U <:< Option[V]
+      i0: U <:< Option[V],
+      encV: TypedEncoder[V]
     ): ThisType[T, Boolean] = {
     val defaultExpr = if (default) Literal.TrueLiteral else Literal.FalseLiteral
 
-    typed(Coalesce(Seq(opt(i0).map(exists).expr, defaultExpr)))
+    typed[T, Boolean](Coalesce(Seq(opt(i0).map(exists).expr, defaultExpr)))
   }
 
   /**
@@ -356,8 +382,10 @@ abstract class AbstractTypedColumn[T, U](
       u: U
     )(implicit
       n: CatalystNumeric[U]
-    ): ThisType[T, U] =
-    typed(Add(self.expr, uencoder.toCatalyst(Literal.fromObject(u))))
+    ): ThisType[T, U] = {
+    val enc = implicitly[TypedEncoder[U]]
+    typed(Add(self.expr, enc.toCatalyst(Literal.create(u, enc.jvmRepr))))
+  }
 
   /**
    * Inversion of boolean expression, i.e. NOT.
@@ -440,8 +468,10 @@ abstract class AbstractTypedColumn[T, U](
       u: U
     )(implicit
       n: CatalystNumeric[U]
-    ): ThisType[T, U] =
-    typed(Subtract(self.expr, uencoder.toCatalyst(Literal.fromObject(u))))
+    ): ThisType[T, U] = {
+    val enc = implicitly[TypedEncoder[U]]
+    typed(Subtract(self.expr, enc.toCatalyst(Literal.create(u, enc.jvmRepr))))
+  }
 
   /**
    * Multiplication of this expression and another expression.
@@ -501,8 +531,10 @@ abstract class AbstractTypedColumn[T, U](
       u: U
     )(implicit
       n: CatalystNumeric[U]
-    ): ThisType[T, U] =
-    typed(Multiply(self.expr, uencoder.toCatalyst(Literal.fromObject(u))))
+    ): ThisType[T, U] = {
+    val enc = implicitly[TypedEncoder[U]]
+    typed(Multiply(self.expr, enc.toCatalyst(Literal.create(u, enc.jvmRepr))))
+  }
 
   /**
    * Modulo (a.k.a. remainder) expression.
@@ -545,7 +577,12 @@ abstract class AbstractTypedColumn[T, U](
     ): ThisType[T, U] = {
     // Use Catalyst Remainder expression directly to avoid Spark 4.0 UnresolvedFunction issue
     import org.apache.spark.sql.catalyst.expressions.Remainder
-    typed(Remainder(self.expr, uencoder.toCatalyst(Literal.fromObject(u))))
+    {
+      val enc = implicitly[TypedEncoder[U]]
+      typed(
+        Remainder(self.expr, enc.toCatalyst(Literal.create(u, enc.jvmRepr)))
+      )
+    }
   }
 
   /**
@@ -599,10 +636,12 @@ abstract class AbstractTypedColumn[T, U](
       u: U
     )(implicit
       n: CatalystNumeric[U]
-    ): ThisType[T, Double] =
-    typed(Divide(self.expr, uencoder.toCatalyst(Literal.fromObject(u))))(
+    ): ThisType[T, Double] = {
+    val enc = implicitly[TypedEncoder[U]]
+    typed(Divide(self.expr, enc.toCatalyst(Literal.create(u, enc.jvmRepr))))(
       implicitly[TypedEncoder[Double]]
     )
+  }
 
   /**
    * Returns a descending ordering used in sorting
@@ -660,7 +699,12 @@ abstract class AbstractTypedColumn[T, U](
     ): ThisType[T, U] = {
     // Use Catalyst BitwiseAnd expression directly to avoid Spark 4.0 UnresolvedFunction issue
     import org.apache.spark.sql.catalyst.expressions.BitwiseAnd
-    typed(BitwiseAnd(self.expr, uencoder.toCatalyst(Literal.fromObject(u))))
+    {
+      val enc = implicitly[TypedEncoder[U]]
+      typed(
+        BitwiseAnd(self.expr, enc.toCatalyst(Literal.create(u, enc.jvmRepr)))
+      )
+    }
   }
 
   /**
@@ -732,7 +776,12 @@ abstract class AbstractTypedColumn[T, U](
     ): ThisType[T, U] = {
     // Use Catalyst BitwiseOr expression directly to avoid Spark 4.0 UnresolvedFunction issue
     import org.apache.spark.sql.catalyst.expressions.BitwiseOr
-    typed(BitwiseOr(self.expr, uencoder.toCatalyst(Literal.fromObject(u))))
+    {
+      val enc = implicitly[TypedEncoder[U]]
+      typed(
+        BitwiseOr(self.expr, enc.toCatalyst(Literal.create(u, enc.jvmRepr)))
+      )
+    }
   }
 
   /**
@@ -804,7 +853,12 @@ abstract class AbstractTypedColumn[T, U](
     ): ThisType[T, U] = {
     // Use Catalyst BitwiseXor expression directly to avoid Spark 4.0 UnresolvedFunction issue
     import org.apache.spark.sql.catalyst.expressions.BitwiseXor
-    typed(BitwiseXor(self.expr, uencoder.toCatalyst(Literal.fromObject(u))))
+    {
+      val enc = implicitly[TypedEncoder[U]]
+      typed(
+        BitwiseXor(self.expr, enc.toCatalyst(Literal.create(u, enc.jvmRepr)))
+      )
+    }
   }
 
   /**
@@ -1222,8 +1276,10 @@ abstract class AbstractTypedColumn[T, U](
       u: U
     )(implicit
       i0: CatalystOrdered[U]
-    ): ThisType[T, Boolean] =
-    typed(LessThan(self.expr, uencoder.toCatalyst(Literal.fromObject(u))))
+    ): ThisType[T, Boolean] = {
+    val enc = implicitly[TypedEncoder[U]]
+    typed(LessThan(self.expr, enc.toCatalyst(Literal.create(u, enc.jvmRepr))))
+  }
 
   /**
    * Less than or equal to.
@@ -1239,10 +1295,12 @@ abstract class AbstractTypedColumn[T, U](
       u: U
     )(implicit
       i0: CatalystOrdered[U]
-    ): ThisType[T, Boolean] =
+    ): ThisType[T, Boolean] = {
+    val enc = implicitly[TypedEncoder[U]]
     typed(
-      LessThanOrEqual(self.expr, uencoder.toCatalyst(Literal.fromObject(u)))
+      LessThanOrEqual(self.expr, enc.toCatalyst(Literal.create(u, enc.jvmRepr)))
     )
+  }
 
   /**
    * Greater than.
@@ -1258,8 +1316,12 @@ abstract class AbstractTypedColumn[T, U](
       u: U
     )(implicit
       i0: CatalystOrdered[U]
-    ): ThisType[T, Boolean] =
-    typed(GreaterThan(self.expr, uencoder.toCatalyst(Literal.fromObject(u))))
+    ): ThisType[T, Boolean] = {
+    val enc = implicitly[TypedEncoder[U]]
+    typed(
+      GreaterThan(self.expr, enc.toCatalyst(Literal.create(u, enc.jvmRepr)))
+    )
+  }
 
   /**
    * Greater than or equal.
@@ -1275,10 +1337,15 @@ abstract class AbstractTypedColumn[T, U](
       u: U
     )(implicit
       i0: CatalystOrdered[U]
-    ): ThisType[T, Boolean] =
+    ): ThisType[T, Boolean] = {
+    val enc = implicitly[TypedEncoder[U]]
     typed(
-      GreaterThanOrEqual(self.expr, uencoder.toCatalyst(Literal.fromObject(u)))
+      GreaterThanOrEqual(
+        self.expr,
+        enc.toCatalyst(Literal.create(u, enc.jvmRepr))
+      )
     )
+  }
 
   /**
    * Returns true if the value of this column is contained in of the arguments.
@@ -1294,10 +1361,15 @@ abstract class AbstractTypedColumn[T, U](
       values: U*
     )(implicit
       e: CatalystIsin[U]
-    ): ThisType[T, Boolean] =
+    ): ThisType[T, Boolean] = {
+    val enc = implicitly[TypedEncoder[U]]
     typed(
-      In(self.expr, values.map(v => uencoder.toCatalyst(Literal.fromObject(v))))
+      In(
+        self.expr,
+        values.map(v => enc.toCatalyst(Literal.create(v, enc.jvmRepr)))
+      )
     )
+  }
 
   /**
    * True if the current column is between the lower bound and upper bound, inclusive.
@@ -1318,18 +1390,21 @@ abstract class AbstractTypedColumn[T, U](
       GreaterThanOrEqual,
       LessThanOrEqual
     }
-    typed(
-      And(
-        GreaterThanOrEqual(
-          self.expr,
-          uencoder.toCatalyst(Literal.fromObject(lowerBound))
-        ),
-        LessThanOrEqual(
-          self.expr,
-          uencoder.toCatalyst(Literal.fromObject(upperBound))
+    {
+      val enc = implicitly[TypedEncoder[U]]
+      typed(
+        And(
+          GreaterThanOrEqual(
+            self.expr,
+            enc.toCatalyst(Literal.create(lowerBound, enc.jvmRepr))
+          ),
+          LessThanOrEqual(
+            self.expr,
+            enc.toCatalyst(Literal.create(upperBound, enc.jvmRepr))
+          )
         )
       )
-    )
+    }
   }
 
   /**
