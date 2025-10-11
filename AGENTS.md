@@ -42,7 +42,7 @@ This document guides automated agents and contributors working in this repositor
 ## Local Environment
 
 - **Java**: JDK 8 (CI uses Temurin 8).
-- **Scala**: 2.12 (default), 2.13 (cross).
+- **Scala**: 2.13 only.
 - **sbt**: 1.x.
 - **Env (helpful)**:
     - `SBT_OPTS="-Xms1g -Xmx4g"`
@@ -56,16 +56,10 @@ This document guides automated agents and contributors working in this repositor
 - **Format & Lint**
     - `sbt scalafmtAll scalafmtSbt`
     - `sbt scalafixAll`  ← run after edits
-- **Compile & Test (default Spark root)**
-    - Scala 2.12:
-        - `sbt "++ 2.12" "project root-spark35" compile test`
-    - Scala 2.13:
-        - `sbt "++ 2.13" "project root-spark35" compile test`
+- **Compile & Test**
+    - `sbt compile test`
 - **Re-run previously failed tests**
-    - `sbt "project root-spark35" testQuick`
-- **Cross Spark roots (when relevant to change)**
-    - `sbt "++ 2.12" "project root-spark34" compile test`
-    - `sbt "++ 2.12" "project root-spark33" compile test`
+    - `sbt testQuick`
 - **Binary compatibility (MiMa)**
     - `sbt 'project <module>' mimaReportBinaryIssues`
 - **Coverage (optional local match to CI)**
@@ -77,7 +71,7 @@ This document guides automated agents and contributors working in this repositor
 
 ## CI Expectations (see `.github/workflows/ci.yml`)
 
-- **Matrix**: Scala 2.12/2.13, Spark roots: `root-spark33`, `root-spark34`, `root-spark35` (2.13 excludes 33/34).
+- **Matrix**: Scala 2.13 only.
 - **Checks**:
     - Formatting: `scalafmtCheckAll` and sbt file check.
     - Tests with coverage, MiMa, API docs generation.
