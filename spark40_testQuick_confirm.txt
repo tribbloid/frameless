@@ -1,0 +1,71 @@
+[info] welcome to sbt 1.11.6 (Ubuntu Java 17.0.16)
+[info] loading global plugins from /home/peng/.sbt/1.0/plugins
+[info] loading settings for project frameless-build-build-build from metals.sbt...
+[info] loading project definition from /home/peng/git-release/__LEGACY/frameless/project/project/project
+[info] loading settings for project frameless-build-build from metals.sbt...
+[info] loading project definition from /home/peng/git-release/__LEGACY/frameless/project/project
+[success] Generated .bloop/frameless-build-build.json
+[success] Total time: 2 s, completed Oct. 12, 2025, 2:27:35 a.m.
+[info] loading settings for project frameless-build from metals.sbt, plugins.sbt...
+[info] loading project definition from /home/peng/git-release/__LEGACY/frameless/project
+[success] Generated .bloop/frameless-build.json
+[success] Total time: 2 s, completed Oct. 12, 2025, 2:27:37 a.m.
+[info] loading settings for project root from build.sbt, github.sbt...
+[info] resolving key references (21985 settings) ...
+[info] set scmInfo to https://github.com/typelevel/frameless
+[info] set current project to root (in build file:/home/peng/git-release/__LEGACY/frameless/)
+[warn] there are 23 keys that are not used by any other settings/tasks:
+[warn]  
+[warn] * cats / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * cats-spark33 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * cats-spark34 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * cats-spark40 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * core / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * dataset / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * dataset-spark33 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * dataset-spark34 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * dataset-spark40 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * docs / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * ml / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * ml-spark33 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * ml-spark34 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * ml-spark40 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * refined / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * refined-spark33 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * refined-spark34 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * refined-spark40 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * root / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * root-spark33 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * root-spark34 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * root-spark35 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * root-spark40 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn]  
+[warn] note: a setting might still be used by a command; to exclude a key from this `lintUnused` check
+[warn] either append it to `Global / excludeLintKeys` or call .withRank(KeyRanks.Invisible) on the key
+[info] set current project to frameless-dataset-spark40 (in build file:/home/peng/git-release/__LEGACY/frameless/)
+[info] Passed: Total 0, Failed 0, Errors 0, Passed 0
+[info] No tests to run for Test / testQuick
+[success] Total time: 1 s, completed Oct. 12, 2025, 2:27:42 a.m.
