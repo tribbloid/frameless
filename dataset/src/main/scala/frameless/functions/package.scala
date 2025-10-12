@@ -27,8 +27,10 @@ package object functions extends Udf with UnaryFunctions {
       i0: TypedEncoder[A],
       i1: Refute[IsValueClass[A]]
     ): TypedAggregate[T, A] = {
-    val col = _root_.org.apache.spark.sql.functions.lit(value)
-    new TypedAggregate[T, A](col)
+    import org.apache.spark.sql.catalyst.expressions.Literal
+    val enc = i0
+    val litExpr = enc.toCatalyst(Literal.create(value, enc.jvmRepr))
+    new TypedAggregate[T, A](litExpr)
   }
 
   /**
@@ -45,8 +47,9 @@ package object functions extends Udf with UnaryFunctions {
     )(implicit
       encoder: TypedEncoder[A]
     ): TypedColumn[T, A] = {
-    val col = _root_.org.apache.spark.sql.functions.lit(value)
-    new TypedColumn[T, A](col)
+    val enc = encoder
+    val expr = enc.toCatalyst(Literal.create(value, enc.jvmRepr))
+    new TypedColumn[T, A](expr)
   }
 
   /**

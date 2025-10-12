@@ -1,0 +1,165 @@
+[info] welcome to sbt 1.11.6 (Ubuntu Java 17.0.16)
+[info] loading global plugins from /home/peng/.sbt/1.0/plugins
+[info] loading settings for project frameless-build-build-build from metals.sbt...
+[info] loading project definition from /home/peng/git-release/__LEGACY/frameless/project/project/project
+[info] loading settings for project frameless-build-build from metals.sbt...
+[info] loading project definition from /home/peng/git-release/__LEGACY/frameless/project/project
+[success] Generated .bloop/frameless-build-build.json
+[success] Total time: 1 s, completed Oct. 12, 2025, 1:30:31 a.m.
+[info] loading settings for project frameless-build from metals.sbt, plugins.sbt...
+[info] loading project definition from /home/peng/git-release/__LEGACY/frameless/project
+[success] Generated .bloop/frameless-build.json
+[success] Total time: 2 s, completed Oct. 12, 2025, 1:30:33 a.m.
+[info] loading settings for project root from build.sbt, github.sbt...
+[info] resolving key references (21985 settings) ...
+[info] set scmInfo to https://github.com/typelevel/frameless
+[info] set current project to root (in build file:/home/peng/git-release/__LEGACY/frameless/)
+[warn] there are 23 keys that are not used by any other settings/tasks:
+[warn]  
+[warn] * cats / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * cats-spark33 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * cats-spark34 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * cats-spark40 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * core / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * dataset / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * dataset-spark33 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * dataset-spark34 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * dataset-spark40 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * docs / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * ml / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * ml-spark33 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * ml-spark34 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * ml-spark40 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * refined / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * refined-spark33 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * refined-spark34 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * refined-spark40 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * root / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * root-spark33 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * root-spark34 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * root-spark35 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * root-spark40 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn]  
+[warn] note: a setting might still be used by a command; to exclude a key from this `lintUnused` check
+[warn] either append it to `Global / excludeLintKeys` or call .withRank(KeyRanks.Invisible) on the key
+[info] set current project to frameless-dataset-spark40 (in build file:/home/peng/git-release/__LEGACY/frameless/)
+[info] LitTests:
+2025-10-12 01:30:40 [pool-1-thread-1] WARN  org.apache.hadoop.util.NativeCodeLoader:60 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+[info] - select(lit(...)) (9 seconds, 24 milliseconds)
+[info] - support value class (95 milliseconds)
+[info] - support optional value class (104 milliseconds)
+[info] - #205: comparing literals encoded using Injection (108 milliseconds)
+[info] FramelessLitPushDownTests:
+[info] - java.sql.Timestamp push-down (1 second, 91 milliseconds)
+[info] - java.time.Instant push-down (218 milliseconds)
+[info] - struct push-down (227 milliseconds)
+[info] RecordEncoderTests:
+[info] - Unable to encode products made from units only (1 millisecond)
+[info] - Dropping fields (4 milliseconds)
+[info] - Representation skips units (8 milliseconds)
+[info] - Serialization skips units (137 milliseconds)
+[info] - Empty nested record value becomes null on serialization (281 milliseconds)
+[info] - Empty nested record value becomes none on deserialization (220 milliseconds)
+[info] - Deeply nested optional values have correct deserialization (225 milliseconds)
+[info] - Nesting with Seq (82 milliseconds)
+[info] - Nesting with Set (91 milliseconds)
+[info] - Scalar value class (53 milliseconds)
+[info] - Case class with value class field (266 milliseconds)
+[info] - Case class with value class as optional field (394 milliseconds)
+[info] - Case class with simple Map (148 milliseconds)
+[info] - Case class with Map & Value class (149 milliseconds)
+[info] - Encode binary array (317 milliseconds)
+[info] - Encode simple array (101 milliseconds)
+[info] - Encode array of Value class (102 milliseconds)
+[info] - Encode case class with simple Seq (360 milliseconds)
+[info] - Encode case class with Value class (52 milliseconds)
+[info] ColumnTests:
+[info] - select('a < 'b, 'a <= 'b, 'a > 'b, 'a >= 'b) (3 seconds, 12 milliseconds)
+[info] - between (2 seconds, 344 milliseconds)
+[info] - toString (8 milliseconds)
+[info] - boolean and / or (744 milliseconds)
+[info] - substr (459 milliseconds)
+[info] - like (203 milliseconds)
+[info] - rlike (237 milliseconds)
+[info] - contains (216 milliseconds)
+[info] - startsWith (208 milliseconds)
+[info] - endsWith (230 milliseconds)
+[info] - getOrElse (2 seconds, 177 milliseconds)
+[info] - Consistency with Spark internal date/time representation (34 milliseconds)
+[info] - asCol (1 second, 718 milliseconds)
+[info] - asCol single column TypedDatasets (1 second, 342 milliseconds)
+[info] - asCol with numeric operators (401 milliseconds)
+[info] - reference Value class so can join on (168 milliseconds)
+[info] - unary_! (32 milliseconds)
+[info] - unary_! with non-boolean columns should not compile (16 milliseconds)
+[info] - opt (51 milliseconds)
+[info] - opt compiles only for columns of type Option[_] (13 milliseconds)
+[info] - field (35 milliseconds)
+[info] - field compiles only for valid field (8 milliseconds)
+[info] - col through lambda (19 milliseconds)
+[info] AggregateFunctionsTests:
+[info] - sum (2 seconds, 84 milliseconds)
+[info] - sumDistinct (1 second, 813 milliseconds)
+[info] - avg (1 second, 969 milliseconds)
+[info] - stddev and variance (4 seconds, 444 milliseconds)
+[info] - litAggr (813 milliseconds)
+[info] - count (668 milliseconds)
+[info] - count('a) (574 milliseconds)
+[info] - max (2 seconds, 105 milliseconds)
+[info] - max with follow up multiplication (320 milliseconds)
+[info] - min (1 second, 866 milliseconds)
+[info] - first (2 seconds, 119 milliseconds)
+[info] - last (2 seconds, 27 milliseconds)
+[info] - countDistinct (788 milliseconds)
+[info] - approxCountDistinct (1 second, 272 milliseconds)
+[info] - collectList (1 second, 141 milliseconds)
+[info] - collectSet (1 second, 230 milliseconds)
+[info] - lit (3 seconds, 132 milliseconds)
+[info] - corr (4 seconds, 617 milliseconds)
+[info] - covar_pop (4 seconds, 20 milliseconds)
+[info] - covar_samp (3 seconds, 952 milliseconds)
+[info] - kurtosis (5 seconds, 144 milliseconds)
+[info] - skewness (4 seconds, 147 milliseconds)
+[info] - stddev_pop (3 seconds, 348 milliseconds)
+[info] - stddev_samp (3 seconds, 743 milliseconds)
+[info] FilterTests:
+[info] - filter('a == lit(b)) (189 milliseconds)
+[info] - filter('a =!= lit(b)) (1 second, 592 milliseconds)
+[info] - filter('a =!= 'b) (1 second, 846 milliseconds)
+[info] - filter('a =!= 'b (2 seconds, 709 milliseconds)
+[info] - filter with arithmetic expressions: addition (413 milliseconds)
+[info] - filter with values (not columns): addition (159 milliseconds)
+[info] - filter with arithmetic expressions: multiplication (30 milliseconds)
+[info] - Option equality/inequality for columns (2 seconds, 574 milliseconds)
+[info] - Option equality/inequality for lit (2 seconds, 637 milliseconds)
+[info] - Option content filter (86 milliseconds)
+[info] - filter with isin values (844 milliseconds)
+[info] Run completed in 1 minute, 40 seconds.
+[info] Total number of tests run: 84
+[info] Suites: completed 6, aborted 0
+[info] Tests: succeeded 84, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 103 s (0:01:43.0), completed Oct. 12, 2025, 1:32:19 a.m.

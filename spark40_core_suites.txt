@@ -1,0 +1,128 @@
+[info] welcome to sbt 1.11.6 (Ubuntu Java 17.0.16)
+[info] loading global plugins from /home/peng/.sbt/1.0/plugins
+[info] loading settings for project frameless-build-build-build from metals.sbt...
+[info] loading project definition from /home/peng/git-release/__LEGACY/frameless/project/project/project
+[info] loading settings for project frameless-build-build from metals.sbt...
+[info] loading project definition from /home/peng/git-release/__LEGACY/frameless/project/project
+[success] Generated .bloop/frameless-build-build.json
+[success] Total time: 2 s, completed Oct. 12, 2025, 12:26:26 a.m.
+[info] loading settings for project frameless-build from metals.sbt, plugins.sbt...
+[info] loading project definition from /home/peng/git-release/__LEGACY/frameless/project
+[success] Generated .bloop/frameless-build.json
+[success] Total time: 3 s, completed Oct. 12, 2025, 12:26:29 a.m.
+[info] loading settings for project root from build.sbt, github.sbt...
+[info] resolving key references (21985 settings) ...
+[info] set scmInfo to https://github.com/typelevel/frameless
+[info] set current project to root (in build file:/home/peng/git-release/__LEGACY/frameless/)
+[warn] there are 23 keys that are not used by any other settings/tasks:
+[warn]  
+[warn] * cats / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * cats-spark33 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * cats-spark34 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * cats-spark40 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * core / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * dataset / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * dataset-spark33 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * dataset-spark34 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * dataset-spark40 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * docs / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * ml / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * ml-spark33 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * ml-spark34 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * ml-spark40 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * refined / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * refined-spark33 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * refined-spark34 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * refined-spark40 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * root / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * root-spark33 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * root-spark34 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * root-spark35 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn] * root-spark40 / scalafmtFilter
+[warn]   +- /home/peng/git-release/__LEGACY/frameless/project/Common.scala:12
+[warn]  
+[warn] note: a setting might still be used by a command; to exclude a key from this `lintUnused` check
+[warn] either append it to `Global / excludeLintKeys` or call .withRank(KeyRanks.Invisible) on the key
+[info] set current project to frameless-dataset-spark40 (in build file:/home/peng/git-release/__LEGACY/frameless/)
+[info] CubeTests:
+2025-10-12 00:26:40 [pool-1-thread-1] WARN  org.apache.hadoop.util.NativeCodeLoader:60 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+[info] - cube('a).agg(count()) (9 seconds, 842 milliseconds)
+[info] - cube('a, 'b).agg(count()) (3 seconds, 572 milliseconds)
+[info] - cube('a).agg(sum('b) (2 seconds, 310 milliseconds)
+[info] - cube('a).mapGroups('a, sum('b)) (1 second, 774 milliseconds)
+[info] - cube('a).agg(sum('b), sum('c)) to cube('a).agg(sum('a), sum('b), sum('a), sum('b), sum('a)) (8 seconds, 617 milliseconds)
+[info] - cube('a, 'b).agg(sum('c), sum('d)) (3 seconds, 532 milliseconds)
+[info] - cube('a, 'b).agg(sum('c)) to cube('a, 'b).agg(sum('c),sum('c),sum('c),sum('c),sum('c)) (11 seconds, 407 milliseconds)
+[info] - cube('a, 'b).mapGroups('a, 'b, sum('c)) (1 second, 38 milliseconds)
+[info] - cube('a).mapGroups(('a, toVector(('a, 'b)) (3 seconds, 677 milliseconds)
+[info] - cube('a).flatMapGroups(('a, toVector(('a, 'b)) (2 seconds, 816 milliseconds)
+[info] - cube('a, 'b).flatMapGroups((('a,'b) toVector((('a,'b), 'c)) (2 seconds, 951 milliseconds)
+[info] - cubeMany('a).agg(sum('b)) (1 second, 405 milliseconds)
+[info] SchemaTests:
+[info] - schema of groupBy('a).agg(sum('b)) (55 milliseconds)
+[info] - schema of select(lit(1L)) (68 milliseconds)
+[info] - schema of select(lit(1L), lit(2L)).as[X2[Long, Long]] (33 milliseconds)
+[info] PivotTest:
+[info] - X4[Boolean, String, Int, Boolean] pivot on String (3 seconds, 509 milliseconds)
+[info] - Pivot on Boolean (319 milliseconds)
+[info] - Pivot with groupBy on two columns, pivot on Long (274 milliseconds)
+[info] - Pivot with cube on two columns, pivot on Long (156 milliseconds)
+[info] - Pivot with cube on Boolean (178 milliseconds)
+[info] - Pivot with rollup on two columns, pivot on Long (154 milliseconds)
+[info] - Pivot with rollup on Boolean (152 milliseconds)
+[info] RollupTests:
+[info] - rollup('a).agg(count()) (1 second, 518 milliseconds)
+[info] - rollup('a, 'b).agg(count()) (1 second, 964 milliseconds)
+[info] - rollup('a).agg(sum('b) (1 second, 433 milliseconds)
+[info] - rollup('a).mapGroups('a, sum('b)) (895 milliseconds)
+[info] - rollup('a).agg(sum('b), sum('c)) to rollup('a).agg(sum('a), sum('b), sum('a), sum('b), sum('a)) (5 seconds, 42 milliseconds)
+[info] - rollup('a, 'b).agg(sum('c), sum('d)) (1 second, 479 milliseconds)
+[info] - rollup('a, 'b).agg(sum('c)) to rollup('a, 'b).agg(sum('c),sum('c),sum('c),sum('c),sum('c)) (7 seconds, 725 milliseconds)
+[info] - rollup('a, 'b).mapGroups('a, 'b, sum('c)) (861 milliseconds)
+[info] - rollup('a).mapGroups(('a, toVector(('a, 'b)) (2 seconds, 686 milliseconds)
+[info] - rollup('a).flatMapGroups(('a, toVector(('a, 'b)) (2 seconds, 713 milliseconds)
+[info] - rollup('a, 'b).flatMapGroups((('a,'b) toVector((('a,'b), 'c)) (3 seconds, 263 milliseconds)
+[info] - rollupMany('a).agg(sum('b)) (1 second, 974 milliseconds)
+[info] GroupByTests:
+[info] - groupByMany('a).agg(sum('b)) (1 second, 58 milliseconds)
+[info] - agg(sum('a)) (920 milliseconds)
+[info] - agg(sum('a), sum('b)) (905 milliseconds)
+[info] - agg(sum('a), sum('b), sum('c)) (903 milliseconds)
+[info] - agg(sum('a), sum('b), min('c), max('d)) (3 seconds, 771 milliseconds)
+[info] - groupBy('a).agg(sum('b)) (1 second, 6 milliseconds)
+[info] - groupBy('a).mapGroups('a, sum('b)) (1 second, 83 milliseconds)
+[info] - groupBy('a).agg(sum('b), sum('c)) to groupBy('a).agg(sum('a), sum('b), sum('a), sum('b), sum('a)) (4 seconds, 247 milliseconds)
+[info] - groupBy('a, 'b).agg(sum('c)) to groupBy('a, 'b).agg(sum('c),sum('c),sum('c),sum('c),sum('c)) (4 seconds, 636 milliseconds)
+[info] - groupBy('a, 'b).agg(sum('c), sum('d)) (889 milliseconds)
+[info] - groupBy('a, 'b).mapGroups('a, 'b, sum('c)) (1 second, 113 milliseconds)
+[info] - groupBy('a).mapGroups(('a, toVector(('a, 'b)) (2 seconds, 974 milliseconds)
+[info] - groupBy('a).flatMapGroups(('a, toVector(('a, 'b)) (2 seconds, 710 milliseconds)
+[info] - groupBy('a, 'b).flatMapGroups((('a,'b) toVector((('a,'b), 'c)) (3 seconds, 425 milliseconds)
+[info] Run completed in 2 minutes, 5 seconds.
+[info] Total number of tests run: 48
+[info] Suites: completed 5, aborted 0
+[info] Tests: succeeded 48, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 126 s (0:02:06.0), completed Oct. 12, 2025, 12:28:41 a.m.
