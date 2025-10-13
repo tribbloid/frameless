@@ -26,3 +26,6 @@ ThisBuild / githubWorkflowBuildPostamble +=
     ),
     params = Map("flags" -> s"$${{ matrix.scala }}-$${{ matrix.project }}")
   )
+
+// Ensure workflows use only Java 11 (Spark 4.0 compatible)
+ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin("11"))
