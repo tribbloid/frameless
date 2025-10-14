@@ -1,6 +1,6 @@
 # Test Report Plugin
 
-An sbt plugin that generates aggregated HTML test reports across all Frameless modules.
+A generic sbt plugin that generates aggregated HTML test reports across all project modules.
 
 ## Usage
 
@@ -12,15 +12,27 @@ sbt generateTestReport
 
 The report will be generated at: `target/test-reports/test-report.html`
 
+## Configuration
+
+The plugin can be customized with the following settings:
+
+```scala
+// In build.sbt
+testReportTitle := "My Project"  // Default: project name
+testReportOutputDir := target.value / "custom-reports"  // Default: target/test-reports
+```
+
 ## Features
 
-- **Aggregated Results**: Combines test results from all modules (core, dataset-spark40, cats-spark40, ml-spark40, refined-spark40)
+- **Generic and Reusable**: No hardcoded project names or packages - works with any sbt project
+- **Aggregated Results**: Automatically discovers and combines test results from all project modules
 - **Beautiful HTML Report**: Modern, responsive design with color-coded statistics
 - **Pass Rate Visualization**: Prominent display of overall pass rate percentage
 - **Module Breakdown**: Shows test statistics per module
 - **Suite Details**: Expandable test suite details with individual test case results
 - **Time Tracking**: Displays execution time for each test suite and individual test
 - **Error Messages**: Shows failure and error messages for failed tests
+- **Configurable**: Customize report title and output directory
 
 ## Report Contents
 
@@ -78,11 +90,20 @@ Individual test case information:
 ## Technical Details
 
 - **Location**: `project/TestReportPlugin.scala`
-- **Type**: sbt AutoPlugin (automatically enabled)
-- **Input**: XML test result files from `target/test-reports/*.xml`
+- **Type**: sbt AutoPlugin (automatically enabled for all projects)
+- **Input**: XML test result files from `target/test-reports/*.xml` in all modules
 - **Output**: Single aggregated HTML file at `target/test-reports/test-report.html`
 
-The plugin automatically scans all module directories for test result XML files and aggregates them into a single, comprehensive HTML report.
+The plugin automatically scans all module directories for test result XML files and aggregates them into a single, comprehensive HTML report. It extracts module names from the directory structure, making it work with any project layout.
+
+### Portability
+
+This plugin is fully portable and can be copied to any sbt project:
+
+1. Copy `project/TestReportPlugin.scala` to your project's `project/` directory
+2. The plugin auto-enables and is ready to use
+3. Run `sbt generateTestReport` after running tests
+4. Optionally configure `testReportTitle` in your `build.sbt`
 
 ## Example Statistics
 

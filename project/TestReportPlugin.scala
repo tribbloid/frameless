@@ -11,16 +11,19 @@ object TestReportPlugin extends AutoPlugin {
   object autoImport {
     val generateTestReport = taskKey[File]("Generate aggregated HTML test report")
     val testReportOutputDir = settingKey[File]("Directory for test report output")
+    val testReportTitle = settingKey[String]("Title for the test report")
   }
 
   import autoImport._
 
   override lazy val projectSettings = Seq(
     testReportOutputDir := target.value / "test-reports",
+    testReportTitle := name.value,
     generateTestReport := {
       val log = streams.value.log
       val outputDir = testReportOutputDir.value
       val baseDir = (ThisBuild / baseDirectory).value
+      val reportTitle = testReportTitle.value
 
       log.info("Generating aggregated test report...")
 
@@ -41,7 +44,7 @@ object TestReportPlugin extends AutoPlugin {
 
       // Generate HTML report
       val htmlFile = outputDir / "test-report.html"
-      val html = generateHtmlReport(testResults)
+      val html = generateHtmlReport(testResults, reportTitle)
       IO.write(htmlFile, html)
 
       log.info(s"Test report generated at: ${htmlFile.absolutePath}")
@@ -127,7 +130,7 @@ object TestReportPlugin extends AutoPlugin {
     }
   }
 
-  private def generateHtmlReport(results: Seq[TestResult]): String = {
+  private def generateHtmlReport(results: Seq[TestResult], projectTitle: String): String = {
     val totalTests = results.map(_.testCount).sum
     val totalFailures = results.map(_.failures).sum
     val totalErrors = results.map(_.errors).sum
@@ -144,7 +147,7 @@ object TestReportPlugin extends AutoPlugin {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frameless Test Report</title>
+    <title>$projectTitle Test Report</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -272,7 +275,7 @@ object TestReportPlugin extends AutoPlugin {
 </head>
 <body>
     <div class="container">
-        <h1>🧪 Frameless Test Report</h1>
+        <h1>🧪 $projectTitle Test Report</h1>
         
         <div class="summary">
             <h2>Overall Summary</h2>
