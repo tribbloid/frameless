@@ -26,16 +26,22 @@ This document guides automated agents and contributors working in this repositor
 ## Guardrails (Do/Don’t)
 
 - **Do**
+    - **Compile** often to verify your work.
+    - **Write** larconic, minimal and elegant code that does the function.
     - **Commit** code to git local repository after each task, each commit message should start with your model name-version. 
     - **Format** code with `scalafmt` before committing.
     - **Test** across supported Scala and Spark roots used in CI.
     - **Run** MiMa checks on changed modules.
     - **Keep Spark deps Provided**; do not add Spark as compile dependency.
     - **Document** user-facing changes; add/adjust tests accordingly.
+
 - **Don’t**
     - Don’t change CI secrets or publish settings.
     - Don’t break binary compatibility without coordination and proper MiMa filters and versioning.
     - Don’t introduce heavy dependencies into core APIs.
+    - Don't run sbt without `--batch` mode.
+    - Don't delete existing test cases.
+    - Don't use JVM runtime reflection and language features that lack type safety, unless neccessary.
     - Don’t bypass the aggregate root projects; build/test the correct `root-sparkXX` target.
     - Don't write experimental code outside test directory, always clean them up after to avoid breaking the project compilation
 
@@ -53,20 +59,21 @@ This document guides automated agents and contributors working in this repositor
 ## Common Workflows
 
 - **Format & Lint**
-    - `sbt scalafmtAll scalafmtSbt`
-    - `sbt scalafixAll`  ← run after edits
+    - `sbt --batch scalafmtAll scalafmtSbt`
 - **Compile & Test**
-    - `sbt compile test`
+    - `sbt --batch compile test`
 - **Re-run previously failed tests**
-    - `sbt testQuick`
+    - `sbt --batch testQuick`
 - **Binary compatibility (MiMa)**
-    - `sbt 'project <module>' mimaReportBinaryIssues`
+    - `sbt --batch 'project <module>' mimaReportBinaryIssues`
 - **Coverage (optional local match to CI)**
-    - `sbt coverage test coverageReport`
+    - `sbt --batch coverage test coverageReport`
 - **Docs site (check locally)**
-    - `sbt docs/tlSite`
+    - `sbt --batch docs/tlSite`
 - **REPL bootstrap**
-    - `sbt console` (preloads Spark session helpers via build-defined initial commands)
+    - `sbt --batch console` (preloads Spark session helpers via build-defined initial commands)
+- **Test report (after running tests)**
+    - `sbt --batch generateTestReport` (generates HTML report at `target/test-reports/test-report.html`)
 
 ## CI Expectations (see `.github/workflows/ci.yml`)
 
@@ -97,7 +104,7 @@ This document guides automated agents and contributors working in this repositor
 ## Troubleshooting
 
 - OOM in property tests: tune `FRAMELESS_GEN_MIN_SIZE` / `FRAMELESS_GEN_SIZE_RANGE`.
-- Cache issues: run `sbt +update`.
+- Cache issues: run `sbt --batch +update`.
 - Spark local issues: ensure `SPARK_LOCAL_IP=localhost`.
 
 ## Attribution and Conduct

@@ -1,62 +1,67 @@
 import sbt._
 import sbt.Keys._
 import java.io.File
-import java.nio.file.{Files, Paths}
+import java.nio.file.{ Files, Paths }
 import scala.collection.mutable
 
-/** A portable sbt plugin for generating aggregated HTML test reports.
-  *
-  * This plugin automatically discovers test results from all modules in your project
-  * and generates a beautiful, comprehensive HTML report with statistics, timing information,
-  * and detailed failure messages.
-  *
-  * ==Usage==
-  *
-  * After running your tests, generate the report:
-  * {{{
-  * sbt test
-  * sbt generateTestReport
-  * }}}
-  *
-  * The report will be generated at `target/test-reports/test-report.html`
-  *
-  * ==Configuration==
-  *
-  * Optional settings can be configured in your `build.sbt`:
-  * {{{
-  * // Customize the report title (default: project name)
-  * testReportTitle := "My Project"
-  *
-  * // Customize output directory (default: target/test-reports)
-  * testReportOutputDir := target.value / "custom-reports"
-  * }}}
-  *
-  * ==Portability==
-  *
-  * This plugin is fully portable and can be used in any sbt project:
-  * - No hardcoded project names or package names
-  * - Automatically discovers all modules and test results
-  * - Works with any test framework that generates JUnit XML reports
-  *
-  * Simply copy this file to your project's `project/` directory and it will auto-enable.
-  *
-  * ==Features==
-  * - Aggregated results across all modules
-  * - Pass rate visualization with color-coded indicators
-  * - Module-level and suite-level breakdowns
-  * - Expandable test case details with timing and error messages
-  * - Modern, responsive HTML design
-  *
-  * @author TestReportPlugin
-  * @since 1.0
-  */
+/**
+ * A portable sbt plugin for generating aggregated HTML test reports.
+ *
+ * This plugin automatically discovers test results from all modules in your project
+ * and generates a beautiful, comprehensive HTML report with statistics, timing information,
+ * and detailed failure messages.
+ *
+ * ==Usage==
+ *
+ * After running your tests, generate the report:
+ * {{{
+ * sbt test
+ * sbt generateTestReport
+ * }}}
+ *
+ * The report will be generated at `target/test-reports/test-report.html`
+ *
+ * ==Configuration==
+ *
+ * Optional settings can be configured in your `build.sbt`:
+ * {{{
+ * // Customize the report title (default: project name)
+ * testReportTitle := "My Project"
+ *
+ * // Customize output directory (default: target/test-reports)
+ * testReportOutputDir := target.value / "custom-reports"
+ * }}}
+ *
+ * ==Portability==
+ *
+ * This plugin is fully portable and can be used in any sbt project:
+ * - No hardcoded project names or package names
+ * - Automatically discovers all modules and test results
+ * - Works with any test framework that generates JUnit XML reports
+ *
+ * Simply copy this file to your project's `project/` directory and it will auto-enable.
+ *
+ * ==Features==
+ * - Aggregated results across all modules
+ * - Pass rate visualization with color-coded indicators
+ * - Module-level and suite-level breakdowns
+ * - Expandable test case details with timing and error messages
+ * - Modern, responsive HTML design
+ *
+ * @author TestReportPlugin
+ * @since 1.0
+ */
 object TestReportPlugin extends AutoPlugin {
 
   override def trigger = allRequirements
 
   object autoImport {
-    val generateTestReport = taskKey[File]("Generate aggregated HTML test report")
-    val testReportOutputDir = settingKey[File]("Directory for test report output")
+
+    val generateTestReport =
+      taskKey[File]("Generate aggregated HTML test report")
+
+    val testReportOutputDir =
+      settingKey[File]("Directory for test report output")
     val testReportTitle = settingKey[String]("Title for the test report")
   }
 
@@ -80,7 +85,9 @@ object TestReportPlugin extends AutoPlugin {
       val testResultFiles = findTestResults(baseDir, log)
 
       if (testResultFiles.isEmpty) {
-        log.warn("No test results found. Run 'test' first to generate test reports.")
+        log.warn(
+          "No test results found. Run 'test' first to generate test reports."
+        )
       } else {
         log.info(s"Found ${testResultFiles.length} test result files")
       }
@@ -112,23 +119,21 @@ object TestReportPlugin extends AutoPlugin {
   }
 
   private case class TestResult(
-    moduleName: String,
-    suiteName: String,
-    testCount: Int,
-    failures: Int,
-    errors: Int,
-    skipped: Int,
-    time: Double,
-    testCases: Seq[TestCase]
-  )
+      moduleName: String,
+      suiteName: String,
+      testCount: Int,
+      failures: Int,
+      errors: Int,
+      skipped: Int,
+      time: Double,
+      testCases: Seq[TestCase])
 
   private case class TestCase(
-    name: String,
-    className: String,
-    time: Double,
-    status: String, // "passed", "failed", "error", "skipped"
-    message: Option[String] = None
-  )
+      name: String,
+      className: String,
+      time: Double,
+      status: String, // "passed", "failed", "error", "skipped"
+      message: Option[String] = None)
 
   private def parseTestResultXml(xmlFile: File): Option[TestResult] = {
     try {
@@ -139,13 +144,17 @@ object TestReportPlugin extends AutoPlugin {
       val failures = (xml \ "@failures").text.toInt
       val errors = (xml \ "@errors").text.toInt
       val skipped = (xml \ "@skipped").text.toInt
-      val time = try { (xml \ "@time").text.toDouble } catch { case _: NumberFormatException => 0.0 }
+      val time =
+        try { (xml \ "@time").text.toDouble }
+        catch { case _: NumberFormatException => 0.0 }
 
       val testCases = (xml \ "testcase").map { tc =>
         val name = (tc \ "@name").text
         val className = (tc \ "@classname").text
-        val testTime = try { (tc \ "@time").text.toDouble } catch { case _: NumberFormatException => 0.0 }
-        
+        val testTime =
+          try { (tc \ "@time").text.toDouble }
+          catch { case _: NumberFormatException => 0.0 }
+
         val (status, message) = if ((tc \ "failure").nonEmpty) {
           ("failed", Some((tc \ "failure").text))
         } else if ((tc \ "error").nonEmpty) {
@@ -159,7 +168,18 @@ object TestReportPlugin extends AutoPlugin {
         TestCase(name, className, testTime, status, message)
       }
 
-      Some(TestResult(moduleName, suiteName, testCount, failures, errors, skipped, time, testCases))
+      Some(
+        TestResult(
+          moduleName,
+          suiteName,
+          testCount,
+          failures,
+          errors,
+          skipped,
+          time,
+          testCases
+        )
+      )
     } catch {
       case e: Exception =>
         None
@@ -176,7 +196,10 @@ object TestReportPlugin extends AutoPlugin {
     }
   }
 
-  private def generateHtmlReport(results: Seq[TestResult], projectTitle: String): String = {
+  private def generateHtmlReport(
+      results: Seq[TestResult],
+      projectTitle: String
+    ): String = {
     val totalTests = results.map(_.testCount).sum
     val totalFailures = results.map(_.failures).sum
     val totalErrors = results.map(_.errors).sum
@@ -184,7 +207,8 @@ object TestReportPlugin extends AutoPlugin {
     val totalTime = results.map(_.time).sum
     val totalPassed = totalTests - totalFailures - totalErrors - totalSkipped
 
-    val passRate = if (totalTests > 0) (totalPassed * 100.0 / totalTests) else 0.0
+    val passRate =
+      if (totalTests > 0) (totalPassed * 100.0 / totalTests) else 0.0
 
     val moduleResults = results.groupBy(_.moduleName).toSeq.sortBy(_._1)
 
@@ -238,7 +262,9 @@ object TestReportPlugin extends AutoPlugin {
             font-weight: bold;
             text-align: center;
             margin: 20px 0;
-            color: ${if (passRate >= 90) "#4CAF50" else if (passRate >= 70) "#ff9800" else "#f44336"};
+            color: ${if (passRate >= 90) "#4CAF50"
+      else if (passRate >= 70) "#ff9800"
+      else "#f44336"};
         }
         .module-section {
             background: white;
@@ -353,7 +379,8 @@ object TestReportPlugin extends AutoPlugin {
             </p>
         </div>
 
-        ${moduleResults.map { case (moduleName, moduleTests) =>
+        ${moduleResults.map {
+        case (moduleName, moduleTests) =>
           val modTests = moduleTests.map(_.testCount).sum
           val modFailures = moduleTests.map(_.failures).sum
           val modErrors = moduleTests.map(_.errors).sum
@@ -386,13 +413,19 @@ object TestReportPlugin extends AutoPlugin {
                     </tr>
                 </thead>
                 <tbody>
-                    ${moduleTests.zipWithIndex.map { case (suite, idx) =>
-                      val passed = suite.testCount - suite.failures - suite.errors - suite.skipped
-                      val status = if (suite.failures > 0 || suite.errors > 0) "failed" else "passed"
-                      val statusBadge = if (status == "failed") "status-failed" else "status-passed"
-                      val detailsId = s"details-${moduleName.replaceAll("[^a-zA-Z0-9]", "_")}-$idx"
+                    ${moduleTests.zipWithIndex.map {
+              case (suite, idx) =>
+                val passed =
+                  suite.testCount - suite.failures - suite.errors - suite.skipped
+                val status =
+                  if (suite.failures > 0 || suite.errors > 0) "failed"
+                  else "passed"
+                val statusBadge =
+                  if (status == "failed") "status-failed" else "status-passed"
+                val detailsId =
+                  s"details-${moduleName.replaceAll("[^a-zA-Z0-9]", "_")}-$idx"
 
-                      s"""<tr class="expandable" onclick="toggleDetails('$detailsId')">
+                s"""<tr class="expandable" onclick="toggleDetails('$detailsId')">
                         <td><strong>${escapeHtml(suite.suiteName)}</strong></td>
                         <td style="text-align: center;">${suite.testCount}</td>
                         <td style="text-align: center;">$passed</td>
@@ -409,28 +442,32 @@ object TestReportPlugin extends AutoPlugin {
                             <div id="$detailsId" class="test-details">
                                 <h4>Test Cases:</h4>
                                 ${suite.testCases.map { tc =>
-                                  val statusClass = tc.status match {
-                                    case "passed" => "status-passed"
-                                    case "failed" => "status-failed"
-                                    case "error" => "status-error"
-                                    case "skipped" => "status-skipped"
-                                    case _ => ""
-                                  }
-                                  s"""<div style="margin: 5px 0; padding: 8px; background: white; border-radius: 4px;">
+                    val statusClass = tc.status match {
+                      case "passed"  => "status-passed"
+                      case "failed"  => "status-failed"
+                      case "error"   => "status-error"
+                      case "skipped" => "status-skipped"
+                      case _         => ""
+                    }
+                    s"""<div style="margin: 5px 0; padding: 8px; background: white; border-radius: 4px;">
                                     <span class="status-badge $statusClass">${tc.status.toUpperCase}</span>
                                     <strong>${escapeHtml(tc.name)}</strong> 
                                     <span style="color: #666;">(${f"${tc.time}%.3f"}s)</span>
-                                    ${tc.message.map(msg => s"<pre style='margin-top: 5px; padding: 8px; background: #f5f5f5; overflow-x: auto; font-size: 0.85em;'>${escapeHtml(msg.take(500))}</pre>").getOrElse("")}
+                                    ${tc.message
+                        .map(msg =>
+                          s"<pre style='margin-top: 5px; padding: 8px; background: #f5f5f5; overflow-x: auto; font-size: 0.85em;'>${escapeHtml(msg.take(500))}</pre>"
+                        )
+                        .getOrElse("")}
                                   </div>"""
-                                }.mkString}
+                  }.mkString}
                             </div>
                         </td>
                     </tr>"""
-                    }.mkString}
+            }.mkString}
                 </tbody>
             </table>
         </div>"""
-        }.mkString}
+      }.mkString}
 
         <div class="timestamp">
             Generated on ${java.time.LocalDateTime.now().toString}
@@ -441,10 +478,11 @@ object TestReportPlugin extends AutoPlugin {
   }
 
   private def escapeHtml(str: String): String = {
-    str.replaceAll("&", "&amp;")
-       .replaceAll("<", "&lt;")
-       .replaceAll(">", "&gt;")
-       .replaceAll("\"", "&quot;")
-       .replaceAll("'", "&#39;")
+    str
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll("\"", "&quot;")
+      .replaceAll("'", "&#39;")
   }
 }

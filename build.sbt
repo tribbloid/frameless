@@ -295,8 +295,6 @@ lazy val framelessSettings = Seq(
   libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
 ) ++ consoleSettings
 
- 
-
 lazy val spark40Settings = Seq[Setting[_]](
   tlVersionIntroduced := Map("2.13" -> "0.16.0"),
   // New Spark 4.0 cross modules; no previous artifacts to compare for MiMa
@@ -361,7 +359,5 @@ ThisBuild / tlSitePublishBranch := Some("master")
 val roots = List("root-spark40")
 
 ThisBuild / githubWorkflowBuildMatrixAdditions += "project" -> roots
-
- 
 
 ThisBuild / githubWorkflowEnv += "SBT_OPTS" -> "-Xms1g -Xmx4g"
