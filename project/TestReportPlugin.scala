@@ -4,6 +4,52 @@ import java.io.File
 import java.nio.file.{Files, Paths}
 import scala.collection.mutable
 
+/** A portable sbt plugin for generating aggregated HTML test reports.
+  *
+  * This plugin automatically discovers test results from all modules in your project
+  * and generates a beautiful, comprehensive HTML report with statistics, timing information,
+  * and detailed failure messages.
+  *
+  * ==Usage==
+  *
+  * After running your tests, generate the report:
+  * {{{
+  * sbt test
+  * sbt generateTestReport
+  * }}}
+  *
+  * The report will be generated at `target/test-reports/test-report.html`
+  *
+  * ==Configuration==
+  *
+  * Optional settings can be configured in your `build.sbt`:
+  * {{{
+  * // Customize the report title (default: project name)
+  * testReportTitle := "My Project"
+  *
+  * // Customize output directory (default: target/test-reports)
+  * testReportOutputDir := target.value / "custom-reports"
+  * }}}
+  *
+  * ==Portability==
+  *
+  * This plugin is fully portable and can be used in any sbt project:
+  * - No hardcoded project names or package names
+  * - Automatically discovers all modules and test results
+  * - Works with any test framework that generates JUnit XML reports
+  *
+  * Simply copy this file to your project's `project/` directory and it will auto-enable.
+  *
+  * ==Features==
+  * - Aggregated results across all modules
+  * - Pass rate visualization with color-coded indicators
+  * - Module-level and suite-level breakdowns
+  * - Expandable test case details with timing and error messages
+  * - Modern, responsive HTML design
+  *
+  * @author TestReportPlugin
+  * @since 1.0
+  */
 object TestReportPlugin extends AutoPlugin {
 
   override def trigger = allRequirements
