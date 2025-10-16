@@ -140,46 +140,62 @@ object TestReportPlugin extends AutoPlugin {
       val xml = scala.xml.XML.loadFile(xmlFile)
       val moduleName = extractModuleName(xmlFile)
       val suiteName = (xml \ "@name").text
-      val testCount = (xml \ "@tests").text.toInt
-      val failures = (xml \ "@failures").text.toInt
-      val errors = (xml \ "@errors").text.toInt
-      val skipped = (xml \ "@skipped").text.toInt
       val time =
         try { (xml \ "@time").text.toDouble }
         catch { case _: NumberFormatException => 0.0 }
 
-      val testCases = (xml \ "testcase").map { tc =>
+      // Parse test cases and filter out invalid SuiteSelector entries
+      val allTestCases = (xml \ "testcase").flatMap { tc =>
         val name = (tc \ "@name").text
         val className = (tc \ "@classname").text
-        val testTime =
-          try { (tc \ "@time").text.toDouble }
-          catch { case _: NumberFormatException => 0.0 }
 
-        val (status, message) = if ((tc \ "failure").nonEmpty) {
-          ("failed", Some((tc \ "failure").text))
-        } else if ((tc \ "error").nonEmpty) {
-          ("error", Some((tc \ "error").text))
-        } else if ((tc \ "skipped").nonEmpty) {
-          ("skipped", Some((tc \ "skipped").text))
+        // Filter out SuiteSelector entries that aren't real tests
+        if (
+          name.contains("It is not a test it is a sbt.testing.SuiteSelector")
+        ) {
+          None
         } else {
-          ("passed", None)
-        }
+          val testTime =
+            try { (tc \ "@time").text.toDouble }
+            catch { case _: NumberFormatException => 0.0 }
 
-        TestCase(name, className, testTime, status, message)
+          val (status, message) = if ((tc \ "failure").nonEmpty) {
+            ("failed", Some((tc \ "failure").text))
+          } else if ((tc \ "error").nonEmpty) {
+            ("error", Some((tc \ "error").text))
+          } else if ((tc \ "skipped").nonEmpty) {
+            ("skipped", Some((tc \ "skipped").text))
+          } else {
+            ("passed", None)
+          }
+
+          Some(TestCase(name, className, testTime, status, message))
+        }
       }
 
-      Some(
-        TestResult(
-          moduleName,
-          suiteName,
-          testCount,
-          failures,
-          errors,
-          skipped,
-          time,
-          testCases
+      // Calculate actual counts from parsed test cases
+      val testCount = allTestCases.length
+      val failures = allTestCases.count(_.status == "failed")
+      val errors = allTestCases.count(_.status == "error")
+      val skipped = allTestCases.count(_.status == "skipped")
+
+      // Only include suites that have actual tests
+      if (testCount == 0) {
+        None
+      } else {
+        Some(
+          TestResult(
+            moduleName,
+            suiteName,
+            testCount,
+            failures,
+            errors,
+            skipped,
+            time,
+            allTestCases
+          )
         )
-      )
+      }
     } catch {
       case e: Exception =>
         None
