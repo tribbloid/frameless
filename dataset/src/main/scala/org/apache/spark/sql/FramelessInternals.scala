@@ -38,8 +38,7 @@ object FramelessInternals {
     // Spark 4.x - extract Expression from ColumnNode
     var strategyError: Option[String] = None
     try {
-      val nodeMethod = classOf[Column].getMethod("node")
-      val columnNode = nodeMethod.invoke(column)
+      val columnNode = column.node
       strategyError = Some(s"Got node: ${columnNode.getClass.getName}")
 
       columnNode match {
