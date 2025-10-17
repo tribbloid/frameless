@@ -166,7 +166,7 @@
   </span><span class="identifier">count</span><span> &lt;- </span><span class="identifier">typedDs</span><span>.</span><span class="identifier">count</span><span>[</span><span class="type-name">Action</span><span>]()
 } </span><span class="keyword">yield</span><span> (</span><span class="identifier">sample</span><span>, </span><span class="identifier">count</span><span>)
 </span><span class="comment">// result: Action[(Seq[(Int, String)], Long)] = Kleisli(
-//   cats.data.Kleisli$$Lambda$12899/0x000000080381d840@7c33b6b1
+//   cats.data.Kleisli$$Lambda$11746/0x0000000803334840@4f79da18
 // )</span></code></pre>
         <p>As with <code>Job</code>, note that nothing has been run yet. The effect has been properly suspended. To
         run our program, we must first supply the <code>SparkSession</code> to the <code>ReaderT</code> layer and then
@@ -193,7 +193,7 @@
        }
 } </span><span class="keyword">yield</span><span> </span><span class="identifier">r</span><span>
 </span><span class="comment">// resultWithDescription: Action[(Seq[(Int, String)], Long)] = Kleisli(
-//   cats.data.Kleisli$$$Lambda$14372/0x0000000803dcd040@73b9cbf3
+//   cats.data.Kleisli$$$Lambda$13246/0x00000008038dd040@3d77f413
 // )
 </span><span>
 </span><span class="identifier">resultWithDescription</span><span>.</span><span class="identifier">run</span><span>(</span><span class="identifier">spark</span><span>).</span><span class="identifier">unsafeRunSync</span><span>()
@@ -273,7 +273,7 @@
         <pre class="keep-together pdf epub"><code class="nohighlight"><span class="comment">// Type aliases for meaningful types
 </span><span class="keyword">type</span><span> </span><span class="type-name">TimeSeries</span><span> = </span><span class="type-name">Map</span><span>[</span><span class="type-name">Int</span><span>,</span><span class="type-name">Int</span><span>]
 </span><span class="keyword">type</span><span> </span><span class="type-name">UserName</span><span> = </span><span class="type-name">String</span></code></pre>
-        <p>Example: Using the implicit full-our-join operator</p>
+        <p>Example: Using the implicit full-outer-join operator</p>
         <pre><code class="nohighlight"><span class="keyword">import</span><span> </span><span class="identifier">frameless</span><span>.</span><span class="identifier">cats</span><span>.</span><span class="identifier">outer</span><span>.</span><span class="identifier">_</span><span>
 
 </span><span class="keyword">val</span><span> </span><span class="identifier">day1</span><span>: </span><span class="type-name">RDD</span><span>[(</span><span class="type-name">UserName</span><span>,</span><span class="type-name">TimeSeries</span><span>)] = </span><span class="identifier">sc</span><span>.</span><span class="identifier">makeRDD</span><span>( (</span><span class="string-literal">&quot;John&quot;</span><span>, </span><span class="type-name">Map</span><span>(</span><span class="number-literal">0</span><span> -&gt; </span><span class="number-literal">2</span><span>, </span><span class="number-literal">1</span><span> -&gt; </span><span class="number-literal">4</span><span>)) :: (</span><span class="string-literal">&quot;Chris&quot;</span><span>, </span><span class="type-name">Map</span><span>(</span><span class="number-literal">0</span><span> -&gt; </span><span class="number-literal">1</span><span>, </span><span class="number-literal">1</span><span> -&gt; </span><span class="number-literal">2</span><span>)) :: (</span><span class="string-literal">&quot;Sam&quot;</span><span>, </span><span class="type-name">Map</span><span>(</span><span class="number-literal">0</span><span> -&gt; </span><span class="number-literal">1</span><span>)) :: </span><span class="type-name">Nil</span><span> )
