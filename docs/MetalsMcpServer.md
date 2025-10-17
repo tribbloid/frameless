@@ -17,7 +17,7 @@ The Scala Metals language server has an integrated MCP (Model Context Protocol) 
 
 The MCP configuration file is located at:
 ```
-~/.config/Windsurf/User/mcp.json
+~/.codeium/windsurf/mcp_config.json
 ```
 
 Current configuration:

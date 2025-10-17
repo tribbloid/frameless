@@ -8,7 +8,7 @@ The Metals MCP (Model Context Protocol) server provides AI assistants like Casca
 
 - **Server Running**: Yes (port 39777)
 - **Windsurf Configured**: Yes
-- **Configuration File**: `~/.config/Windsurf/User/mcp.json`
+- **Configuration File**: `~/.codeium/windsurf/mcp_config.json`
 
 ## Quick Commands
 
@@ -39,7 +39,7 @@ With the Metals MCP server configured, AI assistants can:
 ## Configuration Files
 
 ### Windsurf MCP Config
-**Location**: `~/.config/Windsurf/User/mcp.json`
+**Location**: `~/.codeium/windsurf/mcp_config.json`
 
 ```json
 {
@@ -75,7 +75,7 @@ With the Metals MCP server configured, AI assistants can:
 ### Port Changed?
 The port is dynamically assigned. If it changes:
 1. Check `.metals/mcp.json` for the new port
-2. Update `~/.config/Windsurf/User/mcp.json`
+2. Update `~/.codeium/windsurf/mcp_config.json`
 
 ## More Information
 

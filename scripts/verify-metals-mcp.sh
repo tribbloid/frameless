@@ -55,7 +55,7 @@ fi
 # Check Windsurf MCP config
 echo ""
 echo "4. Checking Windsurf MCP configuration..."
-WINDSURF_MCP="$HOME/.config/Windsurf/User/mcp.json"
+WINDSURF_MCP="$HOME/.codeium/windsurf/mcp_config.json"
 if [ -f "$WINDSURF_MCP" ]; then
     echo "   ✓ Windsurf MCP config exists at $WINDSURF_MCP"
     if grep -q "frameless-metals" "$WINDSURF_MCP"; then
@@ -84,4 +84,4 @@ echo "To enable MCP tracing, create an empty file:"
 echo "  touch .metals/mcp.trace.json"
 echo ""
 echo "To view all available MCP servers in Windsurf:"
-echo "  cat ~/.config/Windsurf/User/mcp.json"
+echo "  cat ~/.codeium/windsurf/mcp_config.json"
