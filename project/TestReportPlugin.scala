@@ -212,6 +212,55 @@ object TestReportPlugin extends AutoPlugin {
     }
   }
 
+  private def detectSystemTimezone(): java.time.ZoneId = {
+    // Try timezone sources in order of precedence:
+    // 1. TZ environment variable (standard POSIX override)
+    // 2. Java's systemDefault() (reads from OS configuration)
+    // This is more stable than relying on user.timezone JVM property,
+    // which is not set by default on most systems.
+
+    sys.env
+      .get("TZ")
+      .flatMap { tz =>
+        try {
+          Some(java.time.ZoneId.of(tz))
+        } catch {
+          case _: Exception => None
+        }
+      }
+      .getOrElse(java.time.ZoneId.systemDefault())
+  }
+
+  private def collectEnvironmentInfo(): Map[String, String] = {
+    val props = sys.props
+    val env = sys.env
+    val runtime = java.lang.Runtime.getRuntime
+
+    Map(
+      "Java Version" -> props.getOrElse("java.version", "unknown"),
+      "Java Vendor" -> props.getOrElse("java.vendor", "unknown"),
+      "Java Home" -> props.getOrElse("java.home", "unknown"),
+      "Scala Version" -> props
+        .getOrElse("scala.version", scala.util.Properties.versionNumberString),
+      "OS Name" -> props.getOrElse("os.name", "unknown"),
+      "OS Version" -> props.getOrElse("os.version", "unknown"),
+      "OS Architecture" -> props.getOrElse("os.arch", "unknown"),
+      "User Name" -> props.getOrElse("user.name", "unknown"),
+      "User Dir" -> props.getOrElse("user.dir", "unknown"),
+      "SBT Version" -> props.getOrElse("sbt.version", "unknown"),
+      "Available Processors" -> runtime.availableProcessors().toString,
+      "Max Memory" -> s"${runtime.maxMemory() / (1024 * 1024)} MB",
+      "Total Memory" -> s"${runtime.totalMemory() / (1024 * 1024)} MB",
+      "Free Memory" -> s"${runtime.freeMemory() / (1024 * 1024)} MB",
+      "SPARK_LOCAL_IP" -> env.getOrElse("SPARK_LOCAL_IP", "not set"),
+      "SBT_OPTS" -> env.getOrElse("SBT_OPTS", "not set"),
+      "TZ (Environment)" -> env.getOrElse("TZ", "not set"),
+      "user.timezone (JVM Property)" -> props
+        .getOrElse("user.timezone", "not set"),
+      "JVM Default Timezone" -> java.time.ZoneId.systemDefault().toString
+    )
+  }
+
   private def generateHtmlReport(
       results: Seq[TestResult],
       projectTitle: String
@@ -227,6 +276,21 @@ object TestReportPlugin extends AutoPlugin {
       if (totalTests > 0) (totalPassed * 100.0 / totalTests) else 0.0
 
     val moduleResults = results.groupBy(_.moduleName).toSeq.sortBy(_._1)
+
+    // Collect system environment information
+    val systemTimezone = detectSystemTimezone()
+    val generationTimeUTC =
+      java.time.ZonedDateTime.now(java.time.ZoneId.of("UTC"))
+    val generationTimeLocal =
+      generationTimeUTC.withZoneSameInstant(systemTimezone)
+
+    // Format timestamps for display
+    val dateTimeFormatter =
+      java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z")
+    val utcFormatted = generationTimeUTC.format(dateTimeFormatter)
+    val localFormatted = generationTimeLocal.format(dateTimeFormatter)
+
+    val envInfo = collectEnvironmentInfo()
 
     s"""<!DOCTYPE html>
 <html lang="en">
@@ -352,6 +416,47 @@ object TestReportPlugin extends AutoPlugin {
             color: #999;
             margin-top: 30px;
             font-size: 0.9em;
+        }
+        .appendix {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 30px;
+        }
+        .appendix h2 {
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        .appendix h3 {
+            color: #555;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        .env-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .env-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #eee;
+        }
+        .env-table td:first-child {
+            font-weight: 600;
+            color: #555;
+            width: 250px;
+        }
+        .env-table td:last-child {
+            color: #333;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .env-table tr:hover {
+            background: #f9f9f9;
         }
     </style>
     <script>
@@ -485,8 +590,120 @@ object TestReportPlugin extends AutoPlugin {
         </div>"""
       }.mkString}
 
-        <div class="timestamp">
-            Generated on ${java.time.LocalDateTime.now().toString}
+        <div class="appendix">
+            <h2>📋 Appendix - Test Environment Information</h2>
+            
+            <h3>⏰ Generation Timestamp</h3>
+            <table class="env-table">
+                <tr>
+                    <td>UTC Time</td>
+                    <td>${utcFormatted}</td>
+                </tr>
+                <tr>
+                    <td>Local Time</td>
+                    <td>${localFormatted}</td>
+                </tr>
+                <tr>
+                    <td>Time Zone</td>
+                    <td>${systemTimezone.toString}</td>
+                </tr>
+                <tr>
+                    <td>Epoch Milliseconds</td>
+                    <td>${generationTimeUTC.toInstant.toEpochMilli}</td>
+                </tr>
+            </table>
+            
+            <h3>☕ Java Environment</h3>
+            <table class="env-table">
+                <tr>
+                    <td>Java Version</td>
+                    <td>${envInfo("Java Version")}</td>
+                </tr>
+                <tr>
+                    <td>Java Vendor</td>
+                    <td>${envInfo("Java Vendor")}</td>
+                </tr>
+                <tr>
+                    <td>Java Home</td>
+                    <td>${envInfo("Java Home")}</td>
+                </tr>
+            </table>
+            
+            <h3>🔧 Build Environment</h3>
+            <table class="env-table">
+                <tr>
+                    <td>Scala Version</td>
+                    <td>${envInfo("Scala Version")}</td>
+                </tr>
+                <tr>
+                    <td>SBT Version</td>
+                    <td>${envInfo("SBT Version")}</td>
+                </tr>
+                <tr>
+                    <td>SBT_OPTS</td>
+                    <td>${envInfo("SBT_OPTS")}</td>
+                </tr>
+                <tr>
+                    <td>SPARK_LOCAL_IP</td>
+                    <td>${envInfo("SPARK_LOCAL_IP")}</td>
+                </tr>
+                <tr>
+                    <td>TZ Environment Variable</td>
+                    <td>${envInfo("TZ (Environment)")}</td>
+                </tr>
+                <tr>
+                    <td>user.timezone (JVM Property)</td>
+                    <td>${envInfo("user.timezone (JVM Property)")}</td>
+                </tr>
+                <tr>
+                    <td>JVM Default Timezone</td>
+                    <td>${envInfo("JVM Default Timezone")}</td>
+                </tr>
+                <tr>
+                    <td>Detected System Timezone</td>
+                    <td>${systemTimezone.toString}</td>
+                </tr>
+            </table>
+            
+            <h3>💻 System Information</h3>
+            <table class="env-table">
+                <tr>
+                    <td>Operating System</td>
+                    <td>${envInfo("OS Name")} ${envInfo("OS Version")}</td>
+                </tr>
+                <tr>
+                    <td>OS Architecture</td>
+                    <td>${envInfo("OS Architecture")}</td>
+                </tr>
+                <tr>
+                    <td>Available Processors</td>
+                    <td>${envInfo("Available Processors")}</td>
+                </tr>
+                <tr>
+                    <td>User Name</td>
+                    <td>${envInfo("User Name")}</td>
+                </tr>
+                <tr>
+                    <td>Working Directory</td>
+                    <td>${envInfo("User Dir")}</td>
+                </tr>
+            </table>
+            
+            <h3>🧠 JVM Memory</h3>
+            <table class="env-table">
+                <tr>
+                    <td>Max Memory</td>
+                    <td>${envInfo("Max Memory")}</td>
+                </tr>
+                <tr>
+                    <td>Total Memory</td>
+                    <td>${envInfo("Total Memory")}</td>
+                </tr>
+                <tr>
+                    <td>Free Memory</td>
+                    <td>${envInfo("Free Memory")}</td>
+                </tr>
+            </table>
         </div>
     </div>
 </body>
