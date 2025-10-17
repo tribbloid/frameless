@@ -29,49 +29,18 @@ object FramelessInternals {
         val errorMsg =
           s"""Cannot resolve column name "$colNames" among (${ds.schema.fieldNames
               .mkString(", ")})"""
-        // Spark 4 changed AnalysisException constructor - use SparkException instead
-        try {
-          val sparkExceptionClass =
-            Class.forName("org.apache.spark.SparkException")
-          val internalErrorMethod =
-            sparkExceptionClass.getMethod("internalError", classOf[String])
-          throw internalErrorMethod
-            .invoke(null, errorMsg)
-            .asInstanceOf[Throwable]
-        } catch {
-          case _: ClassNotFoundException | _: NoSuchMethodException |
-              _: IllegalAccessException =>
-            // Spark 3.x - use old constructor with single String parameter
-            val analysisExceptionClass = classOf[AnalysisException]
-            try {
-              // Try single-parameter constructor first (Spark 3.2+)
-              val constructor =
-                analysisExceptionClass.getConstructor(classOf[String])
-              throw constructor.newInstance(errorMsg)
-            } catch {
-              case _: NoSuchMethodException =>
-                // Fall back to creating a runtime exception
-                throw new RuntimeException(errorMsg)
-            }
-        }
+        // Spark 4 uses SparkException.internalError for internal errors
+        throw org.apache.spark.SparkException.internalError(errorMsg)
       }
   }
 
   def expr(column: Column): Expression = {
-    // Strategy 1: Spark 3.x - direct expr field/method
-    try {
-      val exprMethod = classOf[Column].getMethod("expr")
-      return exprMethod.invoke(column).asInstanceOf[Expression]
-    } catch {
-      case _: NoSuchMethodException => // Continue to Strategy 2
-    }
-
-    // Strategy 2: Spark 4.x - extract from ColumnNode
-    var strategy2Error: Option[String] = None
+    // Spark 4.x - extract Expression from ColumnNode
+    var strategyError: Option[String] = None
     try {
       val nodeMethod = classOf[Column].getMethod("node")
       val columnNode = nodeMethod.invoke(column)
-      strategy2Error = Some(s"Got node: ${columnNode.getClass.getName}")
+      strategyError = Some(s"Got node: ${columnNode.getClass.getName}")
 
       columnNode match {
         case e: Expression =>
@@ -197,7 +166,7 @@ object FramelessInternals {
                 }
               } catch {
                 case e: Exception =>
-                  strategy2Error = Some(
+                  strategyError = Some(
                     s"Node class ${columnNode.getClass.getName}: Strategy 2d failed: ${e.getClass.getName}: ${e.getMessage}"
                   )
               }
@@ -387,12 +356,12 @@ object FramelessInternals {
                     s" Last error: ${e.getClass.getName}: ${e.getMessage}"
                   )
                   .getOrElse("")
-                strategy2Error = Some(
+                strategyError = Some(
                   s"Node class ${columnNode.getClass.getName}: Failed to create UnresolvedFunction.$errorMsg"
                 )
               } catch {
                 case e: Exception =>
-                  strategy2Error = Some(
+                  strategyError = Some(
                     s"Node class ${columnNode.getClass.getName}: Exception in Strategy 2c: ${e.getClass.getName}: ${e.getMessage}"
                   )
               }
@@ -403,9 +372,9 @@ object FramelessInternals {
 
           // If we reach here, all extraction strategies failed
           if (
-            strategy2Error.isEmpty || strategy2Error.get.startsWith("Got node:")
+            strategyError.isEmpty || strategyError.get.startsWith("Got node:")
           ) {
-            strategy2Error = Some(
+            strategyError = Some(
               s"Node class ${columnNode.getClass.getName}: could not extract expression using any method"
             )
           }
@@ -413,12 +382,12 @@ object FramelessInternals {
       }
     } catch {
       case e: NoSuchMethodException =>
-        strategy2Error = Some(
+        strategyError = Some(
           s"Column has no node() method. Available methods: ${classOf[Column].getMethods.map(_.getName).sorted.distinct.mkString(", ")}"
         )
       // Continue to Strategy 3
       case e: Exception =>
-        strategy2Error = Some(
+        strategyError = Some(
           s"Unexpected error: ${e.getClass.getName}: ${e.getMessage}"
         )
     }
@@ -466,7 +435,7 @@ object FramelessInternals {
     } catch {
       case e: Exception =>
         val debugInfo =
-          strategy2Error.map(err => s" Strategy 2 debug: $err").getOrElse("")
+          strategyError.map(err => s" Strategy 2 debug: $err").getOrElse("")
         throw new UnsupportedOperationException(
           s"Cannot extract Expression from Column using any strategy. " +
             s"This may indicate an incompatible Spark version or Column type. Error: ${e.getMessage}." +
