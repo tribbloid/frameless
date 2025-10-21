@@ -27,8 +27,9 @@ This document guides automated agents and contributors working in this repositor
 
 - **Do**
     - **Compile** often to verify your work.
-    - **Write** larconic, minimal and elegant code that does the function.
-    - **Commit** code to git local repository after each task, each commit message should start with your model name-version. 
+    - **Write** laconic, minimal and elegant code that does the function.
+    - **Commit** code to git local repository after each task, each commit message should start with your model name-version.
+    - **Inspect** library implementation using Scala metals MCP server.
     - **Format** code with `scalafmt` before committing.
     - **Test** across supported Scala and Spark roots used in CI.
     - **Run** MiMa checks on changed modules.
