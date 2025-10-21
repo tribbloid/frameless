@@ -13,7 +13,6 @@ import org.apache.spark.sql.catalyst.expressions.{
   Literal
 }
 import org.apache.spark.sql.types.StructType
-import frameless.internal.SparkCompat
 
 object TypedExpressionEncoder {
 
@@ -73,73 +72,12 @@ object TypedExpressionEncoder {
     ): Encoder[T] = {
     import scala.reflect.ClassTag
 
-    // Spark 4.x: ExpressionEncoder(AgnosticEncoder, serializer: Expression, deserializer: Expression)
-    val encCls = classOf[ExpressionEncoder[_]]
-    val ctor = SparkCompat
-      .findCtorByParamFQNs(
-        encCls,
-        List(
-          List(
-            "org.apache.spark.sql.catalyst.encoders.AgnosticEncoder",
-            "org.apache.spark.sql.catalyst.expressions.Expression",
-            "org.apache.spark.sql.catalyst.expressions.Expression"
-          )
-        )
-      )
-      .getOrElse(
-        throw new RuntimeException(
-          s"Spark 4.x ExpressionEncoder constructor not found. Found constructors:\n${SparkCompat.debugConstructors(encCls)}"
-        )
-      )
-
     // Build ClassTag for runtimeClass
     val classTag = ClassTag(runtimeClass)
 
-    // Create AgnosticEncoder with the correct ClassTag using ProductEncoder
-    // ProductEncoder(ClassTag, fields: Seq[AgnosticEncoder.Field], outer: Option[...])
-    // NOTE: We pass our custom serializer/deserializer expressions to ExpressionEncoder,
-    // so the field-level encoders in AgnosticEncoder are only used for schema/type metadata.
-    // We still use RowEncoder's fields to maintain compatibility with Spark's expectations.
-    val agnostic =
-      try {
-        // Get RowEncoder to get the correct field structure for the schema
-        val rowEncoderComp =
-          Class.forName("org.apache.spark.sql.catalyst.encoders.RowEncoder$")
-        val rowEncoderMod = rowEncoderComp.getField("MODULE$").get(null)
-        val encoderFor = rowEncoderComp.getMethod(
-          "encoderFor",
-          classOf[org.apache.spark.sql.types.StructType]
-        )
-        val rowEncoder = encoderFor.invoke(rowEncoderMod, schema)
-
-        // We need to modify the RowEncoder to use our ClassTag
-        // Since RowEncoder is immutable, we create a new ProductEncoder with the same fields
-        // but with our ClassTag
-        val rowEncoderClass = rowEncoder.getClass
-        val fieldsMethod = rowEncoderClass.getMethod("fields")
-        val fields = fieldsMethod.invoke(rowEncoder)
-
-        // Try to create ProductEncoder with our ClassTag but RowEncoder's fields
-        val productEncoderClass =
-          Class.forName("org.apache.spark.sql.catalyst.encoders.AgnosticEncoders$ProductEncoder")
-        val productEncoderCtor = productEncoderClass.getConstructors.head
-        val noneOption =
-          Class.forName("scala.None$").getField("MODULE$").get(null)
-        productEncoderCtor.newInstance(classTag, fields, noneOption)
-      } catch {
-        case e: Exception =>
-          // If ProductEncoder creation fails, fall back to RowEncoder
-          // This will use Row's ClassTag but at least won't break basic functionality
-          val rowEncoderComp = Class.forName(
-            "org.apache.spark.sql.catalyst.encoders.RowEncoder$"
-          )
-          val rowEncoderMod = rowEncoderComp.getField("MODULE$").get(null)
-          val encoderFor = rowEncoderComp.getMethod(
-            "encoderFor",
-            classOf[org.apache.spark.sql.types.StructType]
-          )
-          encoderFor.invoke(rowEncoderMod, schema)
-      }
+    // Use public RowEncoder API to create AgnosticEncoder for the schema
+    // This eliminates reflection for accessing RowEncoder
+    val agnostic = org.apache.spark.sql.catalyst.encoders.RowEncoder.encoderFor(schema)
 
     // In Spark 4.0, the serializer and deserializer need to match the AgnosticEncoder structure
     // Unlike Spark 3.x where serializer was Seq[NamedExpression], Spark 4.0 uses single expressions
@@ -160,8 +98,12 @@ object TypedExpressionEncoder {
       }
     }
 
-    ctor
-      .newInstance(agnostic, spark4Serializer, deserializerExpr)
-      .asInstanceOf[Encoder[T]]
+    // Use public ExpressionEncoder.apply method instead of reflection
+    // This eliminates the need for constructor lookup and reflection
+    org.apache.spark.sql.catalyst.encoders.ExpressionEncoder(
+      agnostic,
+      spark4Serializer,
+      deserializerExpr
+    ).asInstanceOf[Encoder[T]]
   }
 }
