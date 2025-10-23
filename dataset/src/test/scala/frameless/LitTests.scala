@@ -68,7 +68,7 @@ class LitTests extends TypedDatasetSuite with Matchers {
 
     val lorem = new Name("Lorem")
 
-    ds.withColumnReplaced('name, functions.litValue(lorem))
+    ds.withColumnReplaced(Symbol("name"), functions.litValue(lorem))
       .collect
       .run() shouldBe initial.map(_.copy(name = lorem))
   }
@@ -85,13 +85,13 @@ class LitTests extends TypedDatasetSuite with Matchers {
     val someIpsum: Option[Name] = Some(new Name("Ipsum"))
 
     val lit = functions.litValue(someIpsum)
-    val tds = ds.withColumnReplaced('alias, functions.litValue(someIpsum))
+    val tds = ds.withColumnReplaced(Symbol("alias"), functions.litValue(someIpsum))
 
     tds.queryExecution.toString() should include(lit.toString)
 
     tds.collect.run() shouldBe initial.map(_.copy(alias = someIpsum))
 
-    ds.withColumnReplaced('alias, functions.litValue(Option.empty[Name]))
+    ds.withColumnReplaced(Symbol("alias"), functions.litValue(Option.empty[Name]))
       .collect
       .run() shouldBe initial.map(_.copy(alias = None))
   }
@@ -105,7 +105,7 @@ class LitTests extends TypedDatasetSuite with Matchers {
     val data = Vector(P(42, today))
     val tds = TypedDataset.create(data)
 
-    tds.filter(tds('d) === today).collect.run().map(_.i) shouldBe Seq(42)
+    tds.filter(tds(Symbol("d")) === today).collect.run().map(_.i) shouldBe Seq(42)
   }
 }
 

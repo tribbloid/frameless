@@ -10,7 +10,7 @@ import scala.reflect.ClassTag
 class ExplodeTests extends TypedDatasetSuite {
   test("simple explode test") {
     val ds = TypedDataset.create(Seq((1, Array(1, 2))))
-    ds.explode('_2): TypedDataset[(Int, Int)]
+    ds.explode(Symbol("_2")): TypedDataset[(Int, Int)]
   }
 
   test("explode on vectors/list/seq") {
@@ -24,7 +24,7 @@ class ExplodeTests extends TypedDatasetSuite {
       ): Prop = {
       val tds = TypedDataset.create(xs)
 
-      val framelessResults = tds.explode('a).collect().run().toVector
+      val framelessResults = tds.explode(Symbol("a")).collect().run().toVector
       val scalaResults = xs.flatMap(_.a).map(Tuple1(_)).toVector
 
       framelessResults ?= scalaResults
@@ -44,7 +44,7 @@ class ExplodeTests extends TypedDatasetSuite {
     def prop[A: TypedEncoder: ClassTag](xs: List[X1[Array[A]]]): Prop = {
       val tds = TypedDataset.create(xs)
 
-      val framelessResults = tds.explode('a).collect().run().toVector
+      val framelessResults = tds.explode(Symbol("a")).collect().run().toVector
       val scalaResults = xs.flatMap(_.a).map(Tuple1(_)).toVector
 
       framelessResults ?= scalaResults
@@ -61,7 +61,7 @@ class ExplodeTests extends TypedDatasetSuite {
       ): Prop = {
       val tds = TypedDataset.create(xs)
 
-      val framelessResults = tds.explodeMap('a).collect().run().toVector
+      val framelessResults = tds.explodeMap(Symbol("a")).collect().run().toVector
       val scalaResults =
         xs.flatMap(_.a.toList).map(t => Tuple1(Tuple2(t._1, t._2))).toVector
 
@@ -82,7 +82,7 @@ class ExplodeTests extends TypedDatasetSuite {
       ): Prop = {
       val tds = TypedDataset.create(xs)
 
-      val framelessResults = tds.explodeMap('b).collect().run().toVector
+      val framelessResults = tds.explodeMap(Symbol("b")).collect().run().toVector
       val scalaResults = xs.flatMap { x2 =>
         x2.b.toList.map((x2.a, _))
       }.toVector
@@ -105,7 +105,7 @@ class ExplodeTests extends TypedDatasetSuite {
       ): Prop = {
       val tds = TypedDataset.create(xs)
 
-      val framelessResults = tds.explodeMap('c).collect().run().toVector
+      val framelessResults = tds.explodeMap(Symbol("c")).collect().run().toVector
       val scalaResults = xs.flatMap { x3 =>
         x3.c.toList.map((x3.key, x3.value, _))
       }.toVector

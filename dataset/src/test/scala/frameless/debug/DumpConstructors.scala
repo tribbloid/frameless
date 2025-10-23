@@ -6,16 +6,14 @@ import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 object DumpConstructors extends App {
   val encCls = classOf[ExpressionEncoder[_]]
   println(
-    "ExpressionEncoder constructors:\n" + SparkCompat.debugConstructors(encCls)
+    "ExpressionEncoder constructors:\n" + "debugConstructors method not available"
   )
 
   try {
     val agnFqn = "org.apache.spark.sql.catalyst.encoders.AgnosticEncoder"
     val agnCls = Class.forName(agnFqn)
     println(
-      "\nAgnosticEncoder constructors:\n" + SparkCompat.debugConstructors(
-        agnCls
-      )
+      "\nAgnosticEncoder constructors:\n" + "debugConstructors method not available"
     )
 
     val agnMod = Class.forName(agnFqn + "$")

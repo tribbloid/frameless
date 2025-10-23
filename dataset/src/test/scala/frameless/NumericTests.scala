@@ -12,7 +12,7 @@ class NumericTests extends TypedDatasetSuite with Matchers {
     def prop[A: TypedEncoder: CatalystNumeric: Numeric](a: A, b: A): Prop = {
       val df = TypedDataset.create(X2(a, b) :: Nil)
       val result = implicitly[Numeric[A]].plus(a, b)
-      val got = df.select(df.col('a) + df.col('b)).collect().run()
+      val got = df.select(df.col(Symbol("a")) + df.col(Symbol("b"))).collect().run()
 
       got ?= (result :: Nil)
     }
@@ -29,7 +29,7 @@ class NumericTests extends TypedDatasetSuite with Matchers {
     def prop[A: TypedEncoder: CatalystNumeric: Numeric](a: A, b: A): Prop = {
       val df = TypedDataset.create(X2(a, b) :: Nil)
       val result = implicitly[Numeric[A]].minus(a, b)
-      val got = df.select(df.col('a) - df.col('b)).collect().run()
+      val got = df.select(df.col(Symbol("a")) - df.col(Symbol("b"))).collect().run()
 
       got ?= (result :: Nil)
     }
@@ -49,7 +49,7 @@ class NumericTests extends TypedDatasetSuite with Matchers {
       ): Prop = {
       val df = TypedDataset.create(X2(a, b) :: Nil)
       val result = implicitly[Numeric[A]].times(a, b)
-      val got = df.select(df.col('a) * df.col('b)).collect().run()
+      val got = df.select(df.col(Symbol("a")) * df.col(Symbol("b"))).collect().run()
 
       got ?= (result :: Nil)
     }
@@ -74,7 +74,7 @@ class NumericTests extends TypedDatasetSuite with Matchers {
         val div: Double = implicitly[Numeric[A]]
           .toDouble(a) / implicitly[Numeric[A]].toDouble(b)
         val got: Seq[Double] =
-          df.select(df.col('a) / df.col('b)).collect().run()
+          df.select(df.col(Symbol("a")) / df.col(Symbol("b"))).collect().run()
 
         got ?= (div :: Nil)
       }
@@ -95,7 +95,7 @@ class NumericTests extends TypedDatasetSuite with Matchers {
         // Spark performs something in between Double division and BigDecimal division,
         // we approximate it using double vision and `approximatelyEqual`:
         val div = BigDecimal(a.doubleValue / b.doubleValue)
-        val got = df.select(df.col('a) / df.col('b)).collect().run()
+        val got = df.select(df.col(Symbol("a")) / df.col(Symbol("b"))).collect().run()
         approximatelyEqual(got.head, div)
       }
     }
@@ -107,7 +107,7 @@ class NumericTests extends TypedDatasetSuite with Matchers {
     def prop(a: BigDecimal, b: BigDecimal): Prop = {
       val df = TypedDataset.create(X2(a, b) :: Nil)
       val result = BigDecimal(a.doubleValue * b.doubleValue)
-      val got = df.select(df.col('a) * df.col('b)).collect().run()
+      val got = df.select(df.col(Symbol("a")) * df.col(Symbol("b"))).collect().run()
       approximatelyEqual(got.head, result)
     }
 
@@ -157,7 +157,7 @@ class NumericTests extends TypedDatasetSuite with Matchers {
       if (b == 0) proved
       else {
         val mod: A = implicitly[NumericMod[A]].mod(a, b)
-        val got: Seq[A] = df.select(df.col('a) % df.col('b)).collect().run()
+        val got: Seq[A] = df.select(df.col(Symbol("a")) % df.col(Symbol("b"))).collect().run()
 
         got ?= (mod :: Nil)
       }
@@ -179,7 +179,7 @@ class NumericTests extends TypedDatasetSuite with Matchers {
         data: X1[A]
       ): Prop = {
       val dataset = TypedDataset.create(Seq(data))
-      val a = dataset.col('a)
+      val a = dataset.col(Symbol("a"))
       if (elem == 0) proved
       else {
         val mod: A = implicitly[NumericMod[A]].mod(data.a, elem)
@@ -211,7 +211,7 @@ class NumericTests extends TypedDatasetSuite with Matchers {
 
       val expected =
         ds.toDF().filter(!$"a".isNaN).map(_.getAs[A](0)).collect().toSeq
-      val rs = ds.filter(!ds('a).isNaN).collect().run().map(_.a)
+      val rs = ds.filter(!ds(Symbol("a")).isNaN).collect().run().map(_.a)
 
       rs ?= expected
     }
@@ -221,7 +221,7 @@ class NumericTests extends TypedDatasetSuite with Matchers {
   }
 
   test("isNaN with non-nan types should not compile") {
-    val ds = TypedDataset.create((1, false, 'a, "b") :: Nil)
+    val ds = TypedDataset.create((1, false, Symbol("a"), "b") :: Nil)
 
     "ds.filter(ds('_1).isNaN)" shouldNot typeCheck
     "ds.filter(ds('_2).isNaN)" shouldNot typeCheck
