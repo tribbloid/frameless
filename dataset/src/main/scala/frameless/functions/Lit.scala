@@ -1,70 +1,24 @@
 package frameless.functions
 
-import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.catalyst.expressions.codegen._
-import org.apache.spark.sql.catalyst.expressions.{
-  Expression,
-  NonSQLExpression
-}
-import org.apache.spark.sql.types.DataType
+import org.apache.spark.sql.catalyst.expressions.Expression
 
-private[frameless] case class Lit[T <: AnyVal](
-    dataType: DataType,
-    nullable: Boolean,
-    show: () => String,
-    catalystExpr: Expression // must be a generated Expression from a literal TypedEncoder's toCatalyst function
-  ) extends Expression
-    with NonSQLExpression {
-  override def toString: String = s"FramelessLit(${show()})"
+/**
+ * Simple marker class for lit functions to maintain compatibility
+ * In Spark 4.0, we just delegate to the underlying catalyst expression
+ */
+private[frameless] case class Lit[T](
+    catalystExpr: Expression
+  ) extends Expression {
 
-  lazy val codegen = {
-    val ctx = new CodegenContext()
-    val eval = genCode(ctx)
-
-    val codeBody =
-      s"""
-      public scala.Function1<InternalRow, Object> generate(Object[] references) {
-        return new LiteralEvalImpl(references);
-      }
-
-      class LiteralEvalImpl extends scala.runtime.AbstractFunction1<InternalRow, Object> {
-        private final Object[] references;
-        ${ctx.declareMutableStates()}
-        ${ctx.declareAddedFunctions()}
-
-        public LiteralEvalImpl(Object[] references) {
-          this.references = references;
-          ${ctx.initMutableStates()}
-        }
-
-        public java.lang.Object apply(java.lang.Object z) {
-          InternalRow ${ctx.INPUT_ROW} = (InternalRow) z;
-          ${eval.code}
-          return ${eval.isNull} ? ((Object)null) : ((Object)${eval.value});
-        }
-      }
-    """
-
-    val code = CodeFormatter.stripOverlappingComments(
-      new CodeAndComment(codeBody, ctx.getPlaceHolderToComments())
-    )
-
-    val (clazz, _) = CodeGenerator.compile(code)
-    val codegen =
-      clazz.generate(ctx.references.toArray).asInstanceOf[InternalRow => AnyRef]
-    codegen
-  }
-
-  def eval(input: InternalRow): Any = codegen(input)
-
-  def children: Seq[Expression] = Nil
-
-  protected def doGenCode(ctx: CodegenContext, ev: ExprCode): ExprCode =
+  def eval(input: org.apache.spark.sql.catalyst.InternalRow): Any = catalystExpr.eval(input)
+  def children: Seq[Expression] = catalystExpr.children
+  protected def doGenCode(ctx: org.apache.spark.sql.catalyst.expressions.codegen.CodegenContext, ev: org.apache.spark.sql.catalyst.expressions.codegen.ExprCode): org.apache.spark.sql.catalyst.expressions.codegen.ExprCode =
     catalystExpr.genCode(ctx)
+  protected def withNewChildrenInternal(newChildren: IndexedSeq[Expression]): Expression = this
 
-  protected def withNewChildrenInternal(
-      newChildren: IndexedSeq[Expression]
-    ): Expression = this
-
+  // Delegate to catalystExpr for all properties
   override val foldable: Boolean = catalystExpr.foldable
+  override def dataType: org.apache.spark.sql.types.DataType = catalystExpr.dataType
+  override def nullable: Boolean = catalystExpr.nullable
+  override def toString: String = s"FramelessLit($catalystExpr)"
 }

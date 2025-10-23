@@ -17,9 +17,6 @@ This document guides automated agents and contributors working in this repositor
     - `cats/` → `frameless-cats`
     - `ml/` → `frameless-ml`
     - `refined/` → `frameless-refined`
-- **Spark-cross variants**:
-    - `*-spark33/`, `*-spark34/` modules and aggregate roots: `.spark33/` (`root-spark33`), `.spark34/` (
-      `root-spark34`), `.spark35/` (`root-spark35`)
 - **CI/Release config**: `.github/workflows/*.yml`, `github.sbt`
 - **Docs site**: `mdocs/` (Typelevel Site)
 
@@ -98,7 +95,6 @@ This document guides automated agents and contributors working in this repositor
 ## Module Guidance
 
 - **Spark dependencies**: Stay in `Provided` scope via `sparkDependencies`/`sparkMlDependencies`.
-- **Cross-modules**: If changing sources mirrored in `*-spark33/34` variants, replicate or refactor appropriately.
 - **Binary Compatibility**: Adjust `mimaBinaryIssueFilters` only with justification and in the affected module.
 - **Docs**: Update `mdocs/` and linked `docs/*.md` when behavior/APIs visible to users change.
 

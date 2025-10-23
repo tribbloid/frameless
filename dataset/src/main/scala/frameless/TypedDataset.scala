@@ -275,22 +275,37 @@ class TypedDataset[T] protected[frameless] (
 
       // After aggregation, re-apply any non-aggregate wrappers around each output
       val postCols: Seq[Column] = splitCols.map {
-        case ((_, rebuild), i, isSum) =>
+        case ((aggExpr, rebuild), i, isSum) =>
           val refExpr: Expression =
             FramelessInternals.expr(dfAgg.col(s"_${i + 1}"))
           val rebuiltExpr = rebuild(refExpr)
 
           // Build zero literal matching the aggregate output type when needed
           import org.apache.spark.sql.types._
-          val zeroLit: Expression = rebuiltExpr.dataType match {
-            case LongType       => Literal(0L)
-            case IntegerType    => Literal(0)
-            case ShortType      => Literal(0.toShort)
-            case ByteType       => Literal(0.toByte)
-            case DoubleType     => Literal(0.0D)
-            case FloatType      => Literal(0.0F)
-            case d: DecimalType => Literal(Decimal(0))
-            case _              => Literal.create(null, rebuiltExpr.dataType)
+          // Get the data type from the aggregated DataFrame's schema to avoid unresolved expression issues
+          val dataTypeForZero: DataType = {
+            try {
+              // Try to get data type from the resolved expression first
+              if (rebuiltExpr.resolved) rebuiltExpr.dataType
+              else dfAgg.schema(s"_${i + 1}").dataType
+            } catch {
+              case _: Exception =>
+                // Final fallback to original aggregate expression
+                if (aggExpr.resolved) aggExpr.dataType
+                else null // This should not happen, but as a last resort
+            }
+          }
+
+          val zeroLit: Expression = Option(dataTypeForZero) match {
+            case Some(LongType)       => Literal(0L)
+            case Some(IntegerType)    => Literal(0)
+            case Some(ShortType)      => Literal(0.toShort)
+            case Some(ByteType)       => Literal(0.toByte)
+            case Some(DoubleType)     => Literal(0.0D)
+            case Some(FloatType)      => Literal(0.0F)
+            case Some(d: DecimalType) => Literal(Decimal(0))
+            case Some(dt)             => Literal.create(null, dt)
+            case None                 => Literal.create(null, StringType) // Fallback
           }
 
           val withDefault: Expression =

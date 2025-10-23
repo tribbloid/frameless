@@ -90,14 +90,7 @@ package object functions extends Udf with UnaryFunctions {
     implicit val enc: TypedEncoder[A] =
       RecordFieldEncoder.valueClass[A, G, H, K, V, KS].encoder
 
-    new TypedColumn[T, A](
-      Lit(
-        dataType = i7.catalystRepr,
-        nullable = i7.nullable,
-        show = () => value.toString,
-        i7.toCatalyst(expr)
-      )
-    )
+    new TypedColumn[T, A](i7.toCatalyst(expr))
   }
 
   /**
@@ -143,13 +136,6 @@ package object functions extends Udf with UnaryFunctions {
     implicit val enc: TypedEncoder[A] =
       RecordFieldEncoder.valueClass[A, G, H, K, V, KS].encoder
 
-    new TypedColumn[T, Option[A]](
-      Lit(
-        dataType = i7.catalystRepr,
-        nullable = true,
-        show = () => value.toString,
-        i7.toCatalyst(expr)
-      )
-    )
+    new TypedColumn[T, Option[A]](i7.toCatalyst(expr))
   }
 }
